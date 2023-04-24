@@ -33,7 +33,7 @@ You can then use the component in your template
 </template>
 
 <script lang="ts" setup>
-import { Map } from 'sqkii-mapbox-g';
+import { Map } from 'sqkii-mapbox-gl';
 
 function onMapLoading() {
   console.log('loading');
