@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/danh121097/vue-mapbox-gl.git"
   },
   "publishConfig": {
     "access": "public",
