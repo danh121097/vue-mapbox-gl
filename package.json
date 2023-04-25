@@ -1,6 +1,6 @@
 {
   "name": "sqkii-mapbox-gl",
-  "version": "1.0.54",
+  "version": "1.0.55",
   "type": "module",
   "license": "MIT",
   "description": "A Simple mapboxGL Component for Vue 3",
