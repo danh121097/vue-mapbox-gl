@@ -22,7 +22,7 @@ You can then use the component in your template
 
 ```vue
 <template>
-  <Map
+  <MapBox
     :mapbox-options="{
       accessToken: '',
       style: ''
