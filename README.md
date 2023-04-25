@@ -27,21 +27,21 @@ You can then use the component in your template
       accessToken: '',
       style: ''
     }"
-    @map-loading="onMapLoading"
-    @map-loaded="onMapLoaded"
+    @map-intialized="(map: Map) => onMapIntialized(map)"
+    @map-intializing="onMapIntializing"
   />
 </template>
 
 <script lang="ts" setup>
-import { Map } from 'sqkii-mapbox-gl';
+import { MapBox } from 'sqkii-mapbox-gl';
 import 'sqkii-mapbox-gl/dist/style.css';
 
-function onMapLoading() {
-  console.log('loading');
+function onMapIntialized(map: Map) {
+  console.log('intialized', map);
 }
 
-function onMapLoaded() {
-  console.log('loaded');
+function onMapIntializing() {
+  console.log('intializing');
 }
 </script>
 ```

@@ -8,9 +8,13 @@ import '../dist/style.css';
 
 const mapContainer = ref<Map | null>(null);
 
-function onMapInit(map: Map) {
+function onMapIntialized(map: Map) {
   if (!map) return;
   mapContainer.value = map;
+}
+
+function onMapIntializing() {
+  console.log('intializing');
 }
 
 function onMapClick(value: unknown) {
@@ -107,7 +111,8 @@ const sourceData = computed(() => {
         style: 'https://worldwidemaps.sqkii.com/api/maps/purple/style.json',
         container: 'mapContainer'
       }"
-      @map-intialized="(map: Map) => onMapInit(map)"
+      @map-intialized="(map: Map) => onMapIntialized(map)"
+      @map-intializing="onMapIntializing"
     >
       <GeoControl
         :geolocate-control-options="{
