@@ -11,16 +11,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@types/mapbox-gl": "^2.7.10",
-    "mapbox-gl": "^2.14.1",
-    "path": "^0.12.7",
-    "vite-plugin-dts": "^2.3.0",
     "vue": "^3.2.47"
   },
   "devDependencies": {
+    "@types/mapbox-gl": "^2.7.10",
     "@vitejs/plugin-vue": "^4.1.0",
+    "mapbox-gl": "^2.14.1",
+    "path": "^0.12.7",
     "typescript": "^5.0.2",
     "vite": "^4.3.0",
+    "vite-plugin-dts": "^2.3.0",
     "vue-tsc": "^1.2.0"
   },
   "repository": {
@@ -40,7 +40,8 @@
     ".": {
       "import": "./dist/sqkii-mapbox-gl.js",
       "require": "./dist/sqkii-mapbox-gl.umd.cjs"
-    }
+    },
+    "./dist/style.css": "./dist/style.css"
   },
   "types": "dist/sqkii-mapbox-gl.d.ts",
   "keywords": [

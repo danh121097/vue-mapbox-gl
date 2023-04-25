@@ -34,6 +34,7 @@ You can then use the component in your template
 
 <script lang="ts" setup>
 import { Map } from 'sqkii-mapbox-gl';
+import 'sqkii-mapbox-gl/dist/style.css';
 
 function onMapLoading() {
   console.log('loading');
