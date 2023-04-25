@@ -46,7 +46,8 @@
   "types": "dist/sqkii-mapbox-gl.d.ts",
   "keywords": [
     "vue3",
+    "typescript",
     "mapbox-gl",
-    "typescript"
+    "geojson"
   ]
 }

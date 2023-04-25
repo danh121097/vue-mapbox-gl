@@ -16,9 +16,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@*": ["src/*"],
-      "@enums": ["src/enums"],
-      "@components": ["src/components"]
+      "@*": ["./src/*"],
+      "@enums": ["./src/enums"],
+      "@components": ["./src/components"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
