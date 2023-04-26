@@ -35,6 +35,14 @@ export default defineConfig({
       {
         find: '@components',
         replacement: resolve(__dirname, './src/components')
+      },
+      {
+        find: '@helpers',
+        replacement: resolve(__dirname, './src/helpers')
+      },
+      {
+        find: '@types',
+        replacement: resolve(__dirname, './src/types')
       }
     ]
   }

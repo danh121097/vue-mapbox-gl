@@ -10,10 +10,12 @@ import {
 } from 'vue';
 import { Map, MapboxOptions } from 'mapbox-gl';
 import { MapClickEvent } from '@enums';
+import { MapAsset } from '@types';
+import { loadAssets } from '@helpers';
 
 export interface MapOptions {
   mapboxOptions?: Partial<MapboxOptions>;
-  preload?: (assets: unknown) => void;
+  preloadAssets?: MapAsset[];
 }
 
 const emits = defineEmits([
@@ -34,7 +36,7 @@ const emits = defineEmits([
 ]);
 
 const props = defineProps<MapOptions>();
-const { mapboxOptions } = props;
+const { mapboxOptions, preloadAssets } = props;
 
 let map = shallowRef<Map | null>(null);
 const attrs = useAttrs();
@@ -44,7 +46,7 @@ const DEFAULT_MAP_OPTIONS = { container: 'mapContainer' };
 provide('map', map);
 
 async function initMap() {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     map.value = new Map(Object.assign({}, DEFAULT_MAP_OPTIONS, mapboxOptions));
 
     map.value.touchZoomRotate.disableRotation();
@@ -55,6 +57,9 @@ async function initMap() {
       if (!!attrs[`onMap${e}`])
         map.value?.on(e.toLowerCase(), attrs[`onMap${e}`] as any);
     });
+
+    if (preloadAssets && preloadAssets.length)
+      await loadAssets(map.value, preloadAssets);
 
     emits('onMapIntialized', map.value);
 
@@ -86,10 +91,5 @@ onBeforeUnmount(() => {
 .mapboxgl-map-container {
   height: 100%;
   width: 100%;
-
-  canvas {
-    width: 100%;
-    width: 100%;
-  }
 }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MapBox, GeoControl, Layer } from '@components';
+import { MapBox, GeoControl, Layer, Marker } from '@components';
 import { ref } from 'vue';
 import { computed } from '@vue/reactivity';
 import { Map } from 'mapbox-gl';
@@ -136,12 +136,14 @@ const sourceData = computed(() => {
             type: 'fill',
             source: 'brand',
             paint: {
-              'fill-color': '#f4f4f4'
+              'fill-color': '#f4f4f4',
+              'fill-opacity': 0.3
             }
           }
         ]"
         @on-map-layer-click="onMapClick"
       />
+      <Marker :lng-lat="[101.655193, 3.063553]" />
     </MapBox>
   </div>
 </template>
