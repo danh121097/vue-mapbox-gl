@@ -4,7 +4,6 @@ import {
   onBeforeUnmount,
   nextTick,
   inject,
-  useAttrs,
   toRefs,
   watch
 } from 'vue';
@@ -19,12 +18,11 @@ export interface LayerOptions {
   layerConfig: AnyLayer[];
 }
 
-defineEmits(['onMapLayerClick']);
+const emits = defineEmits(['click']);
 const props = defineProps<LayerOptions>();
 const { layerIdx, sourceId, sourceData, layerConfig } = toRefs(props);
 
 const map = inject<ShallowRef<Map>>('map');
-const attrs = useAttrs();
 
 function addLayer(map?: Map) {
   if (!map) return;
@@ -39,8 +37,7 @@ function addLayer(map?: Map) {
   });
 
   const layerIds = layerConfig.value.map((config) => config.id);
-  if (!!attrs['onMapLayerClick'])
-    map.on('click', layerIds, attrs['onMapLayerClick'] as any);
+  map.on('click', layerIds, (e) => emits('click', e));
 }
 
 watch(sourceData, (value) => {

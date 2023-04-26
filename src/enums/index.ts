@@ -12,5 +12,21 @@ export const MapClickEvent = [
   'touchend',
   'touchcancel',
   'intialized',
-  'intializing'
+  'intializing',
+  'movestart',
+  'move',
+  'moveend',
+  'zoomstart',
+  'zoom',
+  'zoomend',
+  'rotatestart',
+  'rotate',
+  'rotateend',
+  'dragstart',
+  'drag',
+  'dragend',
+  'pitchstart',
+  'pitch',
+  'pitchend',
+  'wheel'
 ];

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MapBox, GeoControl, Layer } from '@components';
+import { MapBox, GeoControl, Layer, Marker, PopUp } from '@components';
 import { ref } from 'vue';
 import { Map } from 'mapbox-gl';
 import type { Geometry } from 'geojson';
@@ -114,8 +114,8 @@ const sourceData = ref({
         container: 'mapContainer',
         center: [108.47067944725364, 14.37145041099869]
       }"
-      @map-intialized="(map: Map) => onMapIntialized(map)"
-      @map-intializing="onMapIntializing"
+      @intialized="(map: Map) => onMapIntialized(map)"
+      @intializing="onMapIntializing"
       @click="onMapClick"
     >
       <GeoControl
@@ -144,7 +144,11 @@ const sourceData = ref({
             }
           }
         ]"
-        @on-map-layer-click="onMapClick"
+      />
+      <Marker :lng-lat="[108.47067944725364, 14.37145041099869]" />
+      <PopUp
+        :lng-lat="[108.47067944725364, 14.37145041099869]"
+        content="Hello World"
       />
     </MapBox>
   </div>
