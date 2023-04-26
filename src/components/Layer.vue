@@ -1,7 +1,15 @@
 <script lang="ts" setup>
-import { onMounted, nextTick, inject, useAttrs, toRefs } from 'vue';
+import {
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+  inject,
+  useAttrs,
+  toRefs,
+  watch
+} from 'vue';
 import type { ShallowRef } from 'vue';
-import { Map } from 'mapbox-gl';
+import { GeoJSONSource, Map } from 'mapbox-gl';
 import type { AnySourceData, AnyLayer } from 'mapbox-gl';
 
 export interface LayerOptions {
@@ -35,8 +43,20 @@ function addLayer(map?: Map) {
     map.on('click', layerIds, attrs['onMapLayerClick'] as any);
 }
 
+watch(sourceData, (value) => {
+  const source = map?.value?.getSource(sourceId.value) as GeoJSONSource;
+  source.setData((value as any).data);
+});
+
 onMounted(async () => {
   await nextTick();
   addLayer(map?.value);
+});
+
+onBeforeUnmount(() => {
+  map?.value?.removeSource(sourceId.value);
+  layerConfig.value.forEach((config) => {
+    map?.value?.removeLayer(config.id);
+  });
 });
 </script>

@@ -14,7 +14,9 @@
     "vue": "^3.2.47"
   },
   "devDependencies": {
+    "@turf/transform-translate": "^6.5.0",
     "@types/mapbox-gl": "^2.7.10",
+    "@types/turf": "^3.5.32",
     "@vitejs/plugin-vue": "^4.1.0",
     "mapbox-gl": "^2.14.1",
     "path": "^0.12.7",
