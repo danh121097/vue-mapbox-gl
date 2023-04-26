@@ -116,6 +116,7 @@ const sourceData = ref({
       }"
       @map-intialized="(map: Map) => onMapIntialized(map)"
       @map-intializing="onMapIntializing"
+      @click="onMapClick"
     >
       <GeoControl
         :geolocate-control-options="{

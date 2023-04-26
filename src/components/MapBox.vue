@@ -4,7 +4,6 @@ import {
   nextTick,
   onBeforeUnmount,
   ref,
-  useAttrs,
   provide,
   shallowRef
 } from 'vue';
@@ -14,32 +13,16 @@ import { MapAsset } from '@types';
 import { loadAssets } from '@helpers';
 
 export interface MapOptions {
-  mapboxOptions?: Partial<MapboxOptions>;
+  mapboxOptions: Partial<MapboxOptions>;
   preloadAssets?: MapAsset[];
 }
 
-const emits = defineEmits([
-  'onMapClick',
-  'onMapDblclick',
-  'onMapMousedown',
-  'onMapMouseup',
-  'onMapMousemove',
-  'onMapMouseenter',
-  'onMapMouseleave',
-  'onMapMouseover',
-  'onMapMouseout',
-  'onMapTouchstart',
-  'onMapTouchend',
-  'onMapTouchcancel',
-  'onMapIntialized',
-  'onMapIntializing'
-]);
+const emits = defineEmits([...MapClickEvent]);
 
 const props = defineProps<MapOptions>();
 const { mapboxOptions, preloadAssets } = props;
 
 let map = shallowRef<Map | null>(null);
-const attrs = useAttrs();
 const intialized = ref(false);
 const DEFAULT_MAP_OPTIONS = { container: 'mapContainer' };
 
@@ -53,15 +36,14 @@ async function initMap() {
     map.value.doubleClickZoom.disable();
     map.value.dragRotate.disable();
 
-    MapClickEvent.forEach((e) => {
-      if (!!attrs[`onMap${e}`])
-        map.value?.on(e.toLowerCase(), attrs[`onMap${e}`] as any);
+    MapClickEvent.forEach((event) => {
+      map.value?.on(event, (e) => emits(event, e));
     });
 
     if (preloadAssets && preloadAssets.length)
       await loadAssets(map.value, preloadAssets);
 
-    emits('onMapIntialized', map.value);
+    emits('intialized', map.value);
 
     map.value.on('load', () => {
       intialized.value = true;
@@ -71,7 +53,7 @@ async function initMap() {
 }
 
 onMounted(async () => {
-  emits('onMapIntializing');
+  emits('intializing');
   await nextTick();
   await initMap();
 });
