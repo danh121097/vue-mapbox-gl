@@ -53,7 +53,7 @@ function onMapIntializing() {
 **Props**
 
 | prop            | required  | type            |
-| --------------- | :-------: | :-------------- |
+| :-------------- | :-------: | :-------------- |
 | `mapboxOptions` | **true**  | `MapboxOptions` |
 | `preloadAssets` | **false** | `MapAsset`      |
 
@@ -89,7 +89,7 @@ import { MapBox, GeoControl } from 'sqkii-mapbox-gl';
 **Props**
 
 | prop                      | required  | type                |
-| ------------------------- | :-------: | :------------------ |
+| :------------------------ | :-------: | :------------------ |
 | `geolocateControlOptions` | **false** | `GeocontrolOptions` |
 
 ### **`Layer`**
@@ -119,7 +119,7 @@ function onClick(e) {
 **Props**
 
 | props         | required  | type            |
-| ------------- | --------- | --------------- |
+| :------------ | :-------: | :-------------- |
 | `layerIdx`    | **false** | `string`        |
 | `sourceId`    | **true**  | `string`        |
 | `sourceData`  | **true**  | `AnySourceData` |
@@ -148,7 +148,7 @@ import { MapBox, Marker } from 'sqkii-mapbox-gl';
 **Props**
 
 | prop            | required  | type            |
-| --------------- | --------- | --------------- |
+| :-------------- | :-------: | :-------------- |
 | `lngLat`        | **true**  | `LngLatLike`    |
 | `markerOptions` | **false** | `MarkerOptions` |
 | `className`     | **false** | `string`        |
@@ -179,7 +179,7 @@ import { MapBox, PopUp } from 'sqkii-mapbox-gl';
 **Props**
 
 | prop        | required  | type           |
-| ----------- | --------- | -------------- |
+| :---------- | :-------: | :------------- |
 | `lngLat`    | **true**  | `LngLatLike`   |
 | `radius`    | **false** | `number`       |
 | `options`   | **false** | `PopupOptions` |
