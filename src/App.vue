@@ -178,7 +178,7 @@ onMounted(() => {
     <MapBox
       class="map"
       :options="{
-        style: 'https://worldwidemaps.sqkii.com/api/maps/purple/style.json',
+        style: '',
         container: 'mapContainer',
         center: [108.47067944725364, 14.37145041099869]
       }"
