@@ -139,12 +139,12 @@ import { MapBox, Marker } from 'vue3-mapbox';
 
 **Props**
 
-| prop        | required  | type                           |
-| :---------- | :-------: | :----------------------------- |
-| `lngLat`    | **true**  | `LngLatLike` `[number, number` |
-| `options`   | **false** | `MarkerOptions`                |
-| `className` | **false** | `string`                       |
-| `cursor`    | **false** | `string`                       |
+| prop        | required  | type                            |
+| :---------- | :-------: | :------------------------------ |
+| `lngLat`    | **true**  | `LngLatLike` `[number, number]` |
+| `options`   | **false** | `MarkerOptions`                 |
+| `className` | **false** | `string`                        |
+| `cursor`    | **false** | `string`                        |
 
 ### **`PopUp`**
 
