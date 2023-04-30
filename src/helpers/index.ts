@@ -1,4 +1,4 @@
-import { Map } from 'mapbox-gl';
+import { Map } from 'maplibre-gl';
 import { MapAsset } from '@types';
 
 export function loadImageToMap(map: Map, asset: MapAsset) {

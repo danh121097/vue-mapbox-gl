@@ -1,6 +1,8 @@
-# sqkii-mapbox-gl
+# vue-3-mapbox
 
-[![npm](https://img.shields.io/npm/v/sqkii-mapbox-gl)](https://www.npmjs.com/package/sqkii-mapbox-gl) [![Downloads](https://img.shields.io/npm/dt/sqkii-mapbox-gl)](https://www.npmjs.com/package/sqkii-mapbox-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/sqkii-mapbox-gl)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE.md)
+[![npm](https://img.shields.io/npm/v/vue-3-mapbox)](https://www.npmjs.com/package/vue-3-mapbox) [![Downloads](https://img.shields.io/npm/dt/vue-3-mapbox)](https://www.npmjs.com/package/vue-3-mapbox) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/vue-3-mapbox)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE.md)
+
+# Library write base on `maplibre-gl`
 
 # Installation and Usage
 
@@ -9,13 +11,13 @@
 If you are using npm:
 
 ```shell
-npm install sqkii-mapbox-gl@latest --save
+npm install vue-3-mapbox@latest --save
 ```
 
 If you are using yarn:
 
 ```shell
-yarn add sqkii-mapbox-gl@latest
+yarn add vue-3-mapbox@latest
 ```
 
 You can then use the component in your template
@@ -27,35 +29,32 @@ You can then use the component in your template
 ```vue
 <template>
   <MapBox
-    :mapbox-options="{
-      accessToken: '',
+    :options="{
       style: ''
     }"
-    @intialized="(map: Map) => onMapIntialized(map)"
-    @intializing="onMapIntializing"
+    @initialized="mapIntialized"
   />
 </template>
 
 <script lang="ts" setup>
-import { MapBox } from 'sqkii-mapbox-gl';
-import 'sqkii-mapbox-gl/dist/style.css';
+import { MapBox } from 'vue-3-mapbox';
+import 'vue-3-mapbox/dist/style.css';
 
-function onMapIntialized(map: Map) {
+function mapIntialized(map: Map) {
   console.log('intialized', map);
-}
-
-function onMapIntializing() {
-  console.log('intializing');
 }
 </script>
 ```
 
 **Props**
 
-| prop            | required  | type            |
-| :-------------- | :-------: | :-------------- |
-| `mapboxOptions` | **true**  | `MapboxOptions` |
-| `preloadAssets` | **false** | `MapAsset`      |
+| prop            | required  | type         |
+| :-------------- | :-------: | :----------- |
+| `options`       | **true**  | `MapOptions` |
+| `preloadAssets` | **false** | `MapAsset[]` |
+
+**Events**
+extends from `MapEventType`
 
 ### **`Geocontrol`**
 
@@ -64,33 +63,24 @@ function onMapIntializing() {
 ```vue
 <template>
   <MapBox
-    :mapbox-options="{
-      accessToken: '',
+    :options="{
       style: ''
     }"
   >
-    <GeoControl
-      :geolocate-control-options="{
-        positionOptions: {
-          enableHighAccuracy: true
-        },
-        trackUserLocation: true,
-        showUserHeading: false,
-        showAccuracyCircle: false
-      }"
-    />
+    <GeoControl />
   </MapBox>
 </template>
 <script lang="ts" setup>
-import { MapBox, GeoControl } from 'sqkii-mapbox-gl';
+import { MapBox, GeoControl } from 'vue-3-mapbox';
 </script>
 ```
 
 **Props**
 
-| prop                      | required  | type                |
-| :------------------------ | :-------: | :------------------ |
-| `geolocateControlOptions` | **false** | `GeocontrolOptions` |
+| prop       | required  | type                                                |
+| :--------- | :-------: | :-------------------------------------------------- |
+| `options`  | **false** | `GeolocateOptions`                                  |
+| `position` | **false** | `top-right` `top-left` `bottom-right` `bottom-left` |
 
 ### **`Layer`**
 
@@ -99,16 +89,15 @@ import { MapBox, GeoControl } from 'sqkii-mapbox-gl';
 ```vue
 <template>
   <MapBox
-    :mapbox-options="{
-      accessToken: '',
+    :options="{
       style: ''
     }"
   >
-    <Layer :source-data="" source-id="" :layer-config="[]" @click="onClick" />
+    <Layer source-id="" source="" layer-id="" layer="" @click="onClick" />
   </MapBox>
 </template>
 <script lang="ts" setup>
-import { MapBox, Layer } from 'sqkii-mapbox-gl';
+import { MapBox, Layer } from 'vue-3-mapbox';
 
 function onClick(e) {
   console.log('e', e);
@@ -118,12 +107,16 @@ function onClick(e) {
 
 **Props**
 
-| props         | required  | type            |
-| :------------ | :-------: | :-------------- |
-| `layerIdx`    | **false** | `string`        |
-| `sourceId`    | **true**  | `string`        |
-| `sourceData`  | **true**  | `AnySourceData` |
-| `layerConfig` | **true**  | `layerConfig[]` |
+| props      | required  | type                  |
+| :--------- | :-------: | :-------------------- |
+| `sourceId` | **true**  | `string`              |
+| `layerId`  | **true**  | `string`              |
+| `source`   | **true**  | `SourceSpecification` |
+| `layer`    | **true**  | `LayerSpecification`  |
+| `before`   | **false** | `string`              |
+
+**Events**
+extends from `MapLayerEventType`
 
 ### **`Marker`**
 
@@ -132,8 +125,7 @@ function onClick(e) {
 ```vue
 <template>
   <MapBox
-    :mapbox-options="{
-      accessToken: '',
+    :options="{
       style: ''
     }"
   >
@@ -141,17 +133,18 @@ function onClick(e) {
   </MapBox>
 </template>
 <script lang="ts" setup>
-import { MapBox, Marker } from 'sqkii-mapbox-gl';
+import { MapBox, Marker } from 'vue-3-mapbox';
 </script>
 ```
 
 **Props**
 
-| prop            | required  | type            |
-| :-------------- | :-------: | :-------------- |
-| `lngLat`        | **true**  | `LngLatLike`    |
-| `markerOptions` | **false** | `MarkerOptions` |
-| `className`     | **false** | `string`        |
+| prop        | required  | type                           |
+| :---------- | :-------: | :----------------------------- |
+| `lngLat`    | **true**  | `LngLatLike` `[number, number` |
+| `options`   | **false** | `MarkerOptions`                |
+| `className` | **false** | `string`                       |
+| `cursor`    | **false** | `string`                       |
 
 ### **`PopUp`**
 
@@ -160,28 +153,27 @@ import { MapBox, Marker } from 'sqkii-mapbox-gl';
 ```vue
 <template>
   <MapBox
-    :mapbox-options="{
-      accessToken: '',
+    :options="{
       style: ''
     }"
   >
-    <PopUp
-      :lng-lat="[108.47067944725364, 14.37145041099869]"
-      content="Hello World"
-    />
+    <PopUp :lng-lat="[108.47067944725364, 14.37145041099869]">
+      <div>Hello World</div>
+    </PopUp>
   </MapBox>
 </template>
 <script lang="ts" setup>
-import { MapBox, PopUp } from 'sqkii-mapbox-gl';
+import { MapBox, PopUp } from 'vue-3-mapbox';
 </script>
 ```
 
 **Props**
 
-| prop        | required  | type           |
-| :---------- | :-------: | :------------- |
-| `lngLat`    | **true**  | `LngLatLike`   |
-| `radius`    | **false** | `number`       |
-| `options`   | **false** | `PopupOptions` |
-| `content`   | **true**  | `string`       |
-| `className` | **false** | `string`       |
+| prop        | required  | type                            |
+| :---------- | :-------: | :------------------------------ |
+| `lngLat`    | **true**  | `LngLatLike` `[number, number]` |
+| `offset`    | **false** | `number`                        |
+| `options`   | **false** | `PopupOptions`                  |
+| `className` | **false** | `string`                        |
+| `marker`    | **false** | `Marker`                        |
+| `units`     | **false** | `Units`                         |

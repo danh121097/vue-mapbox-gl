@@ -14,16 +14,16 @@ export default defineConfig({
   build: {
     lib: {
       entry: 'src/index.ts',
-      name: 'SqkiiMapboxGl',
-      fileName: 'sqkii-mapbox-gl'
+      name: 'Vue3Mapbox',
+      fileName: 'vue3-mapbox'
     },
     rollupOptions: {
-      external: ['vue', 'mapbox-gl'],
+      external: ['vue', 'maplibre-gl'],
       output: {
         exports: 'named',
         globals: {
           vue: 'vue',
-          'mapbox-gl': 'mapbox-gl'
+          'maplibre-gl': 'maplibreGl'
         }
       }
     }
@@ -31,7 +31,14 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@', replacement: resolve(__dirname, './src') },
-      { find: '@enums', replacement: resolve(__dirname, './src/enums') },
+      {
+        find: '@constants',
+        replacement: resolve(__dirname, './src/constants')
+      },
+       {
+        find: '@enums',
+        replacement: resolve(__dirname, './src/enums')
+      },
       {
         find: '@components',
         replacement: resolve(__dirname, './src/components')

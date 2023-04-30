@@ -7,71 +7,82 @@ import {
   provide,
   shallowRef
 } from 'vue';
-import { Map, MapboxOptions } from 'mapbox-gl';
-import { MapClickEvent } from '@enums';
+import { Map } from 'maplibre-gl';
+import { mapEvents } from '@constants';
 import { MapAsset } from '@types';
 import { loadAssets } from '@helpers';
+import { MAP_KEY, DEFAULT_MAP_OPTIONS } from '@enums';
+import type { MapOptions } from 'maplibre-gl';
 
-export interface MapOptions {
-  mapboxOptions: Partial<MapboxOptions>;
+interface Options {
+  options: MapOptions;
   preloadAssets?: MapAsset[];
 }
 
-const emits = defineEmits([...MapClickEvent]);
-
-const props = defineProps<MapOptions>();
-const { mapboxOptions, preloadAssets } = props;
+const emits = defineEmits(['initialized', ...mapEvents]);
+const props = defineProps<Options>();
+const { options, preloadAssets } = props;
 
 let map = shallowRef<Map | null>(null);
 const intialized = ref(false);
-const DEFAULT_MAP_OPTIONS = { container: 'mapContainer' };
 
-provide('map', map);
+provide(MAP_KEY, map);
 
-async function initMap() {
+async function newMap() {
   return new Promise(async (resolve) => {
-    map.value = new Map(Object.assign({}, DEFAULT_MAP_OPTIONS, mapboxOptions));
+    map.value = new Map(Object.assign({}, DEFAULT_MAP_OPTIONS, options));
 
     map.value.touchZoomRotate.disableRotation();
     map.value.doubleClickZoom.disable();
     map.value.dragRotate.disable();
 
-    MapClickEvent.forEach((event) => {
-      map.value?.on(event, (e) => emits(event, e));
-    });
+    if (preloadAssets?.length) await loadAssets(map.value, preloadAssets);
 
-    if (preloadAssets && preloadAssets.length)
-      await loadAssets(map.value, preloadAssets);
-
-    emits('intialized', map.value);
-
-    map.value.on('load', () => {
+    map.value.on('styledata', () => {
       intialized.value = true;
+      emits('initialized', map.value);
       resolve(true);
     });
   });
 }
 
+function listenerMapEvent() {
+  mapEvents.forEach((e) => {
+    map.value?.on(e, (evt) => {
+      emits(e, evt);
+    });
+  });
+}
+
+function removeListenerMapEvent() {
+  mapEvents.forEach((e) => {
+    map.value?.off(e, (evt) => {
+      emits(e, evt);
+    });
+  });
+}
+
 onMounted(async () => {
-  emits('intializing');
   await nextTick();
-  await initMap();
+  await newMap();
+  listenerMapEvent();
 });
 
 onBeforeUnmount(() => {
-  map.value && map.value.remove();
+  removeListenerMapEvent();
+  map?.value?.remove();
 });
 </script>
 
 <template>
-  <div id="mapContainer" class="mapboxgl-map-container">
+  <div id="mapContainer" class="map-container">
     <slot v-if="intialized" />
   </div>
 </template>
 
 <style>
-.mapboxgl-map-container {
-  height: 100%;
+.map-container {
   width: 100%;
+  height: 100%;
 }
 </style>

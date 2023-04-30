@@ -15,12 +15,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
     "paths": {
-      "@*": ["./src/*"],
-      "@enums": ["./src/enums"],
-      "@components": ["./src/components"],
-      "@helpers": ["./src/helpers"],
-      "@types": ["./src/types"]
+      "@*": ["src/*"],
+      "@constants": ["src/constants"],
+      "@components": ["src/components"],
+      "@enums": ["src/enums"],
+      "@helpers": ["src/helpers"],
+      "@types": ["src/types"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
