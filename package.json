@@ -1,6 +1,6 @@
 {
   "name": "vue3-mapbox",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "type": "module",
   "license": "MIT",
   "description": "A Simple mapboxGL Component for Vue 3 write base on maplibre-gl",
