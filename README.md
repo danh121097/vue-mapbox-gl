@@ -1,6 +1,6 @@
-# vue-3-mapbox
+# vue3-mapbox
 
-[![npm](https://img.shields.io/npm/v/vue-3-mapbox)](https://www.npmjs.com/package/vue-3-mapbox) [![Downloads](https://img.shields.io/npm/dt/vue-3-mapbox)](https://www.npmjs.com/package/vue-3-mapbox) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/vue-3-mapbox)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE.md)
+[![npm](https://img.shields.io/npm/v/vue3-mapbox)](https://www.npmjs.com/package/vue3-mapbox) [![Downloads](https://img.shields.io/npm/dt/vue3-mapbox)](https://www.npmjs.com/package/vue3-mapbox) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-mapbox)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE.md)
 
 # Library write base on `maplibre-gl`
 
@@ -11,13 +11,13 @@
 If you are using npm:
 
 ```shell
-npm install vue-3-mapbox@latest --save
+npm install vue3-mapbox@latest --save
 ```
 
 If you are using yarn:
 
 ```shell
-yarn add vue-3-mapbox@latest
+yarn add vue3-mapbox@latest
 ```
 
 You can then use the component in your template
@@ -37,8 +37,8 @@ You can then use the component in your template
 </template>
 
 <script lang="ts" setup>
-import { MapBox } from 'vue-3-mapbox';
-import 'vue-3-mapbox/dist/style.css';
+import { MapBox } from 'vue3-mapbox';
+import 'vue3-mapbox/dist/style.css';
 
 function mapIntialized(map: Map) {
   console.log('intialized', map);
@@ -71,7 +71,7 @@ extends from `MapEventType`
   </MapBox>
 </template>
 <script lang="ts" setup>
-import { MapBox, GeoControl } from 'vue-3-mapbox';
+import { MapBox, GeoControl } from 'vue3-mapbox';
 </script>
 ```
 
@@ -97,7 +97,7 @@ import { MapBox, GeoControl } from 'vue-3-mapbox';
   </MapBox>
 </template>
 <script lang="ts" setup>
-import { MapBox, Layer } from 'vue-3-mapbox';
+import { MapBox, Layer } from 'vue3-mapbox';
 
 function onClick(e) {
   console.log('e', e);
@@ -133,7 +133,7 @@ extends from `MapLayerEventType`
   </MapBox>
 </template>
 <script lang="ts" setup>
-import { MapBox, Marker } from 'vue-3-mapbox';
+import { MapBox, Marker } from 'vue3-mapbox';
 </script>
 ```
 
@@ -163,7 +163,7 @@ import { MapBox, Marker } from 'vue-3-mapbox';
   </MapBox>
 </template>
 <script lang="ts" setup>
-import { MapBox, PopUp } from 'vue-3-mapbox';
+import { MapBox, PopUp } from 'vue3-mapbox';
 </script>
 ```
 
