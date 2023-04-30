@@ -77,10 +77,10 @@ import { MapBox, GeoControl } from 'vue3-mapbox';
 
 **Props**
 
-| prop       | required  | type                                                |
-| :--------- | :-------: | :-------------------------------------------------- |
-| `options`  | **false** | `GeolocateOptions`                                  |
-| `position` | **false** | `top-right` `top-left` `bottom-right` `bottom-left` |
+| prop       | required  | type                                                        |
+| :--------- | :-------: | :---------------------------------------------------------- |
+| `options`  | **false** | `GeolocateOptions`                                          |
+| `position` | **false** | `'top-right'` `'top-left'` `'bottom-right'` `'bottom-left'` |
 
 ### **`Layer`**
 
