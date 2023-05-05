@@ -9,8 +9,7 @@ import '../dist/style.css';
       class="map"
       :options="{
         style: '',
-        container: 'mapContainer',
-        center: [108.47067944725364, 14.37145041099869]
+        container: 'mapContainer'
       }"
     >
     </MapBox>
