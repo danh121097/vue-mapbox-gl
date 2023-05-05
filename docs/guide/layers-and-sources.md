@@ -37,4 +37,4 @@ By default when Layer components destroying, it removes source from map. If you 
 
 ## Layer events
 
-Layers emits events when loading data or on user interaction like `click`. See full list of events in [API section](/api/Layers/index.md#events)
+Layers emits events when loading data or on user interaction like `click`. See full list of events in [API section](/api/layers.md#events)
