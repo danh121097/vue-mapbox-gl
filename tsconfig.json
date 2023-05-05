@@ -20,6 +20,7 @@
       "@*": ["src/*"],
       "@constants": ["src/constants"],
       "@components": ["src/components"],
+      "@composables": ["src/composables"],
       "@enums": ["src/enums"],
       "@helpers": ["src/helpers"],
       "@types": ["src/types"]

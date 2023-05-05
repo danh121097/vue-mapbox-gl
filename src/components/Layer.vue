@@ -34,7 +34,7 @@ const LAYER = {
 
 watch(source, (value) => {
   const source = map?.value?.getSource(sourceId.value) as GeoJSONSource;
-  source.setData((value as any).data);
+  if (source) source.setData((value as any).data);
 });
 
 function addLayer(map?: Map) {

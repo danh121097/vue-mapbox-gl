@@ -69,11 +69,10 @@ function listenMarkerEvents(): void {
   markerMapEvents.forEach((event: string) => {
     marker.value.on(event, (e: { target: Marker }) => {
       if (event === 'dragend') {
-        if (lngLat instanceof Array) {
+        if (lngLat instanceof Array)
           coordinates = [e.target._lngLat.lng, e.target._lngLat.lat];
-        } else {
-          coordinates = e.target._lngLat;
-        }
+        else coordinates = e.target._lngLat;
+
         emits('update:coordinates', coordinates);
       }
       emits(event, e);

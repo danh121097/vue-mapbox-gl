@@ -44,6 +44,10 @@ export default defineConfig({
         replacement: resolve(__dirname, './src/components')
       },
       {
+        find: '@composables',
+        replacement: resolve(__dirname, './src/composables')
+      },
+      {
         find: '@helpers',
         replacement: resolve(__dirname, './src/helpers')
       },
