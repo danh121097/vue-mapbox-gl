@@ -50,6 +50,6 @@ import { MapBox, PopUp } from 'vue3-mapbox';
 
 ### Props
 
-- `coordinates {Array}` The GeoJSON coordinates for popup placement on the map. If popup used inside marker this prop will be ignored.
+- `lngLat {Array}` The GeoJSON coordinates for popup placement on the map. If popup used inside marker this prop will be ignored.
 
 Full list of props you can see on [API page](/api/popup.md#props)
