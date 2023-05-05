@@ -28,3 +28,5 @@ Full list of `addsource` you can see on [API page](https://maplibre.org/maplibre
 `@touchstart`,
 `@touchend`,
 `@touchcancel`
+
+Full list of `events` you can see on [API page](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-events)

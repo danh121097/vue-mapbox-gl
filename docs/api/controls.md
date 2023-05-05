@@ -44,3 +44,5 @@ Full list of `options` you can see on [API page](https://maplibre.org/maplibre-g
 `@trackuserlocationstart`,
 `@trackuserlocationend`,
 `@initialized`
+
+Full list of `events` you can see on [API page](https://maplibre.org/maplibre-gl-js-docs/api/markers/#geolocatecontrol-events)

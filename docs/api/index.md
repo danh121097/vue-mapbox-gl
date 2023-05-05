@@ -88,3 +88,5 @@ Full list of `options` you can see on [API page](https://maplibre.org/maplibre-g
 `@pitch`,
 `@pitchend`,
 `@wheel`,
+
+Full list of `events` you can see on [API page](https://maplibre.org/maplibre-gl-js-docs/api/map/#map-events)

@@ -25,3 +25,5 @@ Full list of `options` you can see on [API page](https://maplibre.org/maplibre-g
 `@click`,
 `@mouseenter`,
 `@mouseleave`
+
+Full list of `events` you can see on [API page](https://maplibre.org/maplibre-gl-js-docs/api/markers/#marker-events)
