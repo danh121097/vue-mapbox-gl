@@ -35,10 +35,6 @@ Sources are stored in Mapbox GL JS `Map` object by `sourceId`. If you sure that 
 
 By default when Layer components destroying, it removes source from map. If you want to keep source on Map (for example, for future using or if other layers use this source), set `clearSource` prop to `false`.
 
-## Reactivity
-
-Layer components watch for changes in object in their `layer` prop and translate changes to map accordingly. For example, if you change content of `filter` prop in GeojsonLayer, changes will be automatically applied to layer on the map. Not all layer settings can be set dynamically, currently reactive properties are `minzoom`, `maxzoom`, `paint`, `layout` and `filter`.
-
 ## Layer events
 
 Layers emits events when loading data or on user interaction like `click`. See full list of events in [API section](/api/Layers/index.md#events)

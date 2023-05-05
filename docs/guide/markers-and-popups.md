@@ -22,7 +22,8 @@ import { MapBox, Marker } from 'vue3-mapbox';
 ### Props
 
 - `lngLat {Array}` The GeoJSON coordinates for marker placement on the map
-  Full list of props you cab see on [API page](/api/marker.md#props)
+
+Full list of props you cab see on [API page](/api/marker.md#props)
 
 ## Popup
 
