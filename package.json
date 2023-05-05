@@ -48,7 +48,7 @@
     "./dist/style.css": "./dist/style.css"
   },
   "types": "dist/vue3-mapbox.d.ts",
-  "homepage": "",
+  "homepage": "https://vue-mapbox-gl.vercel.app/",
   "keywords": [
     "vue3",
     "typescript",
