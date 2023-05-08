@@ -9,7 +9,7 @@ export default defineConfig({
     vue(),
     dts({
       insertTypesEntry: true
-    })
+    }),
   ],
   build: {
     lib: {
