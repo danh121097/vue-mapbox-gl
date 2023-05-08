@@ -10,27 +10,15 @@ import {
 import { GeoJSONSource, Map } from 'maplibre-gl';
 import { mapLayerEvents } from '@constants';
 import { MAP_KEY } from '@enums';
-import type { SourceSpecification, LayerSpecification } from 'maplibre-gl';
+import { LayerConfig } from '@types';
+import type { LayerSpecification } from 'maplibre-gl';
 import type { ShallowRef } from 'vue';
 
-interface LayerOptions {
-  sourceId: string;
-  layerId: string;
-  source: SourceSpecification;
-  layer: LayerSpecification;
-  before?: string;
-}
-
 const emits = defineEmits(mapLayerEvents);
-const props = defineProps<LayerOptions>();
-const { sourceId, layerId, source, layer, before } = toRefs(props);
+const props = defineProps<LayerConfig>();
+const { sourceId, source, before, id } = toRefs(props);
 
 const map = inject<ShallowRef<Map>>(MAP_KEY);
-const LAYER = {
-  ...layer.value,
-  id: layerId.value,
-  source: sourceId.value
-};
 
 watch(source, (value) => {
   const source = map?.value?.getSource(sourceId.value) as GeoJSONSource;
@@ -42,20 +30,20 @@ function addLayer(map?: Map) {
 
   return new Promise((resolve) => {
     map.addSource(sourceId.value, source.value);
-    map.addLayer(LAYER, before?.value);
+    map.addLayer(props as LayerSpecification, before?.value);
     resolve(true);
   });
 }
 
 function listenerLayerEvent() {
   mapLayerEvents.forEach((event) => {
-    map?.value.on(event, layerId.value, (e) => emits(event, e));
+    map?.value.on(event, id.value, (e) => emits(event, e));
   });
 }
 
 function removeLayerEvent() {
   mapLayerEvents.forEach((event) => {
-    map?.value.off(event, layerId.value, (e) => emits(event, e));
+    map?.value.off(event, id.value, (e) => emits(event, e));
   });
 }
 
@@ -67,7 +55,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   removeLayerEvent();
-  map?.value.removeLayer(layerId.value);
+  map?.value.removeLayer(id.value);
   map?.value.removeSource(sourceId.value);
 });
 </script>

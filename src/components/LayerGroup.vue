@@ -1,16 +1,12 @@
 <script lang="ts" setup>
 import { Layer } from '@components';
+import { LayerConfig } from '@types';
 
-import type { SourceSpecification, LayerSpecification } from 'maplibre-gl';
+import type { SourceSpecification } from 'maplibre-gl';
 
 interface Props {
-  layers: {
-    sourceId: string;
-    layerId: string;
-    source: SourceSpecification;
-    layer: LayerSpecification;
-    before?: string;
-  }[];
+  layers: Omit<LayerConfig, 'source'>[];
+  source: SourceSpecification;
 }
 
 defineProps<Props>();
@@ -18,12 +14,8 @@ defineProps<Props>();
 
 <template>
   <Layer
-    v-for="{ sourceId, layerId, source, layer, before } in layers"
-    :key="layerId"
-    :source-id="sourceId"
-    :layer-id="layerId"
-    :source="source"
-    :layer="layer"
-    :before="before"
+    v-for="layer in layers"
+    :key="layer.id"
+    v-bind="{ ...layer, source }"
   />
 </template>
