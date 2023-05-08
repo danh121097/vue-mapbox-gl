@@ -1,4 +1,11 @@
-import { MapBox, GeoControl, Layer, PopUp, Marker } from '@components';
+import {
+  MapBox,
+  GeoControl,
+  Layer,
+  LayerGroup,
+  PopUp,
+  Marker
+} from '@components';
 import { Units } from '@enums';
 import { GeolocateControl, Map, GeoJSONSource } from 'maplibre-gl';
 import type {
@@ -18,6 +25,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 export {
   MapBox,
   Layer,
+  LayerGroup,
   GeoControl,
   PopUp,
   Marker,
