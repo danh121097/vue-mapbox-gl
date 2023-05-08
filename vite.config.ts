@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
+import TypeImports from 'vite-plugin-vue-type-imports'
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,7 +11,8 @@ export default defineConfig({
     vue(),
     dts({
       insertTypesEntry: true
-    })
+    }),
+    TypeImports()
   ],
   build: {
     lib: {

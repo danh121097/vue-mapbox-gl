@@ -14,8 +14,10 @@ import type { LayerConfig } from '@types';
 import type { LayerSpecification } from 'maplibre-gl';
 import type { ShallowRef } from 'vue';
 
+type Props = LayerConfig;
+
 const emits = defineEmits(mapLayerEvents);
-const props = defineProps<LayerConfig>();
+const props = defineProps<Props>();
 const { sourceId, source, before, id } = toRefs(props);
 
 const map = inject<ShallowRef<Map>>(MAP_KEY);
