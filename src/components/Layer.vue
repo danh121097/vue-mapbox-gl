@@ -10,7 +10,7 @@ import {
 import { GeoJSONSource, Map } from 'maplibre-gl';
 import { mapLayerEvents } from '@constants';
 import { MAP_KEY } from '@enums';
-import { LayerConfig } from '@types';
+import type { LayerConfig } from '@types';
 import type { LayerSpecification } from 'maplibre-gl';
 import type { ShallowRef } from 'vue';
 

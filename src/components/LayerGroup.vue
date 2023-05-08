@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Layer } from '@components';
-import { LayerConfig } from '@types';
-
+import type { LayerConfig } from '@types';
 import type { SourceSpecification } from 'maplibre-gl';
 
 interface Props {
