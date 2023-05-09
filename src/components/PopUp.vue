@@ -8,6 +8,7 @@ import { Map, Popup, Marker } from 'maplibre-gl';
 import { point } from '@turf/helpers';
 import { MAP_KEY, Units } from '@enums';
 import { popupEvents } from '@constants';
+import type { PopupEvents } from '@constants';
 import type { ShallowRef } from 'vue';
 import type { LngLatLike, PopupOptions } from 'maplibre-gl';
 
@@ -64,13 +65,13 @@ function addPopUp() {
 }
 
 function listenPopupEvents() {
-  popupEvents.forEach((event: string) => {
+  popupEvents.forEach((event: PopupEvents) => {
     popup?.on(event, () => emits(event));
   });
 }
 
 function removePopupEvents() {
-  popupEvents.forEach((event: string) => {
+  popupEvents.forEach((event: PopupEvents) => {
     popup?.off(event, () => emits(event));
   });
 }
