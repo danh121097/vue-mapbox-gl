@@ -35,7 +35,8 @@ You can specify content inside popup in default slot. It can be HTML or Vue comp
 <template>
   <MapBox
     :options="{
-      style: ''
+      style: '',
+      container: ''
     }"
   >
     <PopUp :lng-lat="[108.47067944725364, 14.37145041099869]">

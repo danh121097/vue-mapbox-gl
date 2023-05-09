@@ -14,14 +14,46 @@ For example adding a layer with GeoJSON data:
 <template>
   <MapBox
     :options="{
-      style: ''
+      style: '',
+      container: ''
     }"
   >
-    <Layer source-id="" source="" layer-id="" layer="" @click="onClick" />
+    <Layer
+      id=""
+      source=""
+      source-data=""
+      type=""
+      layout=""
+      paint=""
+      @click="onClick"
+    />
   </MapBox>
 </template>
 <script lang="ts" setup>
 import { MapBox, Layer } from 'vue3-mapbox';
+
+function onClick(e) {
+  console.log('e', e);
+}
+</script>
+```
+
+## Group layers
+
+Adding with multiple layer with source data
+
+```vue
+<template>
+  <MapBox
+    :options="{
+      style: ''
+    }"
+  >
+    <LayerGroup source-id="" source="" layers="" @click="onClick" />
+  </MapBox>
+</template>
+<script lang="ts" setup>
+import { MapBox, LayerGroup } from 'vue3-mapbox';
 
 function onClick(e) {
   console.log('e', e);

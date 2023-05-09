@@ -22,7 +22,8 @@ They was setup default options in `vue3-mapbox`:
 <template>
   <MapBox
     :options="{
-      style: ''
+      style: '',
+      container: ''
     }"
   >
     <GeoControl position="" :options="" />

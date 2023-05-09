@@ -8,7 +8,8 @@ For using maps with `maplibre-gl` you need a [map style](https://maplibre.org/ma
 <template>
   <MapBox
     :options="{
-      style: ''
+      style: '',
+      container: ''
     }"
     @initialized="mapIntialized"
   />

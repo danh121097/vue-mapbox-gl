@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {  MapBox } from '@components';
+import { MapBox, LayerGroup } from '@components';
 import '../dist/style.css';
 </script>
 
@@ -8,12 +8,13 @@ import '../dist/style.css';
     <MapBox
       class="map"
       :options="{
-        style: 'https://api.maptiler.com/maps/396cecfe-3c92-4124-8071-3d2aff387ac9/style.json?key=ztwBSN2Gdk1gdq5hBBUw',
+        style:
+          'https://api.maptiler.com/maps/396cecfe-3c92-4124-8071-3d2aff387ac9/style.json?key=ztwBSN2Gdk1gdq5hBBUw',
         container: 'mapContainer',
         center: [0, 0]
       }"
     >
-    <!-- <Layer source="" source-data="" id=""  layout="" paint=""></Layer>s -->
+      <LayerGroup source-id="" source="" layers=""></LayerGroup>
     </MapBox>
   </div>
 </template>

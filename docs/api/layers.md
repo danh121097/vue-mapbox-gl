@@ -2,11 +2,15 @@
 
 ## Props
 
+- `id`: `string`
 - `sourceId`: `string`
-- `layerId`: `string`
 - `source`: `SourceSpecification`
   > [SourceSpecification](https://maplibre.org/maplibre-style-spec/sources/)
-- `layer`: `LayerSpecification`
+- `type`: `LayerSpecification`
+  > [LayerSpecification](https://maplibre.org/maplibre-style-spec/layers/)
+- `paint`: `LayerSpecification`
+  > [LayerSpecification](https://maplibre.org/maplibre-style-spec/layers/)
+- `layout`: `LayerSpecification`
   > [LayerSpecification](https://maplibre.org/maplibre-style-spec/layers/)
 - `before?`: `string`
 
