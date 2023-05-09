@@ -3,6 +3,8 @@ import { inject, onMounted, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { Map, Marker } from 'maplibre-gl';
 import { MAP_KEY } from '@enums';
 import { markerDOMEvents, markerMapEvents } from '@constants';
+import type { MarkerDOMEvents, MarkerMapEvents } from '@constants';
+
 import type { LngLatLike, MarkerOptions } from 'maplibre-gl';
 import type { ShallowRef, Ref } from 'vue';
 
@@ -66,7 +68,7 @@ function setClassName(marker: Marker) {
 function listenMarkerEvents(): void {
   let coordinates: LngLatLike;
   // Listen to Marker Mapbox events
-  markerMapEvents.forEach((event: string) => {
+  markerMapEvents.forEach((event: MarkerMapEvents) => {
     marker.value.on(event, (e: { target: Marker }) => {
       if (event === 'dragend') {
         if (lngLat instanceof Array)
@@ -79,7 +81,7 @@ function listenMarkerEvents(): void {
     });
   });
   // Listen to Marker DOM events
-  markerDOMEvents.forEach((event: string) => {
+  markerDOMEvents.forEach((event: MarkerDOMEvents) => {
     marker.value.getElement().addEventListener(event, (e) => {
       emits(event, e);
     });

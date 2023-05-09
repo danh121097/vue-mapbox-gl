@@ -1,1 +1,2 @@
-export const popupEvents = ['open', 'close'];
+export type PopupEvents = 'open' | 'close';
+export const popupEvents: PopupEvents[] = ['open', 'close'];

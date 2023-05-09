@@ -5,6 +5,7 @@ import { MAP_KEY, DEFAULT_GEO_CONTROL_OPTIONS } from '@enums';
 import { geolocateControlEvents } from '@constants';
 import type { GeolocateOptions } from 'maplibre-gl';
 import type { ShallowRef } from 'vue';
+import type { GeoControlEvents } from '@constants';
 
 interface Options {
   options?: GeolocateOptions;
@@ -27,7 +28,7 @@ function addControl(map: Map | null | undefined) {
   );
   map.addControl(geoControl, position);
 
-  geolocateControlEvents.forEach((event: string) => {
+  geolocateControlEvents.forEach((event: GeoControlEvents) => {
     geoControl?.on(event, (e) => {
       switch (event) {
         case 'initialized':
