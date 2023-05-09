@@ -75,7 +75,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div id="mapContainer" class="map-container">
+  <div
+    :id="options.container.toString() || 'mapContainer'"
+    class="map-container"
+  >
     <slot v-if="intialized" />
   </div>
 </template>
