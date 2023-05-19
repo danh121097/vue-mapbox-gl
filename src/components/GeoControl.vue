@@ -12,7 +12,7 @@ interface Options {
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 }
 
-const emits = defineEmits(geolocateControlEvents);
+const emits = defineEmits(['geocontrol', ...geolocateControlEvents]);
 const props = defineProps<Options>();
 const { options, position } = props;
 
@@ -27,7 +27,7 @@ function addControl(map: Map | null | undefined) {
     Object.assign({}, DEFAULT_GEO_CONTROL_OPTIONS, options)
   );
   map.addControl(geoControl, position);
-
+  emits('geocontrol', geoControl);
   geolocateControlEvents.forEach((event: GeoControlEvents) => {
     geoControl?.on(event, (e) => {
       switch (event) {

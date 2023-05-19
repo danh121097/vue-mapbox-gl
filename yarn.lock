@@ -1568,6 +1568,14 @@ vue-tsc@^1.2.0:
     "@volar/vue-typescript" "1.6.3"
     semver "^7.3.8"
 
+vue3-mapbox@^2.0.71:
+  version "2.0.71"
+  resolved "https://registry.yarnpkg.com/vue3-mapbox/-/vue3-mapbox-2.0.71.tgz#78ea5f7908d1c6afcbf3a30429eba0488d51d115"
+  integrity sha512-ZpPZq35iZv6fLVfoMTYzsGxm3fkKmi9Qw77BSjJgkPFpSD3WaOWejy62sskaDL0bm/OCCNstt3W+/cejer11aw==
+  dependencies:
+    maplibre-gl "^2.4.0"
+    vue "^3.2.47"
+
 vue@^3.2.47:
   version "3.2.47"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.47.tgz#3eb736cbc606fc87038dbba6a154707c8a34cff0"

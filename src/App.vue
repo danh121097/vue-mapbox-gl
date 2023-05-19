@@ -1,20 +1,18 @@
 <script lang="ts" setup>
-import { MapBox } from '@components';
-import '../dist/style.css';
+import { MapBox } from 'vue3-mapbox';
+import 'vue3-mapbox/dist/style.css';
 </script>
 
 <template>
-  <div class="container">
-    <MapBox
-      class="map"
-      :options="{
-        style: '',
-        container: 'mapContainer',
-        center: [0, 0]
-      }"
-    >
-    </MapBox>
-  </div>
+  <MapBox
+    class="map"
+    :options="{
+      style: 'https://worldwidemaps.sqkii.com/api/maps/Streets/style.json',
+      container: 'mapContainer',
+      center: [0, 0]
+    }"
+  >
+  </MapBox>
 </template>
 <style>
 * {
