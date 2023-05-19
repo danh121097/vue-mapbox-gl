@@ -1,6 +1,6 @@
 {
   "name": "vue3-mapbox",
-  "version": "2.0.71",
+  "version": "2.0.72",
   "type": "module",
   "license": "MIT",
   "description": "The features of Maplibre GL and Vue3 JS",
@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "maplibre-gl": "^2.4.0",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vue3-mapbox": "^2.0.71"
   },
   "devDependencies": {
     "@turf/transform-translate": "^6.5.0",
