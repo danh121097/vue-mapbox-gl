@@ -24,6 +24,12 @@ import 'vue3-mapbox/dist/style.css';
   font-family: inherit;
   box-sizing: inherit;
 }
+.hello {
+  background-image: url(/icon.png);
+  background-size: cover;
+  width: 30px;
+  height: 34px;
+}
 .container {
   width: 100vw;
   height: 100vh;

@@ -29,12 +29,6 @@ const map = inject<ShallowRef<Map | null>>(MAP_KEY);
 const isMarkerAvailable = ref(false);
 const marker = ref({}) as Ref<Marker>;
 
-const slotRef = ref<HTMLElement | null>(null);
-
-const setSlotRef = (el: HTMLElement) => {
-  slotRef.value = el;
-};
-
 watch(marker, (_marker) => {
   if ('_map' in _marker) isMarkerAvailable.value = true;
   else isMarkerAvailable.value = false;
@@ -44,25 +38,12 @@ function newMarker(map: Map | null | undefined) {
   if (!map) return;
 
   return new Promise((resolve) => {
-    if (!!slotRef.value) {
-      marker.value = new Marker({
-        element: slotRef.value!,
-        ...options
-      })
-        .setLngLat(lngLat)
-        .addTo(map);
-    } else marker.value = new Marker(options).setLngLat(lngLat).addTo(map);
-
+    const el = document.createElement('div');
+    el.className = className || '';
+    el.style.cursor = cursor || 'default';
+    new Marker(el, options).setLngLat(lngLat).addTo(map);
     resolve(marker.value);
   });
-}
-
-function setCursorPointer(marker: Marker) {
-  marker.getElement().style.cursor = cursor || 'default';
-}
-
-function setClassName(marker: Marker) {
-  if (className) marker.getElement().className = className;
 }
 
 function listenMarkerEvents(): void {
@@ -96,8 +77,6 @@ function removeMarkerFromMap(marker: Marker): void {
 onMounted(async () => {
   await nextTick();
   await newMarker(map?.value);
-  setCursorPointer(marker.value);
-  setClassName(marker.value);
   listenMarkerEvents();
 });
 
@@ -107,6 +86,6 @@ onBeforeUnmount(() => {
 </script>
 <template>
   <section>
-    <slot :set-ref="setSlotRef" name="markers" />
+    <slot name="markers" />
   </section>
 </template>
