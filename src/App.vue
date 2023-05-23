@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MapBox } from '@components';
+import { MapBox, Marker } from '@components';
 import 'vue3-mapbox/dist/style.css';
 </script>
 
@@ -7,7 +7,7 @@ import 'vue3-mapbox/dist/style.css';
   <MapBox
     class="map"
     :options="{
-      style: '',
+      style: 'https://worldwidemaps.sqkii.com/api/maps/purple/style.json',
       container: 'mapContainer',
       center: [103.85876175581991, 1.294674696996273],
       zoom: 9,
@@ -15,6 +15,10 @@ import 'vue3-mapbox/dist/style.css';
       minZoom: 9
     }"
   >
+    <Marker
+      :lng-lat="[103.85876175581991, 1.294674696996273]"
+      class-name="hello"
+    />
   </MapBox>
 </template>
 <style>
