@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MapBox } from 'vue3-mapbox';
+import { MapBox } from '@components';
 import 'vue3-mapbox/dist/style.css';
 </script>
 
@@ -7,9 +7,12 @@ import 'vue3-mapbox/dist/style.css';
   <MapBox
     class="map"
     :options="{
-      style: 'https://worldwidemaps.sqkii.com/api/maps/Streets/style.json',
+      style: '',
       container: 'mapContainer',
-      center: [0, 0]
+      center: [103.85876175581991, 1.294674696996273],
+      zoom: 9,
+      maxZoom: 19,
+      minZoom: 9
     }"
   >
   </MapBox>

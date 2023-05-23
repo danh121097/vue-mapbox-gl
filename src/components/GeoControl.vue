@@ -12,6 +12,13 @@ interface Options {
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 }
 
+interface GeoEvent {
+  coords: GeolocationCoordinates;
+  target: GeolocateControl;
+  timestamp: number;
+  type: 'geolocate';
+}
+
 const emits = defineEmits(['geocontrol', ...geolocateControlEvents]);
 const props = defineProps<Options>();
 const { options, position } = props;
@@ -29,15 +36,8 @@ function addControl(map: Map | null | undefined) {
   map.addControl(geoControl, position);
   emits('geocontrol', geoControl);
   geolocateControlEvents.forEach((event: GeoControlEvents) => {
-    geoControl?.on(event, (e) => {
-      switch (event) {
-        case 'initialized':
-          emits(event, e);
-          break;
-        default:
-          emits(event);
-          break;
-      }
+    geoControl?.on(event, (geoEvent: GeoEvent) => {
+      emits(event, geoEvent);
     });
   });
 }
