@@ -38,11 +38,9 @@ async function newMap() {
 
     if (preloadAssets?.length) await loadAssets(map.value, preloadAssets);
 
-    map.value.on('styledata', () => {
-      intialized.value = true;
-      emits('initialized', map.value);
-      resolve(true);
-    });
+    intialized.value = true;
+    emits('initialized', map.value);
+    resolve(true);
   });
 }
 
