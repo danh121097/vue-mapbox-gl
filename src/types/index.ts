@@ -3,6 +3,110 @@ export interface MapAsset {
   name: string;
 }
 
+export interface StyleFunction {
+  stops?: any[][] | undefined;
+  property?: string | undefined;
+  base?: number | undefined;
+  type?: 'identity' | 'exponential' | 'interval' | 'categorical' | undefined;
+  default?: any;
+  colorSpace?: 'rgb' | 'lab' | 'hcl' | undefined;
+}
+
+type ExpressionName =
+  // Types
+  | 'array'
+  | 'boolean'
+  | 'collator'
+  | 'format'
+  | 'literal'
+  | 'number'
+  | 'number-format'
+  | 'object'
+  | 'string'
+  | 'image'
+  | 'to-boolean'
+  | 'to-color'
+  | 'to-number'
+  | 'to-string'
+  | 'typeof'
+  // Feature data
+  | 'feature-state'
+  | 'geometry-type'
+  | 'id'
+  | 'line-progress'
+  | 'properties'
+  // Lookup
+  | 'at'
+  | 'get'
+  | 'has'
+  | 'in'
+  | 'index-of'
+  | 'length'
+  | 'slice'
+  // Decision
+  | '!'
+  | '!='
+  | '<'
+  | '<='
+  | '=='
+  | '>'
+  | '>='
+  | 'all'
+  | 'any'
+  | 'case'
+  | 'match'
+  | 'coalesce'
+  | 'within'
+  // Ramps, scales, curves
+  | 'interpolate'
+  | 'interpolate-hcl'
+  | 'interpolate-lab'
+  | 'step'
+  // Variable binding
+  | 'let'
+  | 'var'
+  // String
+  | 'concat'
+  | 'downcase'
+  | 'is-supported-script'
+  | 'resolved-locale'
+  | 'upcase'
+  // Color
+  | 'rgb'
+  | 'rgba'
+  | 'to-rgba'
+  // Math
+  | '-'
+  | '*'
+  | '/'
+  | '%'
+  | '^'
+  | '+'
+  | 'abs'
+  | 'acos'
+  | 'asin'
+  | 'atan'
+  | 'ceil'
+  | 'cos'
+  | 'e'
+  | 'floor'
+  | 'ln'
+  | 'ln2'
+  | 'log10'
+  | 'log2'
+  | 'max'
+  | 'min'
+  | 'pi'
+  | 'round'
+  | 'sin'
+  | 'sqrt'
+  | 'tan'
+  // Zoom, Heatmap
+  | 'zoom'
+  | 'heatmap-density';
+
+type Expression = [ExpressionName, ...any[]];
+
 export namespace Vue3MapBox {
   export interface PaintFill {
     'fill-antialias'?: boolean;
@@ -15,11 +119,11 @@ export namespace Vue3MapBox {
   }
 
   export interface PaintLine {
-    'line-opacity'?: number;
+    'line-opacity'?: number | StyleFunction | Expression | undefined | any[];
     'line-color'?: string;
     'line-translate'?: [number, number];
     'line-translate-anchor'?: 'map' | 'viewport';
-    'line-width'?: number;
+    'line-width'?: number | StyleFunction | Expression | undefined | any[];
     'line-gap-width'?: number;
     'line-offset'?: number;
     'line-blur'?: number;

@@ -20,6 +20,7 @@ import type {
   LngLatLike,
   PopupOptions
 } from 'maplibre-gl';
+import type { Vue3MapBox } from './types/index';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 export {
@@ -44,5 +45,6 @@ export type {
   LayerSpecification,
   SourceSpecification,
   GeolocateOptions,
-  PointLike
+  PointLike,
+  Vue3MapBox
 };
