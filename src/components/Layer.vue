@@ -26,7 +26,7 @@ interface LayerOptions {
 
 const emits = defineEmits(mapLayerEvents);
 const props = defineProps<LayerOptions>();
-const { sourceId, id, source, before } = toRefs(props);
+const { sourceId, id, source, before, paint, layout } = toRefs(props);
 
 const map = inject<ShallowRef<Map>>(MAP_KEY);
 const LAYER = {
@@ -41,6 +41,37 @@ watch(source, (value) => {
   const source = map?.value?.getSource(sourceId.value) as GeoJSONSource;
   if (source) source.setData((value as any).data);
 });
+
+watch(
+  () => paint?.value,
+  (value) => {
+    if (!value) return;
+    const layer = map?.value?.getLayer(props.id);
+    if (!layer) return;
+    console.log('value', value);
+    Object.entries(value).forEach(([key, value]) => {
+      map?.value?.setPaintProperty(props.id, key, value);
+    });
+  },
+  {
+    deep: true
+  }
+);
+
+watch(
+  () => layout?.value,
+  (value) => {
+    if (!value) return;
+    const layer = map?.value?.getLayer(props.id);
+    if (!layer) return;
+    Object.entries(value).forEach(([key, value]) => {
+      map?.value?.setLayoutProperty(props.id, key, value);
+    });
+  },
+  {
+    deep: true
+  }
+);
 
 function addLayer(map?: Map) {
   if (!map) return;
@@ -73,7 +104,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   removeLayerEvent();
-  map?.value.removeLayer(id.value);
-  map?.value.removeSource(sourceId.value);
+  // if (map?.value?.getLayer(id.value)) map?.value.removeLayer(id.value);
+  // map?.value?.removeSource(sourceId.value);
 });
 </script>
