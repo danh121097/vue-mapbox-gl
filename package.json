@@ -1,6 +1,6 @@
 {
   "name": "vue3-mapbox",
-  "version": "2.1.14",
+  "version": "2.1.21",
   "type": "module",
   "license": "MIT",
   "description": "The features of Maplibre GL and Vue3 JS",

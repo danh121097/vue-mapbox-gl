@@ -3,12 +3,12 @@ import { inject, nextTick, onMounted } from 'vue';
 import { GeolocateControl, Map } from 'maplibre-gl';
 import { MAP_KEY, DEFAULT_GEO_CONTROL_OPTIONS } from '@enums';
 import { geolocateControlEvents } from '@constants';
-import type { GeolocateControlOptions } from 'maplibre-gl';
+import type { GeolocateOptions } from 'maplibre-gl';
 import type { ShallowRef } from 'vue';
 import type { GeoControlEvents } from '@constants';
 
 interface Options {
-  options?: GeolocateControlOptions;
+  options?: GeolocateOptions;
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 }
 
