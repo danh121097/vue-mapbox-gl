@@ -7,11 +7,11 @@ import {
   toRefs,
   watch
 } from 'vue';
-import { GeoJSONSource, Map } from 'maplibre-gl';
+import { GeoJSONSource, Map } from '@maptiler/sdk';
 import { mapLayerEvents } from '@constants';
 import { MAP_KEY } from '@enums';
 import type { Vue3MapBox } from '@types';
-import type { SourceSpecification, LayerSpecification } from 'maplibre-gl';
+import type { SourceSpecification, LayerSpecification } from '@maptiler/sdk';
 import type { ShallowRef } from 'vue';
 
 interface LayerOptions {
@@ -48,7 +48,6 @@ watch(
     if (!value) return;
     const layer = map?.value?.getLayer(props.id);
     if (!layer) return;
-    console.log('value', value);
     Object.entries(value).forEach(([key, value]) => {
       map?.value?.setPaintProperty(props.id, key, value);
     });
@@ -73,12 +72,13 @@ watch(
   }
 );
 
-function addLayer(map?: Map) {
+async function addLayer(map?: Map) {
   if (!map) return;
 
   return new Promise((resolve) => {
     if (!map.getSource(sourceId.value))
       map.addSource(sourceId.value, source.value);
+
     map.addLayer(LAYER as unknown as LayerSpecification, before?.value);
     resolve(true);
   });
@@ -108,3 +108,8 @@ onBeforeUnmount(() => {
   // map?.value?.removeSource(sourceId.value);
 });
 </script>
+<template>
+  <section id="layer">
+    <slot />
+  </section>
+</template>

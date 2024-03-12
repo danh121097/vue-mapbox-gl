@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { inject, onMounted, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import { Map, Marker } from 'maplibre-gl';
+import { inject, onMounted, nextTick, onBeforeUnmount, ref } from 'vue';
+import { Map, Marker } from '@maptiler/sdk';
 import { MAP_KEY } from '@enums';
 import { markerDOMEvents, markerMapEvents } from '@constants';
 import type { MarkerDOMEvents, MarkerMapEvents } from '@constants';
-
-import type { LngLatLike, MarkerOptions } from 'maplibre-gl';
+import type { LngLatLike, MarkerOptions } from '@maptiler/sdk';
 import type { ShallowRef, Ref } from 'vue';
 
 interface Options {
@@ -26,13 +25,7 @@ const props = defineProps<Options>();
 const { lngLat, options, className, cursor } = props;
 
 const map = inject<ShallowRef<Map | null>>(MAP_KEY);
-const isMarkerAvailable = ref(false);
 const marker = ref({}) as Ref<Marker>;
-
-watch(marker, (_marker) => {
-  if ('_map' in _marker) isMarkerAvailable.value = true;
-  else isMarkerAvailable.value = false;
-});
 
 function newMarker(map: Map | null | undefined) {
   if (!map) return;
@@ -41,7 +34,12 @@ function newMarker(map: Map | null | undefined) {
     const el = document.createElement('div');
     el.className = className || '';
     el.style.cursor = cursor || 'default';
-    marker.value = new Marker(el, options).setLngLat(lngLat).addTo(map);
+    marker.value = new Marker({
+      element: el,
+      ...options
+    })
+      .setLngLat(lngLat)
+      .addTo(map);
     resolve(marker.value);
   });
 }
@@ -85,7 +83,7 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <section>
-    <slot name="markers" />
+  <section id="marker">
+    <slot />
   </section>
 </template>

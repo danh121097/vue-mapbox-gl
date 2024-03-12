@@ -2,15 +2,13 @@ export type GeoControlEvents =
   | 'geolocate'
   | 'error'
   | 'outofmaxbounds'
-  | 'trackuserlocationstart'
   | 'trackuserlocationend'
-  | 'initialized';
+  | 'trackuserlocationstart';
 
 export const geolocateControlEvents: GeoControlEvents[] = [
   'geolocate',
   'error',
   'outofmaxbounds',
   'trackuserlocationstart',
-  'trackuserlocationend',
-  'initialized'
+  'trackuserlocationend'
 ];

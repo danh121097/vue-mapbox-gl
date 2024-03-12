@@ -7,21 +7,18 @@ import {
   provide,
   shallowRef
 } from 'vue';
-import { Map } from 'maplibre-gl';
+import { Map } from '@maptiler/sdk';
 import { mapEvents } from '@constants';
-import { MapAsset } from '@types';
-import { loadAssets } from '@helpers';
 import { MAP_KEY, DEFAULT_MAP_OPTIONS } from '@enums';
-import type { MapOptions } from 'maplibre-gl';
+import type { MapOptions } from '@maptiler/sdk';
 
 interface Options {
   options: MapOptions;
-  preloadAssets?: MapAsset[];
 }
 
 const emits = defineEmits(['initialized', ...mapEvents]);
 const props = defineProps<Options>();
-const { options, preloadAssets } = props;
+const { options } = props;
 
 let map = shallowRef<Map | null>(null);
 const intialized = ref(false);
@@ -29,19 +26,21 @@ const intialized = ref(false);
 provide(MAP_KEY, map);
 
 async function newMap() {
-  return new Promise(async (resolve) => {
+  return new Promise((resolve) => {
     map.value = new Map(Object.assign({}, DEFAULT_MAP_OPTIONS, options));
-
     map.value.touchZoomRotate.disableRotation();
     map.value.doubleClickZoom.disable();
     map.value.dragRotate.disable();
 
-    if (preloadAssets?.length) await loadAssets(map.value, preloadAssets);
+    map.value?.on('load', () => {
+      const loaded = map.value?.loaded();
+      const isStyleLoaded = map.value?.isStyleLoaded();
 
-    map.value.on('styledata', () => {
-      intialized.value = true;
-      emits('initialized', map.value);
-      resolve(true);
+      if (loaded && isStyleLoaded) {
+        intialized.value = true;
+        emits('initialized', map.value);
+        resolve(true);
+      }
     });
   });
 }
@@ -75,10 +74,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div
-    :id="options.container.toString() || 'mapContainer'"
-    class="map-container"
-  >
+  <div :id="options.container.toString()" class="map-container">
     <slot v-if="intialized" />
   </div>
 </template>

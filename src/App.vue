@@ -1,6 +1,23 @@
 <script lang="ts" setup>
-import { MapBox, Marker } from '@components';
-import 'vue3-mapbox/dist/style.css';
+import { MapBox, GeoControl, Layer } from '@components';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import boundary from './boundary.json';
+
+const BOUNDARY_LINE_LAYER = {
+  PAINT: {
+    'line-color': '#7147cd',
+    'line-width': 10,
+    'line-opacity': 0.7
+  },
+  LAYOUT: {
+    'line-join': 'bevel',
+    'line-round-limit': 1
+  }
+};
+
+function trackend(data: { coords: GeolocationCoordinates }) {
+  console.log(data);
+}
 </script>
 
 <template>
@@ -12,13 +29,39 @@ import 'vue3-mapbox/dist/style.css';
       center: [103.85876175581991, 1.294674696996273],
       zoom: 9,
       maxZoom: 19,
-      minZoom: 9
+      minZoom: 9,
+      apiKey: 'ztwBSN2Gdk1gdq5hBBUw',
+      geolocateControl: false,
+      navigationControl: false
     }"
   >
-    <Marker
+    <GeoControl @trackuserlocationend="trackend" />
+    <Layer
+      id="boundary_line_layer"
+      source-id="boundary"
+      type="line"
+      :source="(boundary as any)"
+      :paint="BOUNDARY_LINE_LAYER.PAINT"
+      :layout="(BOUNDARY_LINE_LAYER.LAYOUT as any)"
+    />
+    <!-- <Marker
       :lng-lat="[103.85876175581991, 1.294674696996273]"
       class-name="hello"
-    />
+    /> -->
+    <!-- <template v-if="!!superMap">
+      <Marker
+        :lng-lat="[103.85876175581991, 1.294674696996273]"
+        class-name="hello"
+      />
+      <Layer
+        id="boundary_line_layer"
+        source-id="boundary"
+        type="line"
+        :source="(boundary as any)"
+        :paint="BOUNDARY_LINE_LAYER.PAINT"
+        :layout="(BOUNDARY_LINE_LAYER.LAYOUT as any)"
+      />
+    </template> -->
   </MapBox>
 </template>
 <style>

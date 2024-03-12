@@ -22,6 +22,7 @@ import type {
 } from 'maplibre-gl';
 import type { Vue3MapBox } from './types/index';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import '@maptiler/sdk/dist/maptiler-sdk.css';
 
 export {
   MapBox,

@@ -95,7 +95,7 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <section ref="popupContent">
+  <section id="popup">
     <slot />
   </section>
 </template>
