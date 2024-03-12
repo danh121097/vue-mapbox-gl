@@ -108,3 +108,8 @@ onBeforeUnmount(() => {
   // map?.value?.removeSource(sourceId.value);
 });
 </script>
+<template>
+  <section id="layer">
+    <slot />
+  </section>
+</template>

@@ -38,10 +38,13 @@ async function newMap() {
 
     if (preloadAssets?.length) await loadAssets(map.value, preloadAssets);
 
-    map.value.on('styledata', () => {
-      intialized.value = true;
-      emits('initialized', map.value);
-      resolve(true);
+    map.value.on('load', () => {
+      const loaded = map.value?.loaded();
+      if (loaded) {
+        intialized.value = true;
+        emits('initialized', map.value);
+        resolve(true);
+      }
     });
   });
 }

@@ -41,7 +41,12 @@ function newMarker(map: Map | null | undefined) {
     const el = document.createElement('div');
     el.className = className || '';
     el.style.cursor = cursor || 'default';
-    marker.value = new Marker(el, options).setLngLat(lngLat).addTo(map);
+    marker.value = new Marker({
+      element: el,
+      ...options
+    })
+      .setLngLat(lngLat)
+      .addTo(map);
     resolve(marker.value);
   });
 }
@@ -85,7 +90,7 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <section>
-    <slot name="markers" />
+  <section id="marker">
+    <slot />
   </section>
 </template>
