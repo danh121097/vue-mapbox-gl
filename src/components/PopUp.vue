@@ -3,7 +3,7 @@
 // @ts-ignore
 import transformTranslate from '@turf/transform-translate';
 
-import { inject, onMounted, nextTick, onBeforeUnmount, ref } from 'vue';
+import { inject, onMounted, nextTick, onBeforeUnmount } from 'vue';
 import { Map, Popup, Marker } from 'maplibre-gl';
 import { point } from '@turf/helpers';
 import { MAP_KEY, Units } from '@enums';
@@ -14,6 +14,7 @@ import type { LngLatLike, PopupOptions } from 'maplibre-gl';
 
 interface Options {
   lngLat: LngLatLike | [number, number];
+  content?: string;
   offset?: number;
   options?: PopupOptions;
   className?: string;
@@ -23,10 +24,9 @@ interface Options {
 
 const emits = defineEmits(['added', 'removed', ...popupEvents]);
 const props = defineProps<Options>();
-const { lngLat, offset, options, className, marker, units } = props;
+const { lngLat, offset, options, className, marker, units, content } = props;
 
 const map = inject<ShallowRef<Map | null>>(MAP_KEY);
-const popupContent = ref(null);
 let popup: Popup;
 
 function newGeoTransformTranslate(lngLat: LngLatLike) {
@@ -52,15 +52,9 @@ async function setPopUp() {
   });
 }
 
-function setPopupContent() {
-  if (!popupContent.value) return;
-  popup?.setDOMContent(popupContent.value as Node);
-}
-
 function addPopUp() {
   if (marker) marker.setPopup(popup);
-  else popup?.addTo(map?.value as Map);
-
+  else popup?.setHTML(content ?? '').addTo(map?.value as Map);
   emits('added', popup);
 }
 
@@ -85,7 +79,6 @@ onMounted(async () => {
   await nextTick();
   await setPopUp();
   addPopUp();
-  setPopupContent();
   listenPopupEvents();
 });
 
