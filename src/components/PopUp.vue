@@ -54,7 +54,11 @@ async function setPopUp() {
 
 function addPopUp() {
   if (marker) marker.setPopup(popup);
-  else popup?.setHTML(content ?? '').addTo(map?.value as Map);
+  else {
+    if (content) popup.setHTML(content);
+    if (className) popup.addClassName(className);
+    popup?.addTo(map?.value as Map);
+  }
   emits('added', popup);
 }
 
