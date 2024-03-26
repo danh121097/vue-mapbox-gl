@@ -22,11 +22,14 @@ interface LayerOptions {
   layout?: Vue3MapBox.LayoutSpecification;
   type: Vue3MapBox.LayerType;
   before?: string;
+  minzoom?: number;
+  maxzoom?: number;
 }
 
 const emits = defineEmits(mapLayerEvents);
 const props = defineProps<LayerOptions>();
-const { sourceId, id, source, before, paint, layout } = toRefs(props);
+const { sourceId, id, source, before, paint, layout, minzoom, maxzoom } =
+  toRefs(props);
 
 const map = inject<ShallowRef<Map>>(MAP_KEY);
 const LAYER = {
@@ -34,7 +37,9 @@ const LAYER = {
   layout: props.layout || {},
   type: props.type,
   id: id.value,
-  source: sourceId.value
+  source: sourceId.value,
+  minzoom: minzoom?.value,
+  maxzoom: maxzoom?.value
 };
 
 watch(source, (value) => {

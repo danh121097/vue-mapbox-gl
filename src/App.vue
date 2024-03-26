@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MapBox, Marker, Layer } from '@components';
+import { MapBox, Layer, PopUp } from '@components';
 import { Vue3MapBox } from '@types';
 import 'vue3-mapbox/dist/style.css';
 
@@ -110,10 +110,15 @@ const BOUNDARY_LINE_LAYER = {
       minZoom: 9
     }"
   >
-    <Marker
+    <PopUp
       :lng-lat="[103.85876175581991, 1.294674696996273]"
       class-name="hello"
+      content="haloooooo"
     />
+    <!-- <Marker
+      :lng-lat="[103.85876175581991, 1.294674696996273]"
+      class-name="hello"
+    /> -->
 
     <Layer
       id="boundary_line_layer"
