@@ -52,7 +52,6 @@ watch(
     if (!value) return;
     const layer = map?.value?.getLayer(props.id);
     if (!layer) return;
-    console.log('value', value);
     Object.entries(value).forEach(([key, value]) => {
       map?.value?.setPaintProperty(props.id, key, value);
     });
