@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, nextTick, onBeforeUnmount, onMounted } from 'vue';
+import { inject, nextTick, onMounted } from 'vue';
 import { GeolocateControl, Map } from 'maplibre-gl';
 import { MAP_KEY, DEFAULT_GEO_CONTROL_OPTIONS } from '@enums';
 import { geolocateControlEvents } from '@constants';
@@ -53,10 +53,6 @@ defineExpose({
 onMounted(async () => {
   await nextTick();
   addControl(map?.value);
-});
-
-onBeforeUnmount(() => {
-  if (map?.value && geoControl) map?.value.removeControl(geoControl);
 });
 </script>
 <template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, onMounted, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { inject, onMounted, nextTick, ref, watch } from 'vue';
 import { Map, Marker } from 'maplibre-gl';
 import { MAP_KEY } from '@enums';
 import { markerDOMEvents, markerMapEvents } from '@constants';
@@ -74,18 +74,10 @@ function listenMarkerEvents(): void {
   });
 }
 
-function removeMarkerFromMap(): void {
-  emits('removed');
-}
-
 onMounted(async () => {
   await nextTick();
   await newMarker(map?.value);
   listenMarkerEvents();
-});
-
-onBeforeUnmount(() => {
-  removeMarkerFromMap();
 });
 </script>
 <template>

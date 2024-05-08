@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-import {
-  onMounted,
-  nextTick,
-  onBeforeUnmount,
-  ref,
-  provide,
-  shallowRef
-} from 'vue';
+import { onMounted, nextTick, ref, provide, shallowRef } from 'vue';
 import { Map } from 'maplibre-gl';
 import { mapEvents } from '@constants';
 import { MapAsset } from '@types';
@@ -57,23 +50,10 @@ function listenerMapEvent() {
   });
 }
 
-function removeListenerMapEvent() {
-  if (map?.value)
-    mapEvents.forEach((e) => {
-      map.value?.off(e, (evt) => {
-        emits(e, evt);
-      });
-    });
-}
-
 onMounted(async () => {
   await nextTick();
   await newMap();
   listenerMapEvent();
-});
-
-onBeforeUnmount(() => {
-  removeListenerMapEvent();
 });
 </script>
 

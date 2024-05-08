@@ -3,7 +3,7 @@
 // @ts-ignore
 import transformTranslate from '@turf/transform-translate';
 
-import { inject, onMounted, nextTick, onBeforeUnmount } from 'vue';
+import { inject, onMounted, nextTick } from 'vue';
 import { Map, Popup, Marker } from 'maplibre-gl';
 import { point } from '@turf/helpers';
 import { MAP_KEY, Units } from '@enums';
@@ -68,27 +68,11 @@ function listenPopupEvents() {
   });
 }
 
-function removePopupEvents() {
-  if (map?.value)
-    popupEvents.forEach((event: PopupEvents) => {
-      popup?.off(event, () => emits(event));
-    });
-}
-
-function removePopUp() {
-  emits('removed');
-}
-
 onMounted(async () => {
   await nextTick();
   await setPopUp();
   addPopUp();
   listenPopupEvents();
-});
-
-onBeforeUnmount(() => {
-  removePopupEvents();
-  removePopUp();
 });
 </script>
 <template>

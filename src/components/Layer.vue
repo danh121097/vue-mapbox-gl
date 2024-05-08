@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-import {
-  onMounted,
-  onBeforeUnmount,
-  nextTick,
-  inject,
-  toRefs,
-  watch
-} from 'vue';
+import { onMounted, nextTick, inject, toRefs, watch } from 'vue';
 import { GeoJSONSource, Map } from 'maplibre-gl';
 import { mapLayerEvents } from '@constants';
 import { MAP_KEY } from '@enums';
@@ -93,23 +86,10 @@ function listenerLayerEvent() {
   });
 }
 
-function removeLayerEvent() {
-  if (map?.value)
-    mapLayerEvents.forEach((event) => {
-      map?.value.off(event, id.value, (e) => emits(event, e));
-    });
-}
-
 onMounted(async () => {
   await nextTick();
   await addLayer(map?.value);
   listenerLayerEvent();
-});
-
-onBeforeUnmount(() => {
-  removeLayerEvent();
-  // if (map?.value?.getLayer(id.value)) map?.value.removeLayer(id.value);
-  // map?.value?.removeSource(sourceId.value);
 });
 </script>
 <template>

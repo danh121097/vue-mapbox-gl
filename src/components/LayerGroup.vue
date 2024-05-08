@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, nextTick, onBeforeUnmount, onMounted } from 'vue';
+import { inject, nextTick, onMounted } from 'vue';
 import { Layer } from '@components';
 import { mapLayerEvents } from '@constants';
 import { MAP_KEY } from '@enums';
@@ -35,20 +35,9 @@ function listenerLayerEvent() {
   });
 }
 
-function removeLayerEvent() {
-  if (map?.value)
-    mapLayerEvents.forEach((event) => {
-      map?.value.off(event, (e) => emits(event, e));
-    });
-}
-
 onMounted(async () => {
   await nextTick();
   listenerLayerEvent();
-});
-
-onBeforeUnmount(() => {
-  removeLayerEvent();
 });
 </script>
 
