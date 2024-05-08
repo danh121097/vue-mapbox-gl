@@ -73,7 +73,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   removeListenerMapEvent();
-  map?.value?.remove();
+  map.value?.remove();
 });
 </script>
 

@@ -74,8 +74,7 @@ function listenMarkerEvents(): void {
   });
 }
 
-function removeMarkerFromMap(marker: Marker): void {
-  marker.remove();
+function removeMarkerFromMap(): void {
   emits('removed');
 }
 
@@ -86,7 +85,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  removeMarkerFromMap(marker.value);
+  removeMarkerFromMap();
 });
 </script>
 <template>

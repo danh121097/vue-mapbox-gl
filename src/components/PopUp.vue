@@ -75,7 +75,6 @@ function removePopupEvents() {
 }
 
 function removePopUp() {
-  popup?.remove();
   emits('removed');
 }
 
