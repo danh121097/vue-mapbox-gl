@@ -36,9 +36,10 @@ function listenerLayerEvent() {
 }
 
 function removeLayerEvent() {
-  mapLayerEvents.forEach((event) => {
-    map?.value.off(event, (e) => emits(event, e));
-  });
+  if (map?.value)
+    mapLayerEvents.forEach((event) => {
+      map?.value.off(event, (e) => emits(event, e));
+    });
 }
 
 onMounted(async () => {

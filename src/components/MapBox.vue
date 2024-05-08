@@ -58,11 +58,12 @@ function listenerMapEvent() {
 }
 
 function removeListenerMapEvent() {
-  mapEvents.forEach((e) => {
-    map.value?.off(e, (evt) => {
-      emits(e, evt);
+  if (map?.value)
+    mapEvents.forEach((e) => {
+      map.value?.off(e, (evt) => {
+        emits(e, evt);
+      });
     });
-  });
 }
 
 onMounted(async () => {

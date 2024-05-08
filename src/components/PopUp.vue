@@ -69,9 +69,10 @@ function listenPopupEvents() {
 }
 
 function removePopupEvents() {
-  popupEvents.forEach((event: PopupEvents) => {
-    popup?.off(event, () => emits(event));
-  });
+  if (map?.value)
+    popupEvents.forEach((event: PopupEvents) => {
+      popup?.off(event, () => emits(event));
+    });
 }
 
 function removePopUp() {
