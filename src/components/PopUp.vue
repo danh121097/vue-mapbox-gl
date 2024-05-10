@@ -5,7 +5,8 @@ import transformTranslate from '@turf/transform-translate';
 
 import { inject, onMounted, nextTick } from 'vue';
 import { Map, Popup, Marker } from 'maplibre-gl';
-import { MAP_KEY } from '@enums';
+import { point } from '@turf/helpers';
+import { MAP_KEY, Units } from '@enums';
 import { popupEvents } from '@constants';
 import type { PopupEvents } from '@constants';
 import type { ShallowRef } from 'vue';
@@ -18,19 +19,34 @@ interface Options {
   options?: PopupOptions;
   className?: string;
   marker?: Marker;
+  units?: Units;
 }
 
 const emits = defineEmits(['added', 'removed', ...popupEvents]);
 const props = defineProps<Options>();
-const { lngLat, options, className, marker, content } = props;
+const { lngLat, offset, options, className, marker, units, content } = props;
 
 const map = inject<ShallowRef<Map | null>>(MAP_KEY);
 let popup: Popup;
 
+function newGeoTransformTranslate(lngLat: LngLatLike) {
+  return new Promise((resolve) => {
+    const geo = transformTranslate(point(lngLat as number[]), offset || 0, 0, {
+      units: units || 'meters'
+    });
+
+    const [lng, lat] = geo.geometry.coordinates;
+
+    resolve([lng, lat]);
+  });
+}
+
 async function setPopUp() {
+  const _lngLat = (await newGeoTransformTranslate(lngLat)) as [number, number];
+
   return new Promise((resolve) => {
     popup = new Popup(Object.assign({}, options, { className })).setLngLat(
-      lngLat
+      offset ? _lngLat : lngLat
     );
     resolve(popup);
   });
