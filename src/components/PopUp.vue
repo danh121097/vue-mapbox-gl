@@ -29,11 +29,16 @@ const { lngLat, offset, options, className, marker, units, content } = props;
 const map = inject<ShallowRef<Map | null>>(MAP_KEY);
 let popup: Popup;
 
-function newGeoTransformTranslate(lngLat: LngLatLike) {
+function newGeoTransformTranslate(lngLat: LngLatLike, newOffset?: number) {
   return new Promise((resolve) => {
-    const geo = transformTranslate(point(lngLat as number[]), offset || 0, 0, {
-      units: units || 'meters'
-    });
+    const geo = transformTranslate(
+      point(lngLat as number[]),
+      newOffset || offset || 0,
+      0,
+      {
+        units: units || 'meters'
+      }
+    );
 
     const [lng, lat] = geo.geometry.coordinates;
 
@@ -69,7 +74,7 @@ function listenPopupEvents() {
 }
 
 watch(
-  lngLat,
+  () => props.lngLat,
   async (value) => {
     if (!popup) return;
     const _lngLat = (await newGeoTransformTranslate(value)) as [number, number];
@@ -78,6 +83,19 @@ watch(
   {
     immediate: true,
     deep: true
+  }
+);
+
+watch(
+  () => props.offset,
+  async (value) => {
+    if (!popup) return;
+    if (!popup) return;
+    const _lngLat = (await newGeoTransformTranslate(props.lngLat, value)) as [
+      number,
+      number
+    ];
+    popup.setLngLat(_lngLat);
   }
 );
 
