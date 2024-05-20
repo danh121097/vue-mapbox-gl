@@ -3,7 +3,7 @@
 // @ts-ignore
 import transformTranslate from '@turf/transform-translate';
 
-import { inject, onMounted, nextTick } from 'vue';
+import { inject, onMounted, nextTick, watch } from 'vue';
 import { Map, Popup, Marker } from 'maplibre-gl';
 import { point } from '@turf/helpers';
 import { MAP_KEY, Units } from '@enums';
@@ -67,6 +67,19 @@ function listenPopupEvents() {
     popup?.on(event, () => emits(event));
   });
 }
+
+watch(
+  lngLat,
+  async (value) => {
+    if (!popup) return;
+    const _lngLat = (await newGeoTransformTranslate(value)) as [number, number];
+    popup.setLngLat(_lngLat);
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+);
 
 onMounted(async () => {
   await nextTick();
