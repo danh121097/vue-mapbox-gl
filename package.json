@@ -1,61 +1,40 @@
 {
-  "name": "vue3-mapbox",
-  "version": "2.1.40",
+  "name": "vite-test",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
-  "license": "MIT",
-  "description": "The features of Maplibre GL and Vue3 JS",
-  "author": "Danh Nguyen <danh121097@gmail.com>",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "deploy": "yarn build && yarn publish"
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build --force",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/"
   },
   "dependencies": {
-    "maplibre-gl": "^2.4.0",
-    "vue": "^3.2.47",
-    "vue3-mapbox": "^2.0.71"
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
-    "@turf/transform-translate": "^6.5.0",
-    "@types/turf": "^3.5.32",
-    "@vitejs/plugin-vue": "^4.1.0",
-    "path": "^0.12.7",
-    "typescript": "^5.0.2",
-    "vite": "^4.3.0",
-    "vite-plugin-dts": "^2.3.0",
-    "vitepress": "^1.0.0-alpha.75",
-    "vue-tsc": "^1.2.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/danh121097/vue-mapbox-gl.git"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/vue3-mapbox.umd.cjs",
-  "module": "./dist/vue3-mapbox.js",
-  "exports": {
-    ".": {
-      "import": "./dist/vue3-mapbox.js",
-      "require": "./dist/vue3-mapbox.umd.cjs"
-    },
-    "./dist/style.css": "./dist/style.css"
-  },
-  "types": "dist/vue3-mapbox.d.ts",
-  "homepage": "https://vue-mapbox-gl.vercel.app/",
-  "keywords": [
-    "vue3",
-    "typescript",
-    "maplibre-gl",
-    "geojson",
-    "turfjs"
-  ]
+    "@rushstack/eslint-patch": "^1.8.0",
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^20.12.5",
+    "@typescript-eslint/eslint-plugin": "^7.12.0",
+    "@typescript-eslint/parser": "^7.12.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "@vue/tsconfig": "^0.5.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-unused-imports": "^4.0.0",
+    "eslint-plugin-vue": "^9.23.0",
+    "npm-run-all2": "^6.1.2",
+    "prettier": "^3.2.5",
+    "typescript": "~5.4.0",
+    "unplugin-auto-import": "^0.17.6",
+    "vite": "^5.2.8",
+    "vue-tsc": "^2.0.11"
+  }
 }
