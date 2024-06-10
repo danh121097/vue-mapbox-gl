@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "baseUrl": "./",
+    "outDir": "dist",
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "lib": ["ESNext", "DOM"],
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "types": ["vite/client"],
+    "maxNodeModuleJsDepth": 100,
+    "paths": {
+      "@libs/types": ["libs/types"],
+      "@libs/composables": ["libs/composables"],
+      "@libs/enums": ["libs/enums"]
+    }
+  },
+  "include": [
+    "dist/**/*.ts",
+    "libs/**/*.ts",
+    "libs/**/*.d.ts",
+    "libs/**/*.vue",
+    "types/**/*.d.ts",
+    "types/**/*.ts",
+    "vite.config.ts"
+  ],
+  "exclude": ["node_modules"]
+}
