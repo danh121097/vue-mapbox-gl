@@ -1,6 +1,15 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "./types/**/*.d.ts", "./auto-imports.d.ts"],
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "./types/**/*.d.ts",
+    "./auto-imports.d.ts",
+    "src/libs/**/*.ts",
+    "src/libs/**/*.d.ts",
+    "src/libs/**/*.vue"
+  ],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
@@ -8,7 +17,12 @@
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@libs/enums": ["./src/libs/enums"],
+      "@libs/helpers": ["./src/libs/helpers"],
+      "@libs/hooks": ["./src/libs/hooks"],
+      "@libs/types": ["./src/libs/types"],
+      "@libs/components": ["./src/libs/components"]
     }
   }
 }

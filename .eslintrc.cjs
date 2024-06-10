@@ -1,28 +1,56 @@
-/* eslint-env node */
-require('@rushstack/eslint-patch/modern-module-resolution')
-
 module.exports = {
-  root: true,
-  extends: [
-    'plugin:vue/vue3-essential',
-    'eslint:recommended',
-    '@vue/eslint-config-typescript',
-    '@vue/eslint-config-prettier/skip-formatting',
-    'plugin:prettier/recommended'
-  ],
-  plugins: ['@typescript-eslint', 'vue', 'unused-imports'],
   env: {
     browser: true,
     es2021: true,
     node: true
   },
+  globals: {
+    defineProps: 'readonly',
+    defineEmits: 'readonly',
+    defineExpose: 'readonly',
+    defineOptions: 'readonly',
+    defineModel: 'readonly'
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:vue/vue3-recommended',
+    'plugin:prettier/recommended'
+  ],
+  parser: 'vue-eslint-parser',
   parserOptions: {
     ecmaVersion: 'latest',
     parser: '@typescript-eslint/parser',
-    extraFileExtensions: ['.vue']
+    sourceType: 'module'
   },
+  plugins: ['@typescript-eslint', 'vue', 'unused-imports'],
   rules: {
+    'linebreak-style': ['error', 'unix'],
+    semi: 'off',
+    quotes: 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
     'vue/multi-word-component-names': 'off',
-    'unused-imports/no-unused-imports': 'warn'
+    'vue/valid-template-root': 'off',
+    'vue/no-v-html': 'off',
+    'vue/require-default-prop': 'off',
+    'vue/require-name-property': 'off',
+    'vue/no-template-shadow': 'off',
+    'vue/html-self-closing': [
+      'error',
+      {
+        html: {
+          void: 'always',
+          normal: 'always',
+          component: 'always'
+        },
+        svg: 'always',
+        math: 'always'
+      }
+    ],
+    'no-undef': 'off',
+    'unused-imports/no-unused-imports': 'warn',
+    'prettier/prettier': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'vue/no-reserved-component-names': 'off'
   }
 }

@@ -1,39 +1,25 @@
-# vite-test
+# vue3-mapbox
 
-This template should help get you started developing with Vue 3 in Vite.
+[![npm](https://img.shields.io/npm/v/vue3-mapbox)](https://www.npmjs.com/package/vue3-mapbox) [![Downloads](https://img.shields.io/npm/dt/vue3-mapbox)](https://www.npmjs.com/package/vue3-mapbox) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-mapbox)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE.md)
 
-## Recommended IDE Setup
+# Library write base on `maplibre-gl`
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+# Installation and Usage
 
-## Type Support for `.vue` Imports in TS
+## Vue 3
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+If you are using npm:
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-yarn
+```shell
+npm install vue3-mapbox@latest maplibre-gl --save
 ```
 
-### Compile and Hot-Reload for Development
+If you are using yarn:
 
-```sh
-yarn dev
+```shell
+yarn add vue3-mapbox@latest maplibre-gl
 ```
 
-### Type-Check, Compile and Minify for Production
+## Home Page
 
-```sh
-yarn build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-yarn lint
-```
+See the API documentation [here](https://vue-mapbox-gl.vercel.app/).
