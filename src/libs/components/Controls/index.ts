@@ -1,5 +1,0 @@
-export { default as AttributionControl } from './AttributionControl.vue'
-export { default as FullscreenControl } from './FullscreenControl.vue'
-export { default as GeolocateControl } from './GeolocateControl.vue'
-export { default as NavigationControl } from './NavigationControl.vue'
-export { default as ScaleControl } from './ScaleControl.vue'
