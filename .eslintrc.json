@@ -15,7 +15,7 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:vue/vue3-recommended",
-    "plugin:prettier/recommended"
+    "prettier"
   ],
   "parser": "vue-eslint-parser",
   "parserOptions": {
@@ -25,27 +25,12 @@
   },
   "plugins": ["@typescript-eslint", "vue"],
   "rules": {
-    "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "single"],
-    "semi": ["error", "never"],
     "@typescript-eslint/no-explicit-any": "off",
     "vue/multi-word-component-names": "off",
     "vue/valid-template-root": "off",
     "vue/no-v-html": "off",
     "vue/require-default-prop": "off",
     "vue/require-name-property": "off",
-    "vue/no-template-shadow": "off",
-    "vue/html-self-closing": [
-      "error",
-      {
-        "html": {
-          "void": "always",
-          "normal": "always",
-          "component": "always"
-        },
-        "svg": "always",
-        "math": "always"
-      }
-    ]
+    "vue/no-template-shadow": "off"
   }
 }

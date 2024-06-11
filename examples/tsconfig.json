@@ -15,9 +15,13 @@
     "lib": ["ESNext", "DOM"],
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "types": ["vite/client", "../types/maplibre.d.d.ts"],
+    "types": ["vite/client", "../types/maplibre.d.ts"],
     "paths": {
-      "vue3-mapbox": ["../libs/index.ts"]
+      "@": ["./src"],
+      "@libs/types": ["../libs/types"],
+      "@libs/composables": ["../libs/composables"],
+      "@libs/enums": ["../libs/enums"],
+      "@libs/components": ["../libs/components"]
     }
   },
   "include": [

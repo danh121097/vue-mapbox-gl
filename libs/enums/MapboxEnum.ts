@@ -1,4 +1,4 @@
-import type { MapEventTypes } from '@libs/types'
+import type { GeolocateEventTypes, MapEventTypes } from '@libs/types'
 
 export enum MapboxStatus {
   Disposed = -1,
@@ -56,4 +56,12 @@ export const MapboxEvents: (keyof MapEventTypes)[] = [
   'styledataloading',
   'sourcedataloading',
   'styleimagemissing'
+]
+
+export const GeolocateEvents: (keyof GeolocateEventTypes)[] = [
+  'geolocate',
+  'error',
+  'outofmaxbounds',
+  'trackuserlocationstart',
+  'trackuserlocationend'
 ]

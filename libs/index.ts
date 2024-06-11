@@ -4,9 +4,11 @@
 // export * from '@/hooks'
 // export * from '@/types'
 
-export * from '@libs/composables'
-export * from '@libs/enums'
-export * from './components'
+export * from '@libs/composables';
+export * from '@libs/enums';
+import { Mapbox, GeolocateControl } from '@libs/components';
+
+export { Mapbox, GeolocateControl };
 
 // import Mapbox from '@/components/Mapbox.vue'
 // import CanvasSource from '@/components/Sources/CanvasSource.vue'

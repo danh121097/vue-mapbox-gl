@@ -20,7 +20,8 @@
     "paths": {
       "@libs/types": ["libs/types"],
       "@libs/composables": ["libs/composables"],
-      "@libs/enums": ["libs/enums"]
+      "@libs/enums": ["libs/enums"],
+      "@libs/components": ["libs/components"]
     }
   },
   "include": [
