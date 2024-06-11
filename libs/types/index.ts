@@ -82,7 +82,7 @@ export type MaplibreMethods = CreateMaplibreActions & {
     sourceID: string,
     options?: QuerySourceFeatureOptions,
   ) => MapGeoJSONFeature[] | undefined;
-  queryTerrainElevation: (lnglat: LngLatLike) => number | null;
+  queryTerrainElevation: (lnglat: LngLatLike) => number | null | undefined;
   isStyleLoaded: () => boolean | void;
   isMoving: () => boolean | undefined;
   isZooming: () => boolean | undefined;
@@ -161,9 +161,7 @@ export interface CreateBaseLayerActions<Layer extends LayerSpecification> {
 }
 
 export interface CreateLayerActions<Layer extends LayerSpecification>
-  extends CreateBaseLayerActions<Layer> {
-  setStyle: (styleVal: Layer['layout'] & Layer['paint']) => void;
-}
+  extends CreateBaseLayerActions<Layer> {}
 
 export type Visibility = 'visible' | 'none';
 
@@ -188,3 +186,5 @@ export interface FillPaint {
 export type FillLayerStyle = FillLayout & FillPaint;
 
 export type AnyLayout = FillLayout;
+
+export type AnyPaint = FillPaint;

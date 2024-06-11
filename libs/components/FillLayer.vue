@@ -39,11 +39,7 @@ interface LayerProps {
 
 interface Emits {
   (e: keyof MapLayerEventType, ev: any): any;
-  (
-    e: 'register',
-    actions: CreateLayerActions<FillLayerSpecification>,
-    map: Map,
-  ): any;
+  (e: 'register', actions: any, map: Map): any;
   (e: 'click', ev: MapLayerMouseEvent): any;
   (e: 'dblclick', ev: MapLayerMouseEvent): any;
   (e: 'mousedown', ev: MapLayerMouseEvent): any;
@@ -91,8 +87,8 @@ const {
   metadata: props.metadata,
   sourceLayer: props.sourceLayer,
   register: (actions, map) => {
-    props.register?.(actions, map);
-    emits('register', actions, map);
+    props.register?.(actions as any, map);
+    emits('register', actions as any, map);
   },
 });
 

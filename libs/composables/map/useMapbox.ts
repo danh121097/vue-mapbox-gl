@@ -1,12 +1,7 @@
-import {
-  type EffectScope,
-  computed,
-  effectScope,
-  ref,
-  shallowRef,
-  unref,
-  watch,
-} from 'vue';
+import { MapboxStatus } from '@libs/enums';
+import { computed, effectScope, ref, shallowRef, unref, watch } from 'vue';
+import type { MaplibreMethods, MaplibreActions, Nullable } from '@libs/types';
+import type { EffectScope } from 'vue';
 import type {
   FeatureIdentifier,
   LngLatBoundsLike,
@@ -18,8 +13,6 @@ import type {
   QuerySourceFeatureOptions,
   StyleSpecification,
 } from 'maplibre-gl';
-import type { MaplibreMethods, MaplibreActions, Nullable } from '@libs/types';
-import { MapboxStatus } from '@libs/enums';
 
 export function useMapbox() {
   const instanceRef = ref<MaplibreActions>();
@@ -153,7 +146,7 @@ export function useMapbox() {
       return getMapInstance()?.querySourceFeatures(sourceId, parameters);
     },
     queryTerrainElevation: (lnglat: LngLatLike) => {
-      return getMapInstance()?.queryTerrainElevation(lnglat) as number | null;
+      return getMapInstance()?.queryTerrainElevation(lnglat);
     },
     isStyleLoaded: () => {
       return getMapInstance()?.isStyleLoaded();
@@ -228,6 +221,7 @@ export function useMapbox() {
       getInstance()?.setCenter?.(center);
     },
   };
+
   return {
     register,
     ...methods,

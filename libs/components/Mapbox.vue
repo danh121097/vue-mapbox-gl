@@ -25,7 +25,7 @@ interface MapboxProps {
   register?: (actions: MaplibreActions) => void;
 }
 
-interface MapboxEmits {
+interface Emits {
   (e: keyof MapEventTypes, ev: any): void;
   (e: 'register', actions: MaplibreActions): void;
   (e: 'error', ev: ErrorEvent): void;
@@ -58,28 +58,28 @@ interface MapboxEmits {
   (e: 'mousedown', ev: MapMouseEvent): void;
   (e: 'mouseout', ev: MapMouseEvent): void;
   (e: 'mouseover', ev: MapMouseEvent): void;
-  (e: 'movestart', ev: MouseEvent | TouchEvent | WheelEvent): void;
-  (e: 'move', ev: MouseEvent | TouchEvent | WheelEvent): void;
-  (e: 'moveend', ev: MouseEvent | TouchEvent | WheelEvent): void;
-  (e: 'zoomstart', ev: MouseEvent | TouchEvent | WheelEvent): void;
-  (e: 'zoom', ev: MouseEvent | TouchEvent | WheelEvent): void;
-  (e: 'zoomend', ev: MouseEvent | TouchEvent | WheelEvent): void;
-  (e: 'rotatestart', ev: MouseEvent | TouchEvent): void;
-  (e: 'rotate', ev: MouseEvent | TouchEvent): void;
-  (e: 'rotateend', ev: MouseEvent | TouchEvent): void;
-  (e: 'dragstart', ev: MouseEvent | TouchEvent): void;
-  (e: 'drag', ev: MouseEvent | TouchEvent): void;
-  (e: 'dragend', ev: MouseEvent | TouchEvent): void;
-  (e: 'pitchstart', ev: MouseEvent | TouchEvent): void;
-  (e: 'pitch', ev: MouseEvent | TouchEvent): void;
-  (e: 'pitchend', ev: MouseEvent | TouchEvent): void;
+  (e: 'movestart', ev: MouseEvent): void;
+  (e: 'move', ev: MouseEvent): void;
+  (e: 'moveend', ev: MouseEvent): void;
+  (e: 'zoomstart', ev: MapLibreZoomEvent): void;
+  (e: 'zoom', ev: MapLibreZoomEvent): void;
+  (e: 'zoomend', ev: MapLibreZoomEvent): void;
+  (e: 'rotatestart', ev: MouseEvent): void;
+  (e: 'rotate', ev: MouseEvent): void;
+  (e: 'rotateend', ev: MouseEvent): void;
+  (e: 'dragstart', ev: MouseEvent): void;
+  (e: 'drag', ev: MouseEvent): void;
+  (e: 'dragend', ev: MouseEvent): void;
+  (e: 'pitchstart', ev: MouseEvent): void;
+  (e: 'pitch', ev: MouseEvent): void;
+  (e: 'pitchend', ev: MouseEvent): void;
   (e: 'wheel', ev: MapWheelEvent): void;
 }
 
 const props = withDefaults(defineProps<MapboxProps>(), {
   options: () => ({}),
 });
-const emits = defineEmits<MapboxEmits>();
+const emits = defineEmits<Emits>();
 
 const innerOptions = ref<Partial<MapOptions>>({});
 const maplibreElRef = ref<HTMLElement>();

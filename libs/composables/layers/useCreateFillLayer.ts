@@ -12,10 +12,10 @@ import type {
   Map,
   SourceSpecification,
   FilterSpecification,
-  FillLayerSpecification,
+  LayerSpecification,
 } from 'maplibre-gl';
 
-type Layer = FillLayerSpecification;
+type Layer = LayerSpecification;
 type Layout = FillLayout;
 type Paint = FillPaint;
 

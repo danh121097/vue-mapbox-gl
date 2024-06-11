@@ -53,14 +53,14 @@ function makeSource(features: any[]): SourceSpecification {
   };
 }
 
-const { register, mapInstance } = useMapbox();
+const { register: registerMap, mapInstance } = useMapbox();
 
 watchEffect(() => {
   console.log('mapInstance.value', mapInstance.value);
 });
 </script>
 <template>
-  <Mapbox :options="options" :register="register">
+  <Mapbox :options="options" @register="registerMap">
     <GeolocateControl
       :options="{
         positionOptions: {
