@@ -4,13 +4,7 @@
     "es2021": true,
     "node": true
   },
-  "globals": {
-    "defineProps": "readonly",
-    "defineEmits": "readonly",
-    "defineExpose": "readonly",
-    "defineOptions": "readonly",
-    "defineModel": "readonly"
-  },
+  "globals": {},
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -23,14 +17,12 @@
     "parser": "@typescript-eslint/parser",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "vue"],
+  "plugins": ["@typescript-eslint", "vue", "unused-imports"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "vue/multi-word-component-names": "off",
     "vue/valid-template-root": "off",
-    "vue/no-v-html": "off",
-    "vue/require-default-prop": "off",
-    "vue/require-name-property": "off",
-    "vue/no-template-shadow": "off"
+    "unused-imports/no-unused-imports": "warn",
+    "vue/require-default-prop": "off"
   }
 }

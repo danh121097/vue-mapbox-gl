@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, ref, defineProps, defineEmits } from 'vue';
+import { inject, ref } from 'vue';
 import { MapProvideKey, GeolocateEvents } from '@libs/enums';
 import {
   useGeolocateControl,
