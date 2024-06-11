@@ -5,8 +5,9 @@ import {
   GeoJsonSource,
   GeolocateControl,
   Mapbox,
+  CircleLayer,
 } from '@libs/components';
-import { useMapbox } from '@libs/composables';
+import { useLayer, useMapbox } from '@libs/composables';
 import type { GeolocateSuccess } from '@libs/types';
 import type { MapOptions, SourceSpecification } from 'maplibre-gl';
 import circle from '@turf/circle';
@@ -20,12 +21,15 @@ const options = computed<MapOptions>(() => ({
   maxZoom: 20,
 }));
 
-const data = computed(() => {
-  const s = circle([106.6521209, 10.8013524], 200, {
-    properties: {
-      id: 'circle',
-      price: 10000,
-    },
+const fillData = computed(() => {
+  const s = circle([103.8097, 1.3535], 400, {
+    units: 'meters',
+  });
+  return makeSource([s]);
+});
+
+const circleData = computed(() => {
+  const s = circle([103.8097, 1.3535], 700, {
     units: 'meters',
   });
   return makeSource([s]);
@@ -54,6 +58,7 @@ function makeSource(features: any[]): SourceSpecification {
 }
 
 const { register: registerMap, mapInstance } = useMapbox();
+const { register: registerLayer } = useLayer();
 
 watchEffect(() => {
   console.log('mapInstance.value', mapInstance.value);
@@ -73,11 +78,22 @@ watchEffect(() => {
       @trackuserlocationend="onTrackUserLocationEnd"
       @geolocate="onGeolocate"
     />
-    <GeoJsonSource :data="data">
+    <GeoJsonSource :data="fillData">
       <FillLayer
         :style="{
           'fill-color': '#ffffff',
           'fill-opacity': 0.5,
+        }"
+        @register="registerLayer"
+      />
+    </GeoJsonSource>
+
+    <GeoJsonSource :data="circleData">
+      <CircleLayer
+        :style="{
+          'circle-color': '#ff0000',
+          'circle-radius': 5,
+          'circle-opacity': 0.5,
         }"
       />
     </GeoJsonSource>

@@ -12,10 +12,10 @@ import type {
   Map,
   SourceSpecification,
   FilterSpecification,
-  LayerSpecification,
+  FillLayerSpecification,
 } from 'maplibre-gl';
 
-type Layer = LayerSpecification;
+type Layer = FillLayerSpecification;
 type Layout = FillLayout;
 type Paint = FillPaint;
 
@@ -66,13 +66,7 @@ export function useCreateFillLayer(props: CreateFillLayerProps) {
       metadata: props.metadata,
       sourceLayer: props.sourceLayer,
       register: (actions, map) => {
-        props.register?.(
-          {
-            ...actions,
-            setStyle,
-          },
-          map,
-        );
+        props.register?.(actions, map);
       },
     });
 

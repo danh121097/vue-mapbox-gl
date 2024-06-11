@@ -185,6 +185,26 @@ export interface FillPaint {
 
 export type FillLayerStyle = FillLayout & FillPaint;
 
-export type AnyLayout = FillLayout;
+export interface CircleLayout extends Layout {
+  'circle-sort-key'?: DataDrivenPropertyValueSpecification<number>;
+}
 
-export type AnyPaint = FillPaint;
+export interface CirclePaint {
+  'circle-radius'?: DataDrivenPropertyValueSpecification<number>;
+  'circle-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+  'circle-blur'?: DataDrivenPropertyValueSpecification<number>;
+  'circle-opacity'?: DataDrivenPropertyValueSpecification<number>;
+  'circle-translate'?: PropertyValueSpecification<[number, number]>;
+  'circle-translate-anchor'?: PropertyValueSpecification<'map' | 'viewport'>;
+  'circle-pitch-scale'?: PropertyValueSpecification<'map' | 'viewport'>;
+  'circle-pitch-alignment'?: PropertyValueSpecification<'map' | 'viewport'>;
+  'circle-stroke-width'?: DataDrivenPropertyValueSpecification<number>;
+  'circle-stroke-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+  'circle-stroke-opacity'?: DataDrivenPropertyValueSpecification<number>;
+}
+
+export type CircleLayerStyle = CircleLayout & CirclePaint;
+
+export type AnyLayout = FillLayout | CircleLayout;
+
+export type AnyPaint = FillPaint | CirclePaint;
