@@ -1,10 +1,15 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { Mapbox, GeolocateControl } from '@libs/components';
-import maplibre from 'maplibre-gl';
-import type { MapOptions } from 'maplibre-gl';
+import {
+  FillLayer,
+  GeoJsonSource,
+  GeolocateControl,
+  Mapbox,
+} from '@libs/components';
 import type { GeolocateSuccess } from '@libs/types';
+import circle from '@turf/circle';
+import type { MapOptions, SourceSpecification } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { computed } from 'vue';
 
 const options = computed<MapOptions>(() => ({
   container: 'map',
@@ -13,6 +18,17 @@ const options = computed<MapOptions>(() => ({
   minZoom: 9,
   maxZoom: 20,
 }));
+
+const data = computed(() => {
+  const s = circle([106.6521209, 10.8013524], 200, {
+    properties: {
+      id: 'circle',
+      price: 10000,
+    },
+    units: 'meters',
+  });
+  return makeSource([s]);
+});
 
 function onTrackUserLocationStart(ev: GeolocateSuccess) {
   console.log('onTrackUserLocationStart', ev);
@@ -23,9 +39,17 @@ function onTrackUserLocationEnd(ev: GeolocateSuccess) {
 }
 
 function onGeolocate(ev: GeolocateSuccess) {
-  console.log('maplibre.', parseInt(maplibre.getVersion().split('.')[0], 10));
-
   console.log('onGeolocate', ev.target._watchState);
+}
+
+function makeSource(features: any[]): SourceSpecification {
+  return {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features,
+    },
+  };
 }
 </script>
 <template>
@@ -42,5 +66,13 @@ function onGeolocate(ev: GeolocateSuccess) {
       @trackuserlocationend="onTrackUserLocationEnd"
       @geolocate="onGeolocate"
     />
+    <GeoJsonSource :data="data">
+      <FillLayer
+        :style="{
+          'fill-color': '#ffffff',
+          'fill-opacity': 0.5,
+        }"
+      />
+    </GeoJsonSource>
   </Mapbox>
 </template>

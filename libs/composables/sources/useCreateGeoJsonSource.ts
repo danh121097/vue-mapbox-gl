@@ -6,35 +6,28 @@ import type { Nullable } from '@libs/types';
 import type {
   Map,
   GeoJSONSource,
-  GeoJSONSourceOptions,
   MapSourceDataEvent,
+  SourceSpecification,
 } from 'maplibre-gl';
 
 export interface CreateGeoJsonSourceActions {
   sourceId: string;
   getSource: ShallowRef<Nullable<GeoJSONSource>>;
-  setData: (data: GeoJSONSourceOptions['data']) => void;
+  setData: (data: SourceSpecification) => void;
 }
 
 interface CreateGeoJsonSourceProps {
   map: MaybeRef<Nullable<Map>>;
   id?: string;
-  data?: GeoJSONSourceOptions['data'];
-  options?: Partial<GeoJSONSourceOptions>;
+  data?: SourceSpecification;
   register?: (actions: CreateGeoJsonSourceActions, map: Map) => void;
 }
-
-const defaultData: GeoJSONSourceOptions['data'] = {
-  type: 'FeatureCollection',
-  features: [],
-};
 
 export function useCreateGeoJsonSource({
   map: mapRef,
   id,
+  data,
   register,
-  options = {},
-  data = defaultData,
 }: CreateGeoJsonSourceProps) {
   const sourceId = getNanoid(id);
   const source = shallowRef<Nullable<GeoJSONSource>>(null);
@@ -68,18 +61,15 @@ export function useCreateGeoJsonSource({
   function initSource() {
     const map = unref(mapRef);
     if (map && !source.value && !hasSource(map, sourceId)) {
-      map.addSource(sourceId, {
-        ...options,
-        type: 'geojson',
-        data,
-      });
+      if (!data) return;
+      map.addSource(sourceId, data);
       map.on('sourcedata', sourcedataEventFn);
     }
   }
-  function setData(dataVal: GeoJSONSourceOptions['data']) {
+  function setData(dataVal: SourceSpecification) {
     const map = unref(mapRef);
     if (map && source.value && hasSource(map, sourceId))
-      dataVal && source.value.setData(dataVal);
+      dataVal && source.value.setData(dataVal as any);
   }
 
   function removeSource() {

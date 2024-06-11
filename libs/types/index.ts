@@ -1,7 +1,11 @@
 import type { MapboxStatus } from '@libs/enums';
 import type { ComputedRef } from 'vue';
 import type {
+  ColorSpecification,
+  DataDrivenPropertyValueSpecification,
+  FilterSpecification,
   GeolocateControl,
+  LayerSpecification,
   LngLatBoundsLike,
   LngLatLike,
   Map,
@@ -9,6 +13,9 @@ import type {
   MapMouseEvent,
   MapOptions,
   MapStyleImageMissingEvent,
+  PropertyValueSpecification,
+  ResolvedImageSpecification,
+  StyleSetterOptions,
   StyleSpecification,
 } from 'maplibre-gl';
 
@@ -64,3 +71,62 @@ export interface GeolocateEventTypes {
   trackuserlocationstart: GeolocateSuccess;
   trackuserlocationend: GeolocateSuccess;
 }
+
+export type LayerTypes =
+  | 'fill'
+  | 'line'
+  | 'symbol'
+  | 'circle'
+  | 'heatmap'
+  | 'fill-extrusion'
+  | 'raster'
+  | 'hillshade'
+  | 'background';
+
+export interface CreateBaseLayerActions<Layer extends LayerSpecification> {
+  layerId: string;
+  getLayer: ComputedRef<Nullable<Layer>>;
+  setBeforeId: (beforeId?: string) => void;
+  setFilter: (filter?: FilterSpecification) => void;
+  setPaintProperty: (
+    name: string,
+    value: any,
+    options?: StyleSetterOptions,
+  ) => void;
+  setLayoutProperty: (
+    name: string,
+    value: any,
+    options?: StyleSetterOptions,
+  ) => void;
+  setZoomRange: (minzoom?: number, maxzoom?: number) => void;
+  removeLayer: () => void;
+}
+
+export interface CreateLayerActions<Layer extends LayerSpecification>
+  extends CreateBaseLayerActions<Layer> {
+  setStyle: (styleVal: Layer['layout'] & Layer['paint']) => void;
+}
+
+export type Visibility = 'visible' | 'none';
+
+export interface Layout {
+  visibility?: Visibility | undefined;
+}
+
+export interface FillLayout extends Layout {
+  'fill-sort-key'?: DataDrivenPropertyValueSpecification<number>;
+}
+
+export interface FillPaint {
+  'fill-antialias'?: PropertyValueSpecification<boolean>;
+  'fill-opacity'?: DataDrivenPropertyValueSpecification<number>;
+  'fill-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+  'fill-outline-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
+  'fill-translate'?: PropertyValueSpecification<[number, number]>;
+  'fill-translate-anchor'?: PropertyValueSpecification<'map' | 'viewport'>;
+  'fill-pattern'?: DataDrivenPropertyValueSpecification<ResolvedImageSpecification>;
+}
+
+export type FillLayerStyle = FillLayout & FillPaint;
+
+export type AnyLayout = FillLayout;

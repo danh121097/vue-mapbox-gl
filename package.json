@@ -47,6 +47,8 @@
     "vue": "^3.4.27"
   },
   "devDependencies": {
+    "@turf/circle": "^7.0.0",
+    "@turf/helpers": "^7.0.0",
     "@types/geojson": "^7946.0.14",
     "@types/maplibre-gl": "^1.14.0",
     "@types/node": "^20.14.0",
