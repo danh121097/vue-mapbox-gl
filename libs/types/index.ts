@@ -3,17 +3,25 @@ import type { ComputedRef } from 'vue';
 import type {
   ColorSpecification,
   DataDrivenPropertyValueSpecification,
+  FeatureIdentifier,
   FilterSpecification,
   GeolocateControl,
   LayerSpecification,
+  LngLat,
   LngLatBoundsLike,
   LngLatLike,
   Map,
   MapEventType,
+  MapGeoJSONFeature,
   MapMouseEvent,
   MapOptions,
   MapStyleImageMissingEvent,
+  PaddingOptions,
+  Point,
+  PointLike,
   PropertyValueSpecification,
+  QueryRenderedFeaturesOptions,
+  QuerySourceFeatureOptions,
   ResolvedImageSpecification,
   StyleSetterOptions,
   StyleSpecification,
@@ -41,6 +49,56 @@ export interface CreateMaplibreActions {
 
 export type MaplibreActions = CreateMaplibreActions & {
   setMapOptions: (options: Partial<MapOptions>) => void;
+};
+
+export type MaplibreMethods = CreateMaplibreActions & {
+  getContainer: () => HTMLElement | undefined;
+  getCanvasContainer: () => HTMLElement | undefined;
+  getCanvas: () => HTMLCanvasElement | undefined;
+  getStyle: () => StyleSpecification | undefined;
+  getBounds: () => LngLatBoundsLike | undefined;
+  getCenter: () => LngLatLike | undefined;
+  getZoom: () => number | undefined;
+  getBearing: () => number | undefined;
+  getPadding: () => PaddingOptions | undefined;
+  getPitch: () => number | undefined;
+  getMinZoom: () => number | undefined;
+  getMaxZoom: () => number | undefined;
+  getMinPitch: () => number | undefined;
+  getMaxPitch: () => number | undefined;
+  getFilter: (layerId: string) => void | FilterSpecification;
+  getLayer: (layerId: string) => any | undefined;
+  getPaintProperty: (layerId: string, name: string) => any | undefined;
+  getLayoutProperty: (layerId: string, name: string) => any | undefined;
+  getSource: (sourceId: string) => any | undefined;
+  triggerRepaint: () => void;
+  project: (lnglat: LngLatLike) => Point | undefined;
+  unproject: (point: Point) => LngLat | undefined;
+  queryRenderedFeatures: (
+    point: PointLike | [PointLike, PointLike],
+    options?: QueryRenderedFeaturesOptions,
+  ) => MapGeoJSONFeature[] | undefined;
+  querySourceFeatures: (
+    sourceID: string,
+    options?: QuerySourceFeatureOptions,
+  ) => MapGeoJSONFeature[] | undefined;
+  queryTerrainElevation: (lnglat: LngLatLike) => number | null;
+  isStyleLoaded: () => boolean | void;
+  isMoving: () => boolean | undefined;
+  isZooming: () => boolean | undefined;
+  isRotating: () => boolean | undefined;
+  isEasing: () => boolean | undefined;
+  resize: () => void;
+  remove: () => void;
+  setFeatureState: (
+    options: FeatureIdentifier,
+    state: Record<string, any>,
+  ) => void;
+  removeFeatureState: (options: FeatureIdentifier, key: string) => void;
+  getFeatureState: (
+    options: FeatureIdentifier,
+  ) => Record<string, any> | undefined;
+  setPadding: (padding: PaddingOptions) => void;
 };
 
 export interface MapEventTypes extends MapEventType {

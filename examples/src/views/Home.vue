@@ -1,15 +1,16 @@
 <script lang="ts" setup>
+import { computed, watchEffect } from 'vue';
 import {
   FillLayer,
   GeoJsonSource,
   GeolocateControl,
   Mapbox,
 } from '@libs/components';
+import { useMapbox } from '@libs/composables';
 import type { GeolocateSuccess } from '@libs/types';
-import circle from '@turf/circle';
 import type { MapOptions, SourceSpecification } from 'maplibre-gl';
+import circle from '@turf/circle';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { computed } from 'vue';
 
 const options = computed<MapOptions>(() => ({
   container: 'map',
@@ -51,9 +52,15 @@ function makeSource(features: any[]): SourceSpecification {
     },
   };
 }
+
+const { register, mapInstance } = useMapbox();
+
+watchEffect(() => {
+  console.log('mapInstance.value', mapInstance.value);
+});
 </script>
 <template>
-  <Mapbox :options="options">
+  <Mapbox :options="options" :register="register">
     <GeolocateControl
       :options="{
         positionOptions: {
