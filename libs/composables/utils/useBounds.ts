@@ -5,7 +5,7 @@ import type {
   Map,
   LngLatBoundsLike,
   FitBoundsOptions,
-  CameraOptions
+  CameraForBoundsOptions
 } from 'maplibre-gl'
 
 export function useFitBounds(
@@ -37,10 +37,10 @@ export function useFitBounds(
 
 export function useCameraForBounds(
   map: ShallowRef<Nullable<Map>>,
-  options?: CameraOptions & { bounds: LngLatBoundsLike }
+  options?: CameraForBoundsOptions & { bounds: LngLatBoundsLike }
 ) {
   const bbox = ref<LngLatBoundsLike | undefined>(options?.bounds)
-  let cameraOptions: Undefinedable<CameraOptions> = options
+  let cameraOptions: Undefinedable<CameraForBoundsOptions> = options
 
   watchEffect(() => {
     if (map.value && bbox.value)
@@ -49,7 +49,7 @@ export function useCameraForBounds(
 
   function cameraForBounds(
     boundsVal: LngLatBoundsLike,
-    options?: CameraOptions
+    options?: CameraForBoundsOptions
   ) {
     bbox.value = boundsVal
     if (options) cameraOptions = options

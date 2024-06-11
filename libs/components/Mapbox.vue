@@ -24,12 +24,12 @@ import type {
 
 interface MapboxProps {
   options?: Partial<MapOptions>
-  register?: (mapboxComponentAction: MaplibreActions) => void
+  register?: (actions: MaplibreActions) => void
 }
 
 interface Emits {
   (e: keyof MapEventTypes, ev: any): void
-  (e: 'register', mapboxComponentAction: MaplibreActions): void
+  (e: 'register', actions: MaplibreActions): void
   (e: 'error', ev: ErrorEvent): void
   (e: 'load', ev: MapLibreEvent): void
   (e: 'idle', ev: MapLibreEvent): void
@@ -103,9 +103,8 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<MapboxProps>(), {
-  options: () => ({}) as Partial<MapOptions>
+  options: () => ({})
 })
-
 const emits = defineEmits<Emits>()
 
 const innerOptions = ref<Partial<MapOptions>>({})
@@ -208,7 +207,7 @@ watch(() => unref(mapOptions).renderWorldCopies!, setRenderWorldCopies)
   </div>
 </template>
 <style lang="scss">
-.maplibre_container {
+.mapbox_container {
   width: 100%;
   height: 100%;
 }

@@ -17,10 +17,10 @@ export function useMapEventListener(props: LayerEventProps) {
   const stopEffect = watchEffect(onCleanUp => {
     const map = unref(props.map)
     if (map) map.on(props.event, layerEventFn)
-    onCleanUp(remove)
+    onCleanUp(removeListener)
   })
 
-  function remove() {
+  function removeListener() {
     const map = unref(props.map)
     if (map) map.off(props.event, layerEventFn)
   }
@@ -30,6 +30,6 @@ export function useMapEventListener(props: LayerEventProps) {
   })
 
   return {
-    remove
+    removeListener
   }
 }

@@ -21,6 +21,7 @@ export function useFitScreenCoordinates(map: ShallowRef<Nullable<Map>>) {
     if (optionsVal) options = optionsVal
     if (bearingVal) bearing = bearingVal
   }
+
   watchEffect(() => {
     if (map.value && p0.value && p1.value) {
       bearing = bearing ?? map.value.getBearing()
