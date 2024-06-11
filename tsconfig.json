@@ -21,7 +21,8 @@
       "@libs/types": ["libs/types"],
       "@libs/composables": ["libs/composables"],
       "@libs/enums": ["libs/enums"],
-      "@libs/components": ["libs/components"]
+      "@libs/components": ["libs/components"],
+      "@libs/helpers": ["libs/helpers"]
     }
   },
   "include": [

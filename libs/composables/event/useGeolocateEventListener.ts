@@ -1,8 +1,8 @@
 import { onUnmounted, shallowRef, watchEffect } from 'vue';
 import type { Nullable } from '@libs/types';
 import type { GeolocateEventTypes } from '@libs/types';
-import type { GeolocateControl } from 'maplibre-gl';
 import type { MaybeRef } from 'vue';
+import type { GeolocateControl } from 'maplibre-gl';
 
 interface GeolocateEventProps {
   geolocate: MaybeRef<Nullable<GeolocateControl>>;

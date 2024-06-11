@@ -1,86 +1,86 @@
-import { watchEffect, ref } from 'vue'
-import type { ShallowRef } from 'vue'
-import type { Map, AnimationOptions } from 'maplibre-gl'
-import type { Nullable, Undefinedable } from '@libs/types'
+import { watchEffect, ref } from 'vue';
+import type { Nullable, Undefinedable } from '@libs/types';
+import type { ShallowRef } from 'vue';
+import type { Map, AnimationOptions } from 'maplibre-gl';
 
 export function useRotateTo(
   map: ShallowRef<Nullable<Map>>,
-  options?: AnimationOptions & { bearing: number }
+  options?: AnimationOptions & { bearing: number },
 ) {
-  const bearing = ref<number | undefined>(options?.bearing)
-  const aimationOptions = ref<Undefinedable<AnimationOptions>>(options)
+  const bearing = ref<number | undefined>(options?.bearing);
+  const aimationOptions = ref<Undefinedable<AnimationOptions>>(options);
 
   watchEffect(() => {
     if (map.value && aimationOptions.value)
-      map.value.rotateTo(bearing.value!, aimationOptions.value)
-  })
+      map.value.rotateTo(bearing.value!, aimationOptions.value);
+  });
 
   function rotateTo(bearingVal: number, options?: AnimationOptions) {
-    bearing.value = bearingVal
-    if (options) aimationOptions.value = options
+    bearing.value = bearingVal;
+    if (options) aimationOptions.value = options;
   }
 
   return {
-    rotateTo
-  }
+    rotateTo,
+  };
 }
 
 export function useResetNorth(
   map: ShallowRef<Nullable<Map>>,
-  options?: AnimationOptions
+  options?: AnimationOptions,
 ) {
-  const aimationOptions = ref<Undefinedable<AnimationOptions>>(options)
+  const aimationOptions = ref<Undefinedable<AnimationOptions>>(options);
 
   watchEffect(() => {
     if (map.value && aimationOptions.value)
-      map.value.resetNorth(aimationOptions.value)
-  })
+      map.value.resetNorth(aimationOptions.value);
+  });
 
   function resetNorth(options?: AnimationOptions) {
-    if (options) aimationOptions.value = options
+    if (options) aimationOptions.value = options;
   }
 
   return {
-    resetNorth
-  }
+    resetNorth,
+  };
 }
 
 export function useResetNorthPitch(
   map: ShallowRef<Nullable<Map>>,
-  options?: AnimationOptions
+  options?: AnimationOptions,
 ) {
-  const aimationOptions = ref<Undefinedable<AnimationOptions>>(options)
+  const aimationOptions = ref<Undefinedable<AnimationOptions>>(options);
 
   watchEffect(() => {
     if (map.value && aimationOptions.value)
-      map.value.resetNorthPitch(aimationOptions.value)
-  })
+      map.value.resetNorthPitch(aimationOptions.value);
+  });
 
   function resetNorthPitch(options?: AnimationOptions) {
-    if (options) aimationOptions.value = options
+    if (options) aimationOptions.value = options;
   }
 
   return {
-    resetNorthPitch
-  }
+    resetNorthPitch,
+  };
 }
 
 export function useSnapToNorth(
   map: ShallowRef<Nullable<Map>>,
-  options?: AnimationOptions
+  options?: AnimationOptions,
 ) {
-  const aimationOptions = ref<Undefinedable<AnimationOptions>>(options)
+  const aimationOptions = ref<Undefinedable<AnimationOptions>>(options);
 
   watchEffect(() => {
     if (map.value && aimationOptions.value)
-      map.value.snapToNorth(aimationOptions.value)
-  })
+      map.value.snapToNorth(aimationOptions.value);
+  });
 
   function snapToNorth(options?: AnimationOptions) {
-    if (options) aimationOptions.value = options
+    if (options) aimationOptions.value = options;
   }
 
   return {
-    snapToNorth
-  }
+    snapToNorth,
+  };
 }

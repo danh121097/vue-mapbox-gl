@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { Mapbox, GeolocateControl } from '@libs/components';
+import maplibre from 'maplibre-gl';
 import type { MapOptions } from 'maplibre-gl';
 import type { GeolocateSuccess } from '@libs/types';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -22,6 +23,8 @@ function onTrackUserLocationEnd(ev: GeolocateSuccess) {
 }
 
 function onGeolocate(ev: GeolocateSuccess) {
+  console.log('maplibre.', parseInt(maplibre.getVersion().split('.')[0], 10));
+
   console.log('onGeolocate', ev.target._watchState);
 }
 </script>

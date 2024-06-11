@@ -1,12 +1,12 @@
 import { shallowRef, watchEffect, onUnmounted } from 'vue';
 import { GeolocateControl } from 'maplibre-gl';
 import type { ShallowRef } from 'vue';
+import type { Nullable } from '@libs/types';
 import type {
   Map,
   GeolocateControlOptions,
   ControlPosition,
 } from 'maplibre-gl';
-import type { Nullable } from '@libs/types';
 
 interface GeolocateControlProps {
   map: ShallowRef<Nullable<Map>>;

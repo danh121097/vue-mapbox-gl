@@ -13,6 +13,7 @@ export default defineConfig({
       '@libs/enums': resolve(__dirname, './libs/enums'),
       '@libs/types': resolve(__dirname, './libs/types'),
       '@libs/components': resolve(__dirname, './libs/components'),
+      '@libs/helpers': resolve(__dirname, './libs/helpers'),
     },
   },
   build: {

@@ -5,12 +5,12 @@ import {
   useGeolocateControl,
   useGeolocateEventListener,
 } from '@libs/composables';
-import type { ControlPosition, GeolocateControlOptions } from 'maplibre-gl';
 import type {
   GeolocateSuccess,
   GeolocationPositionError,
   GeolocateEventTypes,
 } from '@libs/types';
+import type { ControlPosition, GeolocateControlOptions } from 'maplibre-gl';
 
 interface GeolocateControlProps {
   position?: ControlPosition;

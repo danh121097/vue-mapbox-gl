@@ -1,5 +1,5 @@
-import type { ComputedRef } from 'vue';
 import type { MapboxStatus } from '@libs/enums';
+import type { ComputedRef } from 'vue';
 import type {
   GeolocateControl,
   LngLatBoundsLike,
