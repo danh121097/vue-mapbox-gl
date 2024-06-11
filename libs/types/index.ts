@@ -161,7 +161,9 @@ export interface CreateBaseLayerActions<Layer extends LayerSpecification> {
 }
 
 export interface CreateLayerActions<Layer extends LayerSpecification>
-  extends CreateBaseLayerActions<Layer> {}
+  extends CreateBaseLayerActions<Layer> {
+  setStyle: (styleVal: AnyLayout & AnyPaint) => void;
+}
 
 export type Visibility = 'visible' | 'none';
 

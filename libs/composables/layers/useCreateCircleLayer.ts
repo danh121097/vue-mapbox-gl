@@ -1,12 +1,6 @@
 import { useCreateLayer } from '@libs/composables';
 import { filterStylePropertiesByKeys } from '@libs/helpers';
 import type {
-  Map,
-  SourceSpecification,
-  FilterSpecification,
-  CircleLayerSpecification,
-} from 'maplibre-gl';
-import type {
   CreateLayerActions,
   Nullable,
   CircleLayout,
@@ -14,6 +8,12 @@ import type {
   CircleLayerStyle,
 } from '@libs/types';
 import type { MaybeRef } from 'vue';
+import type {
+  Map,
+  SourceSpecification,
+  FilterSpecification,
+  CircleLayerSpecification,
+} from 'maplibre-gl';
 
 type Layer = CircleLayerSpecification;
 type Layout = CircleLayout;
@@ -49,9 +49,9 @@ interface CreateCircleLayerProps {
 }
 
 export function useCreateCircleLayer(props: CreateCircleLayerProps) {
-  props.style = props.style || {};
-  const paint: Paint = filterStylePropertiesByKeys(props.style, paintKeys);
-  const layout: Layout = filterStylePropertiesByKeys(props.style, layoutKeys);
+  const style = props.style || {};
+  const paint: Paint = filterStylePropertiesByKeys(style, paintKeys);
+  const layout: Layout = filterStylePropertiesByKeys(style, layoutKeys);
 
   const { setLayoutProperty, setPaintProperty, ...actions } =
     useCreateLayer<Layer>({
@@ -68,7 +68,13 @@ export function useCreateCircleLayer(props: CreateCircleLayerProps) {
       metadata: props.metadata,
       sourceLayer: props.sourceLayer,
       register: (actions, map) => {
-        props.register?.(actions, map);
+        props.register?.(
+          {
+            ...actions,
+            setStyle,
+          },
+          map,
+        );
       },
     });
 

@@ -30,6 +30,7 @@ interface Methods {
   ) => void;
   setZoomRange: (minzoom?: number, maxzoom?: number) => void;
   removeLayer: () => void;
+  setStyle: (styleVal: AnyLayout & AnyPaint) => void;
 }
 
 export function useLayer<T extends LayerSpecification>() {
@@ -129,6 +130,9 @@ export function useLayer<T extends LayerSpecification>() {
     },
     removeLayer: () => {
       getInstance()?.removeLayer();
+    },
+    setStyle: (styleVal: AnyLayout & AnyPaint) => {
+      getInstance()?.setStyle(styleVal);
     },
   };
 

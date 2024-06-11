@@ -66,7 +66,13 @@ export function useCreateFillLayer(props: CreateFillLayerProps) {
       metadata: props.metadata,
       sourceLayer: props.sourceLayer,
       register: (actions, map) => {
-        props.register?.(actions, map);
+        props.register?.(
+          {
+            ...actions,
+            setStyle,
+          },
+          map,
+        );
       },
     });
 
