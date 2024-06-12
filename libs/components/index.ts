@@ -5,3 +5,4 @@ export { default as FillLayer } from './FillLayer.vue';
 export { default as CircleLayer } from './CircleLayer.vue';
 export { default as LineLayer } from './LineLayer.vue';
 export { default as SymbolLayer } from './SymbolLayer.vue';
+export { default as Image } from './Image.vue';

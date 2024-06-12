@@ -1,7 +1,6 @@
 import type { MapboxStatus } from '@libs/enums';
 import type { ComputedRef } from 'vue';
 import type {
-  ExpressionSpecification,
   FeatureIdentifier,
   FilterSpecification,
   GeolocateControl,
@@ -18,6 +17,7 @@ import type {
   PointLike,
   QueryRenderedFeaturesOptions,
   QuerySourceFeatureOptions,
+  StyleImageInterface,
   StyleSetterOptions,
   StyleSpecification,
 } from 'maplibre-gl';
@@ -172,7 +172,111 @@ export interface Layout {
   visibility?: Visibility;
 }
 
-export type Expression = [ExpressionSpecification, ...any[]];
+type ExpressionName =
+  // Types
+  | 'array'
+  | 'boolean'
+  | 'collator'
+  | 'format'
+  | 'literal'
+  | 'number'
+  | 'number-format'
+  | 'object'
+  | 'string'
+  | 'image'
+  | 'to-boolean'
+  | 'to-color'
+  | 'to-number'
+  | 'to-string'
+  | 'typeof'
+  // Feature data
+  | 'feature-state'
+  | 'geometry-type'
+  | 'id'
+  | 'line-progress'
+  | 'properties'
+  // Lookup
+  | 'at'
+  | 'get'
+  | 'has'
+  | 'in'
+  | 'index-of'
+  | 'length'
+  | 'slice'
+  | 'config'
+  // Decision
+  | '!'
+  | '!='
+  | '<'
+  | '<='
+  | '=='
+  | '>'
+  | '>='
+  | 'all'
+  | 'any'
+  | 'case'
+  | 'match'
+  | 'coalesce'
+  | 'within'
+  // Ramps, scales, curves
+  | 'interpolate'
+  | 'interpolate-hcl'
+  | 'interpolate-lab'
+  | 'step'
+  // Variable binding
+  | 'let'
+  | 'var'
+  // String
+  | 'concat'
+  | 'downcase'
+  | 'is-supported-script'
+  | 'resolved-locale'
+  | 'upcase'
+  // Color
+  | 'hsl'
+  | 'hsla'
+  | 'rgb'
+  | 'rgba'
+  | 'to-rgba'
+  // Math
+  | '-'
+  | '*'
+  | '/'
+  | '%'
+  | '^'
+  | '+'
+  | 'abs'
+  | 'acos'
+  | 'asin'
+  | 'atan'
+  | 'ceil'
+  | 'cos'
+  | 'distance'
+  | 'e'
+  | 'floor'
+  | 'ln'
+  | 'ln2'
+  | 'log10'
+  | 'log2'
+  | 'max'
+  | 'min'
+  | 'pi'
+  | 'random'
+  | 'round'
+  | 'sin'
+  | 'sqrt'
+  | 'tan'
+  // Camera
+  | 'distance-from-center'
+  | 'pitch'
+  | 'zoom'
+  | 'raster-value'
+  // Lights
+  | 'measure-light'
+  // Heatmap
+  | 'heatmap-density';
+
+export type Expression = [ExpressionName, ...any[]];
 export interface StyleFunction {
   stops?: any[][];
   property?: string;
@@ -315,3 +419,14 @@ export type SymbolLayerStyle = SymbolLayout & SymbolPaint;
 export type AnyLayout = FillLayout | CircleLayout | LineLayout | SymbolLayout;
 
 export type AnyPaint = FillPaint | CirclePaint | LinePaint | SymbolPaint;
+
+export type ImageDatas =
+  | HTMLImageElement
+  | ImageBitmap
+  | ImageData
+  | {
+      width: number;
+      height: number;
+      data: Uint8Array | Uint8ClampedArray;
+    }
+  | StyleImageInterface;

@@ -66,10 +66,10 @@ export function useCreateGeoJsonSource({
       map.on('sourcedata', sourcedataEventFn);
     }
   }
-  function setData(dataVal: SourceSpecification) {
+  function setData(data: SourceSpecification) {
     const map = unref(mapRef);
     if (map && source.value && hasSource(map, sourceId))
-      dataVal && source.value.setData(dataVal as any);
+      data && source.value.setData(data as any);
   }
 
   function removeSource() {

@@ -25,6 +25,11 @@ const options = computed<MapOptions>(() => ({
 
 const fillData = computed(() => {
   const s = circle([103.8097, 1.3535], 400, {
+    properties: {
+      icon: 'sqkii',
+      iconSizeMax: 1,
+      iconSizeMin: 0.2,
+    },
     units: 'meters',
   });
   return makeSource([s]);
@@ -79,6 +84,7 @@ watchEffect(() => {
       @trackuserlocationend="onTrackUserLocationEnd"
       @geolocate="onGeolocate"
     />
+
     <GeoJsonSource :data="fillData">
       <FillLayer
         :style="{
