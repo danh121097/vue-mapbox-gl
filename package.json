@@ -1,7 +1,7 @@
 {
   "name": "vue3-mapbox",
   "description": "The features of Maplibre GL and Vue3 JS",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "author": {
     "name": "Danh Nguyen"
   },
@@ -44,12 +44,11 @@
   "dependencies": {
     "maplibre-gl": "^4.3.2",
     "vue": "^3.4.27",
-    "vue3-mapbox": "^3.0.3"
+    "vue3-mapbox": "^3.0.4"
   },
   "devDependencies": {
     "@turf/circle": "^7.0.0",
     "@turf/helpers": "^7.0.0",
-    "@types/geojson": "^7946.0.14",
     "@types/maplibre-gl": "^1.14.0",
     "@types/node": "^20.14.0",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
