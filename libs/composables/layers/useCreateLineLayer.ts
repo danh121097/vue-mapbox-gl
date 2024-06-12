@@ -42,10 +42,9 @@ const layoutKeys: (keyof Layout)[] = [
   'visibility',
 ];
 
-interface CreateFillLineProps {
+interface CreateLineProps {
   map: MaybeRef<Nullable<Map>>;
   source: MaybeRef<string | SourceSpecification | object | null>;
-  renderingMode?: string;
   id?: string;
   beforeId?: string;
   filter?: FilterSpecification;
@@ -57,7 +56,7 @@ interface CreateFillLineProps {
   register?: (actions: CreateLayerActions<Layer>, map: Map) => void;
 }
 
-export function useCreateLineLayer(props: CreateFillLineProps) {
+export function useCreateLineLayer(props: CreateLineProps) {
   const style = props.style || {};
   const paint: Paint = filterStylePropertiesByKeys(style, paintKeys);
   const layout: Layout = filterStylePropertiesByKeys(style, layoutKeys);
@@ -70,8 +69,8 @@ export function useCreateLineLayer(props: CreateFillLineProps) {
       id: props.id,
       beforeId: props.beforeId,
       filter: props.filter,
-      layout: layout,
-      paint: paint,
+      layout: layout as any,
+      paint: paint as any,
       maxzoom: props.maxzoom,
       minzoom: props.minzoom,
       metadata: props.metadata,

@@ -131,6 +131,17 @@ export type LayerTypes =
   | 'hillshade'
   | 'background';
 
+export type Anchor =
+  | 'center'
+  | 'left'
+  | 'right'
+  | 'top'
+  | 'bottom'
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
+
 export interface CreateBaseLayerActions<Layer extends LayerSpecification> {
   layerId: string;
   getLayer: ComputedRef<Nullable<Layer>>;
@@ -158,78 +169,149 @@ export interface CreateLayerActions<Layer extends LayerSpecification>
 export type Visibility = 'visible' | 'none';
 
 export interface Layout {
-  visibility?: Visibility | undefined;
+  visibility?: Visibility;
 }
 
 export type Expression = [ExpressionSpecification, ...any[]];
 export interface StyleFunction {
-  stops?: any[][] | undefined;
-  property?: string | undefined;
-  base?: number | undefined;
-  type?: 'identity' | 'exponential' | 'interval' | 'categorical' | undefined;
+  stops?: any[][];
+  property?: string;
+  base?: number;
+  type?: 'identity' | 'exponential' | 'interval' | 'categorical';
   default?: any;
-  colorSpace?: 'rgb' | 'lab' | 'hcl' | undefined;
+  colorSpace?: 'rgb' | 'lab' | 'hcl';
 }
 export interface FillLayout extends Layout {
-  'fill-sort-key'?: number | Expression | undefined;
+  'fill-sort-key'?: number | Expression;
 }
 
 export interface FillPaint {
-  'fill-antialias'?: boolean | Expression | undefined;
-  'fill-opacity'?: number | StyleFunction | Expression | undefined;
-  'fill-color'?: string | StyleFunction | Expression | undefined;
-  'fill-outline-color'?: string | StyleFunction | Expression | undefined;
-  'fill-translate'?: number[] | undefined;
-  'fill-translate-anchor'?: 'map' | 'viewport' | undefined;
-  'fill-pattern'?: string | Expression | undefined;
+  'fill-antialias'?: boolean | Expression;
+  'fill-opacity'?: number | StyleFunction | Expression;
+  'fill-color'?: string | StyleFunction | Expression;
+  'fill-outline-color'?: string | StyleFunction | Expression;
+  'fill-translate'?: number[];
+  'fill-translate-anchor'?: 'map' | 'viewport';
+  'fill-pattern'?: string | Expression;
 }
 
 export type FillLayerStyle = FillLayout & FillPaint;
 
 export interface CircleLayout extends Layout {
-  'circle-sort-key'?: number | Expression | undefined;
+  'circle-sort-key'?: number | Expression;
 }
 
 export interface CirclePaint {
-  'circle-radius'?: number | StyleFunction | Expression | undefined;
-  'circle-color'?: string | StyleFunction | Expression | undefined;
-  'circle-blur'?: number | StyleFunction | Expression | undefined;
-  'circle-opacity'?: number | StyleFunction | Expression | undefined;
-  'circle-translate'?: number[] | Expression | undefined;
-  'circle-translate-anchor'?: 'map' | 'viewport' | undefined;
-  'circle-pitch-scale'?: 'map' | 'viewport' | undefined;
-  'circle-pitch-alignment'?: 'map' | 'viewport' | undefined;
-  'circle-stroke-width'?: number | StyleFunction | Expression | undefined;
-  'circle-stroke-color'?: string | StyleFunction | Expression | undefined;
-  'circle-stroke-opacity'?: number | StyleFunction | Expression | undefined;
+  'circle-radius'?: number | StyleFunction | Expression;
+  'circle-color'?: string | StyleFunction | Expression;
+  'circle-blur'?: number | StyleFunction | Expression;
+  'circle-opacity'?: number | StyleFunction | Expression;
+  'circle-translate'?: number[] | Expression;
+  'circle-translate-anchor'?: 'map' | 'viewport';
+  'circle-pitch-scale'?: 'map' | 'viewport';
+  'circle-pitch-alignment'?: 'map' | 'viewport';
+  'circle-stroke-width'?: number | StyleFunction | Expression;
+  'circle-stroke-color'?: string | StyleFunction | Expression;
+  'circle-stroke-opacity'?: number | StyleFunction | Expression;
 }
 
 export type CircleLayerStyle = CircleLayout & CirclePaint;
 
 export interface LineLayout extends Layout {
-  'line-cap'?: 'butt' | 'round' | 'square' | Expression | undefined;
-  'line-join'?: 'bevel' | 'round' | 'miter' | Expression | undefined;
-  'line-miter-limit'?: number | Expression | undefined;
-  'line-round-limit'?: number | Expression | undefined;
-  'line-sort-key'?: number | Expression | undefined;
+  'line-cap'?: 'butt' | 'round' | 'square' | Expression;
+  'line-join'?: 'bevel' | 'round' | 'miter' | Expression;
+  'line-miter-limit'?: number | Expression;
+  'line-round-limit'?: number | Expression;
+  'line-sort-key'?: number | Expression;
 }
 
 export interface LinePaint {
-  'line-opacity'?: number | StyleFunction | Expression | undefined;
-  'line-color'?: string | StyleFunction | Expression | undefined;
-  'line-translate'?: number[] | Expression | undefined;
-  'line-translate-anchor'?: 'map' | 'viewport' | undefined;
-  'line-width'?: number | StyleFunction | Expression | undefined;
-  'line-gap-width'?: number | StyleFunction | Expression | undefined;
-  'line-offset'?: number | StyleFunction | Expression | undefined;
-  'line-blur'?: number | StyleFunction | Expression | undefined;
-  'line-dasharray'?: number[] | Expression | undefined;
-  'line-pattern'?: string | Expression | undefined;
-  'line-gradient'?: Expression | undefined;
+  'line-opacity'?: number | StyleFunction | Expression;
+  'line-color'?: string | StyleFunction | Expression;
+  'line-translate'?: number[] | Expression;
+  'line-translate-anchor'?: 'map' | 'viewport';
+  'line-width'?: number | StyleFunction | Expression;
+  'line-gap-width'?: number | StyleFunction | Expression;
+  'line-offset'?: number | StyleFunction | Expression;
+  'line-blur'?: number | StyleFunction | Expression;
+  'line-dasharray'?: number[] | Expression;
+  'line-pattern'?: string | Expression;
+  'line-gradient'?: Expression;
 }
 
 export type LineLayerStyle = LineLayout & LinePaint;
 
-export type AnyLayout = FillLayout | CircleLayout | LineLayout;
+export interface SymbolLayout extends Layout {
+  'symbol-placement'?: 'point' | 'line' | 'line-center';
+  'symbol-spacing'?: number | Expression;
+  'symbol-avoid-edges'?: boolean;
+  'symbol-sort-key'?: number | Expression;
+  'symbol-z-order'?: 'auto' | 'viewport-y' | 'source';
+  'icon-allow-overlap'?: boolean | StyleFunction | Expression;
+  'icon-overlap'?: 'never' | 'always' | 'cooperative';
+  'icon-ignore-placement'?: boolean | Expression;
+  'icon-optional'?: boolean;
+  'icon-rotation-alignment'?: 'map' | 'viewport' | 'auto';
+  'icon-size'?: number | StyleFunction | Expression;
+  'icon-text-fit'?: 'none' | 'width' | 'height' | 'both';
+  'icon-text-fit-padding'?: number[] | Expression;
+  'icon-image'?: string | StyleFunction | Expression;
+  'icon-rotate'?: number | StyleFunction | Expression;
+  'icon-padding'?: number | Expression;
+  'icon-keep-upright'?: boolean;
+  'icon-offset'?: number[] | StyleFunction | Expression;
+  'icon-anchor'?: Anchor;
+  'icon-pitch-alignment'?: 'map' | 'viewport' | 'auto';
+  'text-pitch-alignment'?: 'map' | 'viewport' | 'auto';
+  'text-rotation-alignment'?: 'map' | 'viewport' | 'viewport-glyph' | 'auto';
+  'text-field'?: string | StyleFunction | Expression;
+  'text-font'?: string[] | Expression;
+  'text-size'?: number | StyleFunction | Expression;
+  'text-max-width'?: number | StyleFunction | Expression;
+  'text-line-height'?: number | Expression;
+  'text-letter-spacing'?: number | Expression;
+  'text-justify'?: 'auto' | 'left' | 'center' | 'right';
+  'text-radial-offset'?: number | Expression;
+  'text-variable-anchor'?: Anchor[];
+  'text-variable-anchor-offset'?: Array<string | [number, number]>;
+  'text-anchor'?: Anchor;
+  'text-max-angle'?: number | Expression;
+  'text-writing-mode'?: Array<'horizontal' | 'vertical'>;
+  'text-rotate'?: number | StyleFunction | Expression;
+  'text-padding'?: number | Expression;
+  'text-keep-upright'?: boolean;
+  'text-transform'?:
+    | 'none'
+    | 'uppercase'
+    | 'lowercase'
+    | StyleFunction
+    | Expression;
+  'text-offset'?: number[] | Expression;
+  'text-allow-overlap'?: boolean;
+  'text-overlap'?: 'never' | 'always' | 'cooperative';
+  'text-ignore-placement'?: boolean;
+  'text-optional'?: boolean;
+}
 
-export type AnyPaint = FillPaint | CirclePaint | LinePaint;
+export interface SymbolPaint {
+  'icon-opacity'?: number | StyleFunction | Expression;
+  'icon-color'?: string | StyleFunction | Expression;
+  'icon-halo-color'?: string | StyleFunction | Expression;
+  'icon-halo-width'?: number | StyleFunction | Expression;
+  'icon-halo-blur'?: number | StyleFunction | Expression;
+  'icon-translate'?: number[] | Expression;
+  'icon-translate-anchor'?: 'map' | 'viewport';
+  'text-opacity'?: number | StyleFunction | Expression;
+  'text-color'?: string | StyleFunction | Expression;
+  'text-halo-color'?: string | StyleFunction | Expression;
+  'text-halo-width'?: number | StyleFunction | Expression;
+  'text-halo-blur'?: number | StyleFunction | Expression;
+  'text-translate'?: number[] | Expression;
+  'text-translate-anchor'?: 'map' | 'viewport';
+}
+
+export type SymbolLayerStyle = SymbolLayout & SymbolPaint;
+
+export type AnyLayout = FillLayout | CircleLayout | LineLayout | SymbolLayout;
+
+export type AnyPaint = FillPaint | CirclePaint | LinePaint | SymbolPaint;
