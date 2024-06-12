@@ -2,6 +2,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 export * from '@libs/composables';
 export * from '@libs/enums';
 export * from '@libs/helpers';
+export * from '@libs/types';
 export * from 'maplibre-gl';
 import {
   Mapbox,

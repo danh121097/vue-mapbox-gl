@@ -7,12 +7,14 @@ import {
   Mapbox,
   CircleLayer,
   LineLayer,
-} from '@libs/components';
-import { useMapbox } from '@libs/composables';
-import type { GeolocateSuccess } from '@libs/types';
-import type { MapOptions, SourceSpecification } from 'maplibre-gl';
+  useMapbox,
+} from 'vue3-mapbox';
+import type {
+  MapOptions,
+  SourceSpecification,
+  GeolocateSuccess,
+} from 'vue3-mapbox';
 import circle from '@turf/circle';
-import 'maplibre-gl/dist/maplibre-gl.css';
 
 const options = computed<MapOptions>(() => ({
   container: 'map',
