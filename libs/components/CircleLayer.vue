@@ -34,25 +34,25 @@ interface LayerProps {
   register?: (
     actions: CreateLayerActions<FillLayerSpecification>,
     map: Map,
-  ) => any;
+  ) => void;
 }
 
 interface Emits {
-  (e: keyof MapLayerEventType, ev: any): any;
-  (e: 'register', actions: any, map: Map): any;
-  (e: 'click', ev: MapLayerMouseEvent): any;
-  (e: 'dblclick', ev: MapLayerMouseEvent): any;
-  (e: 'mousedown', ev: MapLayerMouseEvent): any;
-  (e: 'mouseup', ev: MapLayerMouseEvent): any;
-  (e: 'mousemove', ev: MapLayerMouseEvent): any;
-  (e: 'mouseenter', ev: MapLayerMouseEvent): any;
-  (e: 'mouseleave', ev: MapLayerMouseEvent): any;
-  (e: 'mouseover', ev: MapLayerMouseEvent): any;
-  (e: 'mouseout', ev: MapLayerMouseEvent): any;
-  (e: 'contextmenu', ev: MapLayerMouseEvent): any;
-  (e: 'touchstart', ev: MapLayerTouchEvent): any;
-  (e: 'touchend', ev: MapLayerTouchEvent): any;
-  (e: 'touchcancel', ev: MapLayerTouchEvent): any;
+  (e: keyof MapLayerEventType, ev: any): void;
+  (e: 'register', actions: any, map: Map): void;
+  (e: 'click', ev: MapLayerMouseEvent): void;
+  (e: 'dblclick', ev: MapLayerMouseEvent): void;
+  (e: 'mousedown', ev: MapLayerMouseEvent): void;
+  (e: 'mouseup', ev: MapLayerMouseEvent): void;
+  (e: 'mousemove', ev: MapLayerMouseEvent): void;
+  (e: 'mouseenter', ev: MapLayerMouseEvent): void;
+  (e: 'mouseleave', ev: MapLayerMouseEvent): void;
+  (e: 'mouseover', ev: MapLayerMouseEvent): void;
+  (e: 'mouseout', ev: MapLayerMouseEvent): void;
+  (e: 'contextmenu', ev: MapLayerMouseEvent): void;
+  (e: 'touchstart', ev: MapLayerTouchEvent): void;
+  (e: 'touchend', ev: MapLayerTouchEvent): void;
+  (e: 'touchcancel', ev: MapLayerTouchEvent): void;
 }
 
 const props = withDefaults(defineProps<LayerProps>(), {

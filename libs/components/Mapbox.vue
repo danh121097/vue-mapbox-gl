@@ -4,18 +4,20 @@ import { MapProvideKey, MapboxEvents, MapboxStatus } from '@libs/enums';
 import { useCreateMapbox, useMapEventListener } from '@libs/composables';
 import type {
   CreateMaplibreActions,
-  MaplibreActions,
   MapEventTypes,
+  MaplibreActions,
 } from '@libs/types';
 import type {
-  MapLibreEvent,
-  MapOptions,
-  MapLibreZoomEvent,
   MapContextEvent,
   MapDataEvent,
+  MapLibreEvent,
+  MapLibreZoomEvent,
   MapMouseEvent,
+  MapOptions,
   MapSourceDataEvent,
   MapStyleDataEvent,
+  MapStyleImageMissingEvent,
+  MapTerrainEvent,
   MapTouchEvent,
   MapWheelEvent,
 } from 'maplibre-gl';
@@ -40,9 +42,11 @@ interface Emits {
   (e: 'data', ev: MapDataEvent): void;
   (e: 'tiledataloading', ev: MapDataEvent): void;
   (e: 'sourcedataloading', ev: MapSourceDataEvent): void;
-  (e: 'styledataloading', ev: MapStyleDataEvent): void;
   (e: 'sourcedata', ev: MapSourceDataEvent): void;
   (e: 'styledata', ev: MapStyleDataEvent): void;
+  (e: 'styleimagemissing', ev: MapStyleImageMissingEvent): void;
+  (e: 'dataabort', ev: MapDataEvent): void;
+  (e: 'sourcedataabort', ev: MapSourceDataEvent): void;
   (e: 'boxzoomcancel', ev: MapLibreZoomEvent): void;
   (e: 'boxzoomstart', ev: MapLibreZoomEvent): void;
   (e: 'boxzoomend', ev: MapLibreZoomEvent): void;
@@ -58,22 +62,53 @@ interface Emits {
   (e: 'mousedown', ev: MapMouseEvent): void;
   (e: 'mouseout', ev: MapMouseEvent): void;
   (e: 'mouseover', ev: MapMouseEvent): void;
-  (e: 'movestart', ev: MouseEvent): void;
-  (e: 'move', ev: MouseEvent): void;
-  (e: 'moveend', ev: MouseEvent): void;
-  (e: 'zoomstart', ev: MapLibreZoomEvent): void;
-  (e: 'zoom', ev: MapLibreZoomEvent): void;
-  (e: 'zoomend', ev: MapLibreZoomEvent): void;
-  (e: 'rotatestart', ev: MouseEvent): void;
-  (e: 'rotate', ev: MouseEvent): void;
-  (e: 'rotateend', ev: MouseEvent): void;
-  (e: 'dragstart', ev: MouseEvent): void;
-  (e: 'drag', ev: MouseEvent): void;
-  (e: 'dragend', ev: MouseEvent): void;
-  (e: 'pitchstart', ev: MouseEvent): void;
-  (e: 'pitch', ev: MouseEvent): void;
-  (e: 'pitchend', ev: MouseEvent): void;
+  (
+    e: 'movestart',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>,
+  ): void;
+  (
+    e: 'move',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>,
+  ): void;
+  (
+    e: 'moveend',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>,
+  ): void;
+  (
+    e: 'zoomstart',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>,
+  ): void;
+  (
+    e: 'zoom',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>,
+  ): void;
+  (
+    e: 'zoomend',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>,
+  ): void;
+  (
+    e: 'rotatestart',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>,
+  ): void;
+  (e: 'rotate', ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>): void;
+  (
+    e: 'rotateend',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>,
+  ): void;
+  (
+    e: 'dragstart',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>,
+  ): void;
+  (e: 'drag', ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>): void;
+  (e: 'dragend', ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>): void;
+  (
+    e: 'pitchstart',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>,
+  ): void;
+  (e: 'pitch', ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>): void;
+  (e: 'pitchend', ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>): void;
   (e: 'wheel', ev: MapWheelEvent): void;
+  (e: 'terrain', ev: MapTerrainEvent): void;
 }
 
 const props = withDefaults(defineProps<MapboxProps>(), {

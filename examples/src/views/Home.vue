@@ -87,7 +87,6 @@ watchEffect(() => {
         @register="registerLayer"
       />
     </GeoJsonSource>
-
     <GeoJsonSource :data="circleData">
       <CircleLayer
         :style="{

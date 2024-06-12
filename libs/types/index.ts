@@ -13,9 +13,7 @@ import type {
   Map,
   MapEventType,
   MapGeoJSONFeature,
-  MapMouseEvent,
   MapOptions,
-  MapStyleImageMissingEvent,
   PaddingOptions,
   Point,
   PointLike,
@@ -101,12 +99,7 @@ export type MaplibreMethods = CreateMaplibreActions & {
   setPadding: (padding: PaddingOptions) => void;
 };
 
-export interface MapEventTypes extends MapEventType {
-  styleimagemissing: MapStyleImageMissingEvent;
-  preclick: MapMouseEvent;
-  mouseleave: MapMouseEvent;
-  mouseenter: MapMouseEvent;
-}
+export interface MapEventTypes extends MapEventType {}
 
 export interface GeolocationPositionError {
   code: number;
