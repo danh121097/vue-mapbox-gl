@@ -1,7 +1,7 @@
 {
   "name": "vue3-mapbox",
   "description": "The features of Maplibre GL and Vue3 JS",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "author": {
     "name": "Danh Nguyen"
   },
@@ -44,7 +44,7 @@
   "dependencies": {
     "maplibre-gl": "^4.3.2",
     "vue": "^3.4.27",
-    "vue3-mapbox": "^3.0.5"
+    "vue3-mapbox": "^3.0.6"
   },
   "devDependencies": {
     "@turf/circle": "^7.0.0",
