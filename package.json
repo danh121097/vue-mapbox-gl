@@ -1,7 +1,7 @@
 {
   "name": "vue3-mapbox",
   "description": "The features of Maplibre GL and Vue3 JS",
-  "version": "2.0.0",
+  "version": "3.0.1",
   "author": {
     "name": "Danh Nguyen"
   },
@@ -22,15 +22,15 @@
     "dist/index.js",
     "dist/index.umd.cjs",
     "dist/style.css",
-    "dist/lib"
+    "dist/libs"
   ],
   "module": "./dist/index.js",
   "main": "./dist/index.umd.cjs",
-  "types": "./dist/lib/index.d.ts",
+  "types": "./dist/libs/index.d.ts",
   "style": "./dist/style.css",
   "exports": {
     ".": {
-      "types": "./dist/lib/index.d.ts",
+      "types": "./dist/libs/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.umd.cjs"
     }
@@ -40,11 +40,13 @@
     "build": "vue-tsc --noEmit && vite build && vue-tsc --declaration --emitDeclarationOnly",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
-    "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\""
+    "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\"",
+    "deploy": "yarn build && yarn publish"
   },
   "dependencies": {
     "maplibre-gl": "^4.3.2",
-    "vue": "^3.4.27"
+    "vue": "^3.4.27",
+    "vue3-mapbox": "^3.0.0"
   },
   "devDependencies": {
     "@turf/circle": "^7.0.0",
