@@ -1,9 +1,10 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
-export * from '@libs/composables';
-export * from '@libs/enums';
-export * from '@libs/helpers';
-export * from '@libs/types';
-export * from 'maplibre-gl';
+export * from './composables';
+export * from './enums';
+export * from './helpers';
+export * from './types';
+import * as maplibre from 'maplibre-gl';
+export default maplibre;
 import {
   Mapbox,
   GeolocateControl,
@@ -13,7 +14,7 @@ import {
   LineLayer,
   SymbolLayer,
   Image,
-} from '@libs/components';
+} from './components';
 export {
   Mapbox,
   GeolocateControl,

@@ -44,7 +44,7 @@
   "dependencies": {
     "maplibre-gl": "^4.3.2",
     "vue": "^3.4.27",
-    "vue3-mapbox": "^3.0.4"
+    "vue3-mapbox": "^3.0.5"
   },
   "devDependencies": {
     "@turf/circle": "^7.0.0",

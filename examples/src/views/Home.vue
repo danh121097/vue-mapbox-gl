@@ -15,6 +15,7 @@ import type {
   GeolocateSuccess,
 } from 'vue3-mapbox';
 import circle from '@turf/circle';
+import 'vue3-mapbox/dist/style.css';
 
 const options = computed<MapOptions>(() => ({
   container: 'map',
