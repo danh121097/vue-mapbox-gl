@@ -34,7 +34,6 @@ const layoutKeys: (keyof Layout)[] = ['fill-sort-key', 'visibility'];
 interface CreateFillLayerProps {
   map: MaybeRef<Nullable<Map>>;
   source: MaybeRef<string | SourceSpecification | object | null>;
-  renderingMode?: string;
   id?: string;
   beforeId?: string;
   filter?: FilterSpecification;

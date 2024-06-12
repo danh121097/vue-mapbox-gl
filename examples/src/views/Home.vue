@@ -6,8 +6,9 @@ import {
   GeolocateControl,
   Mapbox,
   CircleLayer,
+  LineLayer,
 } from '@libs/components';
-import { useLayer, useMapbox } from '@libs/composables';
+import { useMapbox } from '@libs/composables';
 import type { GeolocateSuccess } from '@libs/types';
 import type { MapOptions, SourceSpecification } from 'maplibre-gl';
 import circle from '@turf/circle';
@@ -17,6 +18,7 @@ const options = computed<MapOptions>(() => ({
   container: 'map',
   style: 'https://worldwidemaps.sqkii.com/api/maps/purple/style.json',
   center: [103.8198, 1.3521],
+  zoom: 12,
   minZoom: 9,
   maxZoom: 20,
 }));
@@ -58,7 +60,6 @@ function makeSource(features: any[]): SourceSpecification {
 }
 
 const { register: registerMap, mapInstance } = useMapbox();
-const { register: registerLayer } = useLayer();
 
 watchEffect(() => {
   console.log('mapInstance.value', mapInstance.value);
@@ -84,7 +85,12 @@ watchEffect(() => {
           'fill-color': '#ffffff',
           'fill-opacity': 0.5,
         }"
-        @register="registerLayer"
+      />
+      <LineLayer
+        :style="{
+          'line-color': '#ff0000',
+          'line-width': 5,
+        }"
       />
     </GeoJsonSource>
     <GeoJsonSource :data="circleData">

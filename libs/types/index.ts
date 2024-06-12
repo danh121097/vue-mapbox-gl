@@ -1,8 +1,7 @@
 import type { MapboxStatus } from '@libs/enums';
 import type { ComputedRef } from 'vue';
 import type {
-  ColorSpecification,
-  DataDrivenPropertyValueSpecification,
+  ExpressionSpecification,
   FeatureIdentifier,
   FilterSpecification,
   GeolocateControl,
@@ -17,10 +16,8 @@ import type {
   PaddingOptions,
   Point,
   PointLike,
-  PropertyValueSpecification,
   QueryRenderedFeaturesOptions,
   QuerySourceFeatureOptions,
-  ResolvedImageSpecification,
   StyleSetterOptions,
   StyleSpecification,
 } from 'maplibre-gl';
@@ -164,42 +161,75 @@ export interface Layout {
   visibility?: Visibility | undefined;
 }
 
+export type Expression = [ExpressionSpecification, ...any[]];
+export interface StyleFunction {
+  stops?: any[][] | undefined;
+  property?: string | undefined;
+  base?: number | undefined;
+  type?: 'identity' | 'exponential' | 'interval' | 'categorical' | undefined;
+  default?: any;
+  colorSpace?: 'rgb' | 'lab' | 'hcl' | undefined;
+}
 export interface FillLayout extends Layout {
-  'fill-sort-key'?: DataDrivenPropertyValueSpecification<number>;
+  'fill-sort-key'?: number | Expression | undefined;
 }
 
 export interface FillPaint {
-  'fill-antialias'?: PropertyValueSpecification<boolean>;
-  'fill-opacity'?: DataDrivenPropertyValueSpecification<number>;
-  'fill-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
-  'fill-outline-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
-  'fill-translate'?: PropertyValueSpecification<[number, number]>;
-  'fill-translate-anchor'?: PropertyValueSpecification<'map' | 'viewport'>;
-  'fill-pattern'?: DataDrivenPropertyValueSpecification<ResolvedImageSpecification>;
+  'fill-antialias'?: boolean | Expression | undefined;
+  'fill-opacity'?: number | StyleFunction | Expression | undefined;
+  'fill-color'?: string | StyleFunction | Expression | undefined;
+  'fill-outline-color'?: string | StyleFunction | Expression | undefined;
+  'fill-translate'?: number[] | undefined;
+  'fill-translate-anchor'?: 'map' | 'viewport' | undefined;
+  'fill-pattern'?: string | Expression | undefined;
 }
 
 export type FillLayerStyle = FillLayout & FillPaint;
 
 export interface CircleLayout extends Layout {
-  'circle-sort-key'?: DataDrivenPropertyValueSpecification<number>;
+  'circle-sort-key'?: number | Expression | undefined;
 }
 
 export interface CirclePaint {
-  'circle-radius'?: DataDrivenPropertyValueSpecification<number>;
-  'circle-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
-  'circle-blur'?: DataDrivenPropertyValueSpecification<number>;
-  'circle-opacity'?: DataDrivenPropertyValueSpecification<number>;
-  'circle-translate'?: PropertyValueSpecification<[number, number]>;
-  'circle-translate-anchor'?: PropertyValueSpecification<'map' | 'viewport'>;
-  'circle-pitch-scale'?: PropertyValueSpecification<'map' | 'viewport'>;
-  'circle-pitch-alignment'?: PropertyValueSpecification<'map' | 'viewport'>;
-  'circle-stroke-width'?: DataDrivenPropertyValueSpecification<number>;
-  'circle-stroke-color'?: DataDrivenPropertyValueSpecification<ColorSpecification>;
-  'circle-stroke-opacity'?: DataDrivenPropertyValueSpecification<number>;
+  'circle-radius'?: number | StyleFunction | Expression | undefined;
+  'circle-color'?: string | StyleFunction | Expression | undefined;
+  'circle-blur'?: number | StyleFunction | Expression | undefined;
+  'circle-opacity'?: number | StyleFunction | Expression | undefined;
+  'circle-translate'?: number[] | Expression | undefined;
+  'circle-translate-anchor'?: 'map' | 'viewport' | undefined;
+  'circle-pitch-scale'?: 'map' | 'viewport' | undefined;
+  'circle-pitch-alignment'?: 'map' | 'viewport' | undefined;
+  'circle-stroke-width'?: number | StyleFunction | Expression | undefined;
+  'circle-stroke-color'?: string | StyleFunction | Expression | undefined;
+  'circle-stroke-opacity'?: number | StyleFunction | Expression | undefined;
 }
 
 export type CircleLayerStyle = CircleLayout & CirclePaint;
 
-export type AnyLayout = FillLayout | CircleLayout;
+export interface LineLayout extends Layout {
+  'line-cap'?: 'butt' | 'round' | 'square' | Expression | undefined;
+  'line-join'?: 'bevel' | 'round' | 'miter' | Expression | undefined;
+  'line-miter-limit'?: number | Expression | undefined;
+  'line-round-limit'?: number | Expression | undefined;
+  'line-sort-key'?: number | Expression | undefined;
+}
 
-export type AnyPaint = FillPaint | CirclePaint;
+export interface LinePaint {
+  'line-opacity'?: number | StyleFunction | Expression | undefined;
+  'line-color'?: string | StyleFunction | Expression | undefined;
+  'line-translate'?: number[] | Expression | undefined;
+  'line-translate-anchor'?: 'map' | 'viewport' | undefined;
+  'line-width'?: number | StyleFunction | Expression | undefined;
+  'line-gap-width'?: number | StyleFunction | Expression | undefined;
+  'line-offset'?: number | StyleFunction | Expression | undefined;
+  'line-blur'?: number | StyleFunction | Expression | undefined;
+  'line-dasharray'?: number[] | Expression | undefined;
+  'line-pattern'?: string | Expression | undefined;
+  'line-gradient'?: Expression | undefined;
+}
+
+export type LineLayerStyle = LineLayout & LinePaint;
+
+export type AnyLayout = FillLayout | CircleLayout | LineLayout;
+
+export type AnyPaint = FillPaint | CirclePaint | LinePaint;
