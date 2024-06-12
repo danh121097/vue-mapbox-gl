@@ -7,6 +7,7 @@ import {
   Mapbox,
   CircleLayer,
   LineLayer,
+  Marker,
   useMapbox,
 } from 'vue3-mapbox';
 import type {
@@ -102,6 +103,7 @@ watchEffect(() => {
         }"
       />
     </GeoJsonSource>
+    <Marker :lnglat="[103.8097, 1.3535]" draggable />
     <GeoJsonSource :data="circleData">
       <CircleLayer
         :style="{

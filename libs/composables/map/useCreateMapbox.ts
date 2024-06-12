@@ -78,6 +78,7 @@ export function useCreateMapbox(
   }
 
   function mapEventError(ev: MapLibreEvent) {
+    mapStatus.value = MapboxStatus.Error;
     console.warn('map error', ev);
   }
 

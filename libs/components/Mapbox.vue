@@ -201,8 +201,9 @@ watch(() => unref(mapOptions).renderWorldCopies!, setRenderWorldCopies);
 </script>
 <template>
   <div ref="maplibreElRef" class="maplibre_container">
-    <slot v-if="mapStatus >= MapboxStatus.Loading" name="beforeLoad" />
-    <slot v-if="mapStatus >= MapboxStatus.Loaded" name="default" />
+    <slot v-if="mapStatus === MapboxStatus.Loading" name="beforeLoad" />
+    <slot v-if="mapStatus === MapboxStatus.Error" name="error" />
+    <slot v-if="mapStatus === MapboxStatus.Loaded" name="default" />
   </div>
 </template>
 <style lang="scss">

@@ -6,3 +6,5 @@ export { default as CircleLayer } from './CircleLayer.vue';
 export { default as LineLayer } from './LineLayer.vue';
 export { default as SymbolLayer } from './SymbolLayer.vue';
 export { default as Image } from './Image.vue';
+export { default as Popup } from './Popup.vue';
+export { default as Marker } from './Marker.vue';

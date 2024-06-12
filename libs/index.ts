@@ -3,8 +3,7 @@ export * from './composables';
 export * from './enums';
 export * from './helpers';
 export * from './types';
-import * as maplibre from 'maplibre-gl';
-export default maplibre;
+export * from 'maplibre-gl';
 import {
   Mapbox,
   GeolocateControl,
@@ -14,6 +13,8 @@ import {
   LineLayer,
   SymbolLayer,
   Image,
+  Popup,
+  Marker,
 } from './components';
 export {
   Mapbox,
@@ -24,4 +25,6 @@ export {
   LineLayer,
   SymbolLayer,
   Image,
+  Popup,
+  Marker,
 };

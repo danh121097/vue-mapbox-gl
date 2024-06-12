@@ -2462,6 +2462,24 @@ vue3-mapbox@^3.0.5:
     vue "^3.4.27"
     vue3-mapbox "^3.0.4"
 
+vue3-mapbox@^3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/vue3-mapbox/-/vue3-mapbox-3.0.6.tgz#a4547b36acbf1046eede5cd74b0f95b7c3c43ecb"
+  integrity sha512-Pxl3Q0W30SOxetmeJj5FUnWFmNL+HI5hzyAzKDsueoBsP9IJvl/9sTfwGZV45WQ/N5deIGmWoA9aWYs5ZrAjcA==
+  dependencies:
+    maplibre-gl "^4.3.2"
+    vue "^3.4.27"
+    vue3-mapbox "^3.0.5"
+
+vue3-mapbox@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/vue3-mapbox/-/vue3-mapbox-3.0.8.tgz#4d233964471b2ec8e9680b92c40fe498558ad692"
+  integrity sha512-iUvTNr4LhKy25nYdmsL/O6w+/Jk/76Ab1vDo5izFI/JkxDSuJ1hgxhjtFaBLqhg2dttTYnfUiHftzDT8gQV7Tg==
+  dependencies:
+    maplibre-gl "^4.3.2"
+    vue "^3.4.27"
+    vue3-mapbox "^3.0.6"
+
 vue@^3.4.27:
   version "3.4.27"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.4.27.tgz#40b7d929d3e53f427f7f5945386234d2854cc2a1"
