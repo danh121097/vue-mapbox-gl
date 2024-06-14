@@ -1,5 +1,12 @@
-import { unref, shallowRef, computed, onUnmounted } from 'vue';
-import { getNanoid, getMainVersion, hasSource } from '@libs/helpers';
+import {
+  unref,
+  shallowRef,
+  computed,
+  onUnmounted,
+  onMounted,
+  nextTick,
+} from 'vue';
+import { getMainVersion, getNanoid, hasSource } from '@libs/helpers';
 import { useMapReloadEvent } from '@libs/composables';
 import type { MaybeRef, ShallowRef } from 'vue';
 import type { Nullable } from '@libs/types';
@@ -7,26 +14,33 @@ import type {
   Map,
   GeoJSONSource,
   MapSourceDataEvent,
-  SourceSpecification,
+  GeoJSONSourceSpecification,
 } from 'maplibre-gl';
 
 export interface CreateGeoJsonSourceActions {
   sourceId: string;
   getSource: ShallowRef<Nullable<GeoJSONSource>>;
-  setData: (data: SourceSpecification) => void;
+  setData: (data: GeoJSONSourceSpecification['data']) => void;
 }
 
 interface CreateGeoJsonSourceProps {
   map: MaybeRef<Nullable<Map>>;
   id?: string;
-  data?: SourceSpecification;
+  data: GeoJSONSourceSpecification['data'];
+  options?: Partial<GeoJSONSourceSpecification>;
   register?: (actions: CreateGeoJsonSourceActions, map: Map) => void;
 }
+
+const defaultData: GeoJSONSourceSpecification['data'] = {
+  type: 'FeatureCollection',
+  features: [],
+};
 
 export function useCreateGeoJsonSource({
   map: mapRef,
   id,
-  data,
+  data = defaultData,
+  options = {},
   register,
 }: CreateGeoJsonSourceProps) {
   const sourceId = getNanoid(id);
@@ -45,7 +59,6 @@ export function useCreateGeoJsonSource({
 
     if (!source.value && e.sourceId === sourceId && isSourceLoaded) {
       source.value = map?.getSource(sourceId) as GeoJSONSource;
-
       register?.(
         {
           sourceId,
@@ -62,14 +75,22 @@ export function useCreateGeoJsonSource({
     const map = unref(mapRef);
     if (map && !source.value && !hasSource(map, sourceId)) {
       if (!data) return;
-      map.addSource(sourceId, data);
+
+      map.addSource(sourceId, {
+        ...options,
+        type: 'geojson',
+        data,
+      });
+
       map.on('sourcedata', sourcedataEventFn);
     }
   }
-  function setData(data: SourceSpecification) {
+
+  function setData(data: GeoJSONSourceSpecification['data']) {
     const map = unref(mapRef);
+
     if (map && source.value && hasSource(map, sourceId))
-      data && source.value.setData(data as any);
+      data && source.value.setData(data);
   }
 
   function removeSource() {
@@ -80,6 +101,11 @@ export function useCreateGeoJsonSource({
       map.off('sourcedata', sourcedataEventFn);
     }
   }
+
+  onMounted(async () => {
+    await nextTick();
+    initSource();
+  });
 
   onUnmounted(() => {
     removeSource();

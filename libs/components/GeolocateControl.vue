@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, ref } from 'vue';
+import { inject, ref, watchEffect } from 'vue';
 import { MapProvideKey, GeolocateEvents } from '@libs/enums';
 import {
   useGeolocateControl,
@@ -10,7 +10,11 @@ import type {
   GeolocationPositionError,
   GeolocateEventTypes,
 } from '@libs/types';
-import type { ControlPosition, GeolocateControlOptions } from 'maplibre-gl';
+import type {
+  ControlPosition,
+  GeolocateControl,
+  GeolocateControlOptions,
+} from 'maplibre-gl';
 
 interface GeolocateControlProps {
   position?: ControlPosition;
@@ -19,6 +23,7 @@ interface GeolocateControlProps {
 
 interface Emits {
   (e: keyof GeolocateEventTypes, ev: any): void;
+  (e: 'register', ev: GeolocateControl): void;
   (e: 'geolocate', ev: GeolocateSuccess): void;
   (e: 'error', ev: GeolocationPositionError): void;
   (e: 'outofmaxbounds', ev: GeolocateSuccess): void;
@@ -34,6 +39,10 @@ const mapInstance = inject(MapProvideKey, ref(null));
 const { geolocateControl } = useGeolocateControl({
   map: mapInstance,
   ...props,
+});
+
+watchEffect(() => {
+  if (geolocateControl.value) emits('register', geolocateControl.value);
 });
 
 GeolocateEvents.map((evt) => {

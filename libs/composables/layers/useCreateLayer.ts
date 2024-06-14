@@ -1,7 +1,7 @@
 import { shallowRef, unref, computed, watch } from 'vue';
 import type { CreateBaseLayerActions, Nullable, LayerTypes } from '@libs/types';
-import { useMapReloadEvent } from '@libs/composables';
 import { getNanoid, hasLayer } from '@libs/helpers';
+import { useMapReloadEvent } from '@libs/composables';
 import type { MaybeRef } from 'vue';
 import type {
   SourceSpecification,
@@ -13,6 +13,7 @@ import type {
 
 interface CreateBaseLayerProps<Layer extends LayerSpecification> {
   map: MaybeRef<Nullable<Map>>;
+  id?: string;
   source: MaybeRef<string | SourceSpecification | object | null | undefined>;
   type: LayerTypes;
   beforeId?: string;
@@ -21,7 +22,6 @@ interface CreateBaseLayerProps<Layer extends LayerSpecification> {
   paint?: Layer['paint'];
   maxzoom?: number;
   minzoom?: number;
-  id?: string;
   metadata?: object;
   sourceLayer?: string;
   register?: (actions: CreateBaseLayerActions<Layer>, map: Map) => void;
@@ -32,6 +32,7 @@ export function useCreateLayer<Layer extends LayerSpecification>(
 ) {
   const {
     map: mapRef,
+    id,
     source: sourceRef,
     type,
     beforeId,
@@ -40,11 +41,11 @@ export function useCreateLayer<Layer extends LayerSpecification>(
     paint = {},
     maxzoom = 24,
     minzoom = 0,
-    id,
     metadata,
     sourceLayer = '',
     register,
   } = cfg;
+
   const layerId = getNanoid(id);
   const layer = shallowRef<Nullable<Layer>>(null);
   const getLayer = computed(() => layer.value);
@@ -124,23 +125,20 @@ export function useCreateLayer<Layer extends LayerSpecification>(
       else sourceData = '';
       if (!sourceData) return;
 
-      mapInstance.addLayer(
-        {
-          id: layerId,
-          type,
-          layout,
-          paint,
-          source: sourceData,
-          minzoom,
-          maxzoom,
-          metadata,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          filter,
-          'source-layer': sourceLayer,
-        },
-        beforeId,
-      );
+      const LAYER = {
+        id: layerId,
+        type,
+        source: sourceData,
+        layout,
+        paint,
+        'source-layer': sourceLayer,
+        minzoom,
+        maxzoom,
+        metadata,
+        filter,
+      };
+
+      mapInstance.addLayer(LAYER, beforeId);
       layer.value = mapInstance.getLayer(layerId);
 
       register?.(

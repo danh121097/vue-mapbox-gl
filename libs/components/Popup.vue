@@ -10,6 +10,7 @@ interface PopupProps {
   show?: boolean;
   withMap?: boolean;
   options?: PopupOptions;
+  html?: string;
 }
 
 interface Emits {
@@ -32,6 +33,7 @@ const { setLngLat, show, hide } = useCreatePopup({
   map: mapInstance,
   el: popupElRef,
   lnglat: props.lnglat,
+  html: props.html,
   show: props.show,
   withMap: props.withMap,
   options: {

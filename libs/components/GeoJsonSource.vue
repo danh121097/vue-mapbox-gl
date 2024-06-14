@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { inject, watch, ref, provide } from 'vue';
+import { inject, ref, provide, watch } from 'vue';
 import { MapProvideKey, SourceProvideKey } from '@libs/enums';
 import { useCreateGeoJsonSource } from '@libs/composables';
 import type { CreateGeoJsonSourceActions } from '@libs/composables';
-import type { SourceSpecification } from 'maplibre-gl';
+import type { GeoJSONSourceSpecification } from 'maplibre-gl';
 
 interface GeoJsonSourceProps {
   id?: string;
-  data?: SourceSpecification;
+  data: GeoJSONSourceSpecification['data'];
+  options?: Partial<GeoJSONSourceSpecification>;
   register?: (actions: CreateGeoJsonSourceActions) => void;
 }
 
@@ -17,11 +18,8 @@ interface Emits {
 
 const props = withDefaults(defineProps<GeoJsonSourceProps>(), {
   data: () => ({
-    type: 'geojson',
-    data: {
-      type: 'FeatureCollection',
-      features: [],
-    },
+    type: 'FeatureCollection',
+    features: [],
   }),
 });
 
@@ -33,6 +31,7 @@ const { setData, getSource } = useCreateGeoJsonSource({
   map: mapInstance,
   id: props.id,
   data: props.data,
+  options: props.options,
   register: (actions) => {
     props.register?.(actions);
     emits('register', actions);

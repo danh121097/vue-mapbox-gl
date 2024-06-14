@@ -1,13 +1,13 @@
 import { computed, effectScope, ref, shallowRef, unref, watch } from 'vue';
 import type { ComputedRef, EffectScope } from 'vue';
 import type { CreateGeoJsonSourceActions } from '@libs/composables';
-import type { GeoJSONSource, SourceSpecification } from 'maplibre-gl';
+import type { GeoJSONSource, GeoJSONSourceSpecification } from 'maplibre-gl';
 import type { Nullable } from '@libs/types';
 
 interface Methods {
   sourceId: ComputedRef<string | undefined>;
   getSource: ComputedRef<Nullable<GeoJSONSource>>;
-  setData: (data: SourceSpecification) => void;
+  setData: (data: GeoJSONSourceSpecification['data']) => void;
 }
 
 export function useGeoJsonSource() {
@@ -48,7 +48,7 @@ export function useGeoJsonSource() {
   const methods: Methods = {
     sourceId: computed(() => sourceIdRef.value),
     getSource: computed(() => sourceRef.value),
-    setData: (data: SourceSpecification) => {
+    setData: (data: GeoJSONSourceSpecification['data']) => {
       componentMethods.setData?.(data);
     },
   };

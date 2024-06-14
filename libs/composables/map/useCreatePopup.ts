@@ -12,6 +12,7 @@ interface CreatePopupProps {
   lnglat?: LngLatLike;
   show?: boolean;
   withMap?: boolean;
+  html?: string;
   on?: {
     open?: (popup: Popup) => void;
     close?: (popup: Popup) => void;
@@ -21,6 +22,7 @@ interface CreatePopupProps {
 export function useCreatePopup({
   map: mapRef,
   lnglat: lnglatVal,
+  html,
   el,
   show: showVal = true,
   withMap: withMapVal = true,
@@ -42,7 +44,7 @@ export function useCreatePopup({
       if (lnglatVal && lngLatLikeHasValue(lnglatVal)) setLngLat(lnglatVal);
       if (showVal) show();
       if (withMapVal) addToMap();
-
+      if (html) setHTMLContent();
       popup.value.on('close', closeEventFn);
       popup.value.on('open', openEventFn);
     }
@@ -97,6 +99,10 @@ export function useCreatePopup({
     if (popup.value && map) popup.value.addTo(map);
   }
 
+  function setHTMLContent() {
+    if (popup.value && html) popup.value.setHTML(html);
+  }
+
   function removePopup() {
     removeEvent();
     hide();
@@ -125,5 +131,6 @@ export function useCreatePopup({
     hide,
     setMaxWidth,
     addToMap,
+    setHTMLContent,
   };
 }

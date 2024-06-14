@@ -1,6 +1,6 @@
+import { getVersion } from 'maplibre-gl';
 import { nanoid } from 'nanoid';
 import type { LngLatLike, Map } from 'maplibre-gl';
-import { getVersion } from 'maplibre-gl';
 
 export function getNanoid(id?: string) {
   if (id) return id;

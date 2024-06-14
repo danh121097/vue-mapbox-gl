@@ -15,6 +15,7 @@ export function useMapReloadEvent(
   },
 ) {
   const map = unref(mapRef);
+
   let isMapLoad = !!map?._loaded;
 
   isMapLoad && loadEventFn(true);
@@ -28,6 +29,7 @@ export function useMapReloadEvent(
 
   function loadEventFn(isForce: boolean = false) {
     const map = unref(mapRef);
+
     if (isMapLoad && !isForce) return;
     isMapLoad = true;
     cb.onLoad && cb.onLoad(map!);
