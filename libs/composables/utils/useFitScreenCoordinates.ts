@@ -7,8 +7,10 @@ export function useFitScreenCoordinates(map: ShallowRef<Nullable<Map>>) {
   const p0 = ref<PointLike>();
   const p1 = ref<PointLike>();
 
-  let options: Undefinedable<Omit<FitBoundsOptions, 'bearing'>> = undefined;
-  let bearing: Undefinedable<number> = undefined;
+  const options =
+    ref<Undefinedable<Omit<FitBoundsOptions, 'bearing'>>>(undefined);
+
+  const bearing = ref<Undefinedable<number>>(undefined);
 
   function fitScreenCoordinates(
     p0Val: PointLike,
@@ -18,14 +20,19 @@ export function useFitScreenCoordinates(map: ShallowRef<Nullable<Map>>) {
   ) {
     p0.value = p0Val;
     p1.value = p1Val;
-    if (optionsVal) options = optionsVal;
-    if (bearingVal) bearing = bearingVal;
+    if (optionsVal) options.value = optionsVal;
+    if (bearingVal) bearing.value = bearingVal;
   }
 
   watchEffect(() => {
     if (map.value && p0.value && p1.value) {
-      bearing = bearing ?? map.value.getBearing();
-      map.value.fitScreenCoordinates(p0.value, p1.value, bearing, options);
+      bearing.value = bearing.value ?? map.value.getBearing();
+      map.value.fitScreenCoordinates(
+        p0.value,
+        p1.value,
+        bearing.value,
+        options.value,
+      );
     }
   });
 

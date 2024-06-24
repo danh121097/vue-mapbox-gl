@@ -1,62 +1,62 @@
-import { watchEffect, ref } from 'vue'
-import type { Nullable, Undefinedable } from '@libs/types'
-import type { ShallowRef } from 'vue'
+import { watchEffect, ref } from 'vue';
+import type { Nullable, Undefinedable } from '@libs/types';
+import type { ShallowRef } from 'vue';
 import type {
   Map,
   LngLatBoundsLike,
   FitBoundsOptions,
-  CameraForBoundsOptions
-} from 'maplibre-gl'
+  CameraForBoundsOptions,
+} from 'maplibre-gl';
 
 export function useFitBounds(
   map: ShallowRef<Nullable<Map>>,
-  options?: FitBoundsOptions
+  options?: FitBoundsOptions,
 ) {
-  const bounds = ref<LngLatBoundsLike>()
+  const bounds = ref<LngLatBoundsLike>();
 
-  let boundsOptions: Undefinedable<FitBoundsOptions> = options
+  const boundsOptions = ref<Undefinedable<FitBoundsOptions>>(options);
 
   watchEffect(() => {
     if (map.value && bounds.value)
-      map.value.fitBounds(bounds.value, boundsOptions)
-  })
+      map.value.fitBounds(bounds.value, boundsOptions.value);
+  });
 
   function setFitBounds(
     boundsVal: LngLatBoundsLike,
-    options?: FitBoundsOptions
+    options?: FitBoundsOptions,
   ) {
-    bounds.value = boundsVal
-    if (options) boundsOptions = options
+    bounds.value = boundsVal;
+    if (options) boundsOptions.value = options;
   }
 
   return {
     setFitBounds,
-    bounds
-  }
+    bounds,
+  };
 }
 
 export function useCameraForBounds(
   map: ShallowRef<Nullable<Map>>,
-  options?: CameraForBoundsOptions & { bounds: LngLatBoundsLike }
+  options?: CameraForBoundsOptions & { bounds: LngLatBoundsLike },
 ) {
-  const bbox = ref<LngLatBoundsLike | undefined>(options?.bounds)
-  let cameraOptions: Undefinedable<CameraForBoundsOptions> = options
+  const bbox = ref<LngLatBoundsLike | undefined>(options?.bounds);
+  const cameraOptions = ref<Undefinedable<CameraForBoundsOptions>>(options);
 
   watchEffect(() => {
     if (map.value && bbox.value)
-      map.value.cameraForBounds(bbox.value, cameraOptions)
-  })
+      map.value.cameraForBounds(bbox.value, cameraOptions.value);
+  });
 
   function cameraForBounds(
     boundsVal: LngLatBoundsLike,
-    options?: CameraForBoundsOptions
+    options?: CameraForBoundsOptions,
   ) {
-    bbox.value = boundsVal
-    if (options) cameraOptions = options
+    bbox.value = boundsVal;
+    if (options) cameraOptions.value = options;
   }
 
   return {
     cameraForBounds,
-    bbox
-  }
+    bbox,
+  };
 }
