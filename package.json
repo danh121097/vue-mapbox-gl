@@ -35,7 +35,7 @@
   },
   "scripts": {
     "dev": "cd examples && vite",
-    "build": "vue-tsc --noEmit && vite build && vue-tsc --declaration --emitDeclarationOnly",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
     "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\"",
@@ -47,6 +47,7 @@
     "vue3-mapbox": "^3.1.2"
   },
   "devDependencies": {
+    "@turf/bbox": "^7.0.0",
     "@turf/circle": "^7.0.0",
     "@turf/helpers": "^7.0.0",
     "@types/geojson": "^7946.0.14",
@@ -66,10 +67,11 @@
     "tsc-alias": "^1.8.10",
     "typescript": "^5.4.5",
     "vite": "^5.2.12",
+    "vite-plugin-dts": "^3.9.1",
     "vite-plugin-eslint": "^1.8.1",
+    "vite-tsconfig-paths": "^4.3.2",
     "vue-eslint-parser": "^9.4.3",
-    "vue-router": "^4.3.2",
-    "vue-tsc": "^2.0.19"
+    "vue-router": "^4.3.2"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,cjs,mjs,vue}": "eslint --fix",
