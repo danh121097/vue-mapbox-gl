@@ -1,6 +1,12 @@
 <script lang="ts" setup>
 import { computed, watchEffect } from 'vue';
-import { GeolocateControl, Mapbox } from '@libs/components';
+import {
+  GeolocateControl,
+  Mapbox,
+  GeoJsonSource,
+  SymbolLayer,
+  Image,
+} from '@libs/components';
 import { useFitBounds, useMapbox } from '@libs/composables';
 import type { LngLatBoundsLike, MapOptions } from 'vue3-mapbox';
 import circle from '@turf/circle';
@@ -37,6 +43,25 @@ async function goToBounds() {
     animate: true,
   });
 }
+
+const images = computed(() => {
+  return ['sqkii'].map((name) => {
+    return {
+      id: name,
+      image: `imgs/${name}.png`,
+    };
+  });
+});
+
+const centerIconSources = computed(() => {
+  return {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [103.8198, 1.3521],
+    },
+  } as any;
+});
 </script>
 <template>
   <Mapbox :options="options" @register="registerMap">
@@ -55,5 +80,14 @@ async function goToBounds() {
         showAccuracyCircle: false,
       }"
     />
+    <Image :images="images" />
+    <GeoJsonSource :data="centerIconSources">
+      <SymbolLayer
+        :style="{
+          'icon-image': 'sqkii',
+          'icon-size': 0.5,
+        }"
+      />
+    </GeoJsonSource>
   </Mapbox>
 </template>

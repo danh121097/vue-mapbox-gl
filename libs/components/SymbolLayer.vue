@@ -103,18 +103,18 @@ MapboxLayerEvents.map((evt) => {
   });
 });
 
-watch(() => props.filter!, setFilter);
+watch(() => props.filter, setFilter);
 
-watch(() => props.style!, setStyle);
+watch(() => props.style, setStyle);
 
-watch(() => props.maxzoom!, setZoomRange);
+watch(() => props.maxzoom, setZoomRange);
 
-watch(() => props.minzoom!, setZoomRange);
+watch(() => props.minzoom, setZoomRange);
 
-watch(() => props.beforeId!, setBeforeId);
+watch(() => props.beforeId, setBeforeId);
 
 watch(
-  () => props.visible!,
+  () => props.visible,
   (visible) => setLayoutProperty('visibility', visible ? 'visible' : 'none'),
 );
 </script>
