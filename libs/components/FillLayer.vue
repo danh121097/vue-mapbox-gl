@@ -56,7 +56,7 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<LayerProps>(), {
-  visible: undefined,
+  visible: true,
 });
 
 const emits = defineEmits<Emits>();
