@@ -85,7 +85,9 @@ export function useCreateLayer<Layer extends LayerSpecification>(
   function setPaintProperty(
     name: string,
     value: any,
-    options?: StyleSetterOptions,
+    options: StyleSetterOptions = {
+      validate: true,
+    },
   ) {
     const mapInstance = unref(mapRef);
     if (mapInstance && layer.value && hasLayer(mapInstance, layerId))
@@ -95,9 +97,12 @@ export function useCreateLayer<Layer extends LayerSpecification>(
   function setLayoutProperty(
     name: string,
     value: any,
-    options?: StyleSetterOptions,
+    options: StyleSetterOptions = {
+      validate: true,
+    },
   ) {
     const mapInstance = unref(mapRef);
+
     if (mapInstance && layer.value && hasLayer(mapInstance, layerId))
       mapInstance.setLayoutProperty(layerId, name, value, options);
   }

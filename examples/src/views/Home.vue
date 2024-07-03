@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, watchEffect } from 'vue';
+import { computed } from 'vue';
 import {
   GeolocateControl,
   Mapbox,
@@ -26,17 +26,11 @@ const { register: registerMap, mapInstance } = useMapbox();
 
 const { setFitBounds } = useFitBounds(mapInstance);
 
-watchEffect(() => {
-  console.log('mapInstance.value', mapInstance.value);
-});
-
 async function goToBounds() {
   const _circle = circle([106.69390849397668, 10.789432788366994], 356 * 1.2, {
     units: 'meters',
   });
   const box = bbox(_circle);
-
-  console.log('box', box);
 
   await setFitBounds(box as LngLatBoundsLike, {
     duration: 2000,

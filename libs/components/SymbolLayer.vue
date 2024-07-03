@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, inject, watch } from 'vue';
+import { ref, inject, watch, watchEffect } from 'vue';
 import {
   MapProvideKey,
   SourceProvideKey,
@@ -56,7 +56,7 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<LayerProps>(), {
-  visible: undefined,
+  visible: true,
 });
 
 const emits = defineEmits<Emits>();
@@ -113,9 +113,8 @@ watch(() => props.minzoom, setZoomRange);
 
 watch(() => props.beforeId, setBeforeId);
 
-watch(
-  () => props.visible,
-  (visible) => setLayoutProperty('visibility', visible ? 'visible' : 'none'),
-);
+watchEffect(() => {
+  setLayoutProperty('visibility', props.visible ? 'visible' : 'none');
+});
 </script>
 <template></template>
