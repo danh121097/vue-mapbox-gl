@@ -55,9 +55,7 @@ interface Emits {
   (e: 'touchcancel', ev: MapLayerTouchEvent): void;
 }
 
-const props = withDefaults(defineProps<LayerProps>(), {
-  visible: true,
-});
+const props = defineProps<LayerProps>();
 
 const emits = defineEmits<Emits>();
 
