@@ -1,4 +1,4 @@
-import { computed, onUnmounted, shallowRef, unref, watchEffect } from 'vue';
+import { computed, shallowRef, unref, watchEffect } from 'vue';
 import { Popup } from 'maplibre-gl';
 import { lngLatLikeHasValue } from '@libs/helpers';
 import type { Nullable } from '@libs/types';
@@ -32,7 +32,7 @@ export function useCreatePopup({
   const popup = shallowRef<Nullable<Popup>>(null);
   const popupInstance = computed(() => popup.value);
 
-  const stopEffect = watchEffect((onCleanUp) => {
+  watchEffect((onCleanUp) => {
     const map = unref(mapRef);
 
     if (map && el?.value && !popup.value) {
@@ -115,10 +115,6 @@ export function useCreatePopup({
       popup.value.off('open', openEventFn);
     }
   }
-
-  onUnmounted(() => {
-    stopEffect();
-  });
 
   return {
     popupInstance,

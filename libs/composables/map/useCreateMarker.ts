@@ -1,4 +1,4 @@
-import { onUnmounted, watchEffect, watch, unref, shallowRef } from 'vue';
+import { watchEffect, watch, unref, shallowRef } from 'vue';
 import { Marker } from 'maplibre-gl';
 import { lngLatLikeHasValue } from '@libs/helpers';
 import type { Nullable } from '@libs/types';
@@ -48,7 +48,7 @@ export function useCreateMarker({
     on.dragend?.(ev);
   }
 
-  const stopEffect = watchEffect((onCleanUp) => {
+  watchEffect((onCleanUp) => {
     const map = unref(mapRef);
     if (map && !marker.value) {
       marker.value = new Marker({
@@ -122,11 +122,6 @@ export function useCreateMarker({
     }
     marker.value = null;
   }
-
-  onUnmounted(() => {
-    stopEffect();
-    oPopup = null;
-  });
 
   return {
     setLngLat,

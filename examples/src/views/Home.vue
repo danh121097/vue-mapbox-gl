@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import {
   GeolocateControl,
   Mapbox,
@@ -8,7 +8,11 @@ import {
   Image,
 } from '@libs/components';
 import { useFitBounds, useMapbox } from '@libs/composables';
-import type { LngLatBoundsLike, MapOptions } from 'vue3-mapbox';
+import {
+  MapboxStatus,
+  type LngLatBoundsLike,
+  type MapOptions,
+} from 'vue3-mapbox';
 import circle from '@turf/circle';
 import bbox from '@turf/bbox';
 import 'vue3-mapbox/dist/style.css';
@@ -22,7 +26,7 @@ const options = computed<MapOptions>(() => ({
   maxZoom: 20,
 }));
 
-const { register: registerMap, mapInstance } = useMapbox();
+const { register: registerMap, mapInstance, mapStatus } = useMapbox();
 
 const { setFitBounds } = useFitBounds(mapInstance);
 
@@ -56,32 +60,42 @@ const centerIconSources = computed(() => {
     },
   } as any;
 });
+
+const show = ref(false);
 </script>
 <template>
-  <Mapbox :options="options" @register="registerMap">
-    <button
-      style="position: absolute; top: 0; left: 0; z-index: 10"
-      @click="goToBounds"
-    >
-      fit bounds
-    </button>
-    <GeolocateControl
-      :options="{
-        positionOptions: {
-          enableHighAccuracy: true,
-        },
-        trackUserLocation: true,
-        showAccuracyCircle: false,
-      }"
-    />
-    <Image :images="images" />
-    <GeoJsonSource :data="centerIconSources">
-      <SymbolLayer
-        :style="{
-          'icon-image': 'sqkii',
-          'icon-size': 0.5,
+  <button
+    style="position: absolute; top: 0; left: 0; z-index: 10"
+    @click="show = true"
+  >
+    show
+  </button>
+  <Mapbox v-if="show === true" :options="options" @register="registerMap">
+    <template v-if="mapStatus === MapboxStatus.Loaded">
+      <button
+        style="position: absolute; top: 0; left: 0; z-index: 10"
+        @click="goToBounds"
+      >
+        fit bounds
+      </button>
+      <GeolocateControl
+        :options="{
+          positionOptions: {
+            enableHighAccuracy: true,
+          },
+          trackUserLocation: true,
+          showAccuracyCircle: false,
         }"
       />
-    </GeoJsonSource>
+      <Image :images="images" />
+      <GeoJsonSource :data="centerIconSources">
+        <SymbolLayer
+          :style="{
+            'icon-image': 'sqkii',
+            'icon-size': 0.5,
+          }"
+        />
+      </GeoJsonSource>
+    </template>
   </Mapbox>
 </template>

@@ -1,4 +1,4 @@
-import { onUnmounted, unref, watchEffect } from 'vue';
+import { unref, watchEffect } from 'vue';
 import type { Nullable, ImageDatas } from '@libs/types';
 import type { ShallowRef } from 'vue';
 import type { Map, StyleImageMetadata } from 'maplibre-gl';
@@ -19,7 +19,7 @@ export function useCreateImage(props: CreateImageProps) {
     rejectFn = reject;
   });
 
-  const stopEffect = watchEffect(() => {
+  watchEffect(() => {
     const map = unref(props.map);
     if (map) updateImage(props.image).then(resolveFn).catch(rejectFn);
   });
@@ -66,11 +66,6 @@ export function useCreateImage(props: CreateImageProps) {
     if (map?.hasImage(props.id)) map.removeImage(props.id);
     rejectFn();
   }
-
-  onUnmounted(() => {
-    remove();
-    stopEffect();
-  });
 
   return {
     remove,

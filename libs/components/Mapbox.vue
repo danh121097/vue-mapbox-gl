@@ -1,5 +1,14 @@
 <script lang="ts" setup>
-import { ref, provide, computed, unref, watch, onMounted } from 'vue';
+import {
+  ref,
+  provide,
+  computed,
+  unref,
+  watch,
+  nextTick,
+  onBeforeMount,
+  watchEffect,
+} from 'vue';
 import { MapProvideKey, MapboxEvents } from '@libs/enums';
 import { useCreateMapbox, useMapEventListener } from '@libs/composables';
 import type {
@@ -198,15 +207,20 @@ watch(() => unref(mapOptions).minZoom!, setMinZoom);
 
 watch(() => unref(mapOptions).renderWorldCopies!, setRenderWorldCopies);
 
-onMounted(() => {
+watchEffect(async () => {
+  await nextTick();
   const wrapper = document.getElementById('maplibre_container');
-
   maplibreElRef.value = document.createElement('div');
-  maplibreElRef.value.id =
-    String(props.options?.container) || 'maplibre-container';
+  maplibreElRef.value.id = props.options?.container
+    ? String(props.options?.container)
+    : 'maplibre';
   maplibreElRef.value.style.width = '100%';
   maplibreElRef.value.style.height = '100%';
   wrapper?.appendChild(maplibreElRef.value);
+});
+
+onBeforeMount(() => {
+  maplibreElRef.value?.remove();
 });
 </script>
 
