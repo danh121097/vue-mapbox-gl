@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import {
   GeolocateControl,
   Mapbox,
@@ -60,17 +60,9 @@ const centerIconSources = computed(() => {
     },
   } as any;
 });
-
-const show = ref(false);
 </script>
 <template>
-  <button
-    style="position: absolute; top: 0; left: 0; z-index: 10"
-    @click="show = true"
-  >
-    show
-  </button>
-  <Mapbox v-if="show === true" :options="options" @register="registerMap">
+  <Mapbox :options="options" @register="registerMap">
     <template v-if="mapStatus === MapboxStatus.Loaded">
       <button
         style="position: absolute; top: 0; left: 0; z-index: 10"

@@ -4,7 +4,6 @@ import { MapboxStatus } from '@libs/enums';
 import type { CreateMaplibreActions } from '@libs/types';
 import type { MaybeRef } from 'vue';
 import type {
-  MapLibreEvent,
   MapOptions,
   LngLatBoundsLike,
   LngLatLike,
@@ -77,9 +76,8 @@ export function useCreateMapbox(
     mapStatus.value = MapboxStatus.Loaded;
   }
 
-  function mapEventError(ev: MapLibreEvent) {
+  function mapEventError() {
     mapStatus.value = MapboxStatus.Error;
-    console.warn('map error', ev);
   }
 
   function setCenter(centerVal: LngLatLike) {
