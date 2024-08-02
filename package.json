@@ -1,7 +1,7 @@
 {
   "name": "vue3-mapbox",
   "description": "The features of Maplibre GL and Vue3 JS",
-  "version": "3.1.18",
+  "version": "3.1.19",
   "author": {
     "name": "Danh Nguyen"
   },
