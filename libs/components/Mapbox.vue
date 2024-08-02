@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ref, provide, computed, unref, watch } from 'vue';
-import { MapProvideKey, MapboxEvents, MapboxStatus } from '@libs/enums';
+import { ref, provide, computed, unref, watch, onMounted } from 'vue';
+import { MapProvideKey, MapboxEvents } from '@libs/enums';
 import { useCreateMapbox, useMapEventListener } from '@libs/composables';
 import type {
   CreateMaplibreActions,
@@ -139,7 +139,6 @@ function setMapOptions(options: Partial<MapOptions>) {
 
 const {
   mapInstance,
-  mapStatus,
   setCenter,
   setBearing,
   setZoom,
@@ -198,16 +197,27 @@ watch(() => unref(mapOptions).minPitch!, setMinPitch);
 watch(() => unref(mapOptions).minZoom!, setMinZoom);
 
 watch(() => unref(mapOptions).renderWorldCopies!, setRenderWorldCopies);
-</script>
-<template>
-  <div ref="maplibreElRef" class="maplibre_container">
-    <slot v-if="mapStatus >= MapboxStatus.Loading" name="beforeLoad" />
 
-    <slot v-if="mapStatus >= MapboxStatus.Loaded" name="default" />
+onMounted(() => {
+  const wrapper = document.getElementById('maplibre_container');
+
+  maplibreElRef.value = document.createElement('div');
+  maplibreElRef.value.id =
+    String(props.options?.container) || 'maplibre-container';
+  maplibreElRef.value.style.width = '100%';
+  maplibreElRef.value.style.height = '100%';
+  wrapper?.appendChild(maplibreElRef.value);
+});
+</script>
+
+<template>
+  <div id="maplibre_container">
+    <slot />
   </div>
 </template>
+
 <style lang="scss">
-.maplibre_container {
+#maplibre_container {
   width: 100%;
   height: 100%;
 }

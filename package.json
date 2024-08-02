@@ -34,7 +34,7 @@
     "./dist/style.css": "./dist/style.css"
   },
   "scripts": {
-    "dev": "cd examples && vite",
+    "dev": "cd examples && vite --port 8080",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
