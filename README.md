@@ -19,3 +19,7 @@ If you are using yarn:
 ```shell
 yarn add vue3-mapbox@latest maplibre-gl
 ```
+
+## Home Page
+
+See the Maplibre API documentation [here](https://maplibre.org/maplibre-gl-js/docs).
