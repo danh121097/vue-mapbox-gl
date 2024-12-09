@@ -9,6 +9,7 @@
     "type": "git",
     "url": "https://github.com/danh121097/vue-mapbox-gl.git"
   },
+  "homepage": "https://github.com/danh121097/vue-mapbox-gl/blob/v2/README.md",
   "type": "module",
   "keywords": [
     "mapbox",
