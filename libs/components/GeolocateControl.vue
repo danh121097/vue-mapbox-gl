@@ -17,8 +17,8 @@ import type {
 } from 'maplibre-gl';
 
 interface GeolocateControlProps {
-  position?: ControlPosition;
-  options?: GeolocateControlOptions;
+  position: ControlPosition;
+  options: GeolocateControlOptions;
 }
 
 interface Emits {
@@ -31,7 +31,7 @@ interface Emits {
   (e: 'trackuserlocationend', ev: GeolocateSuccess): void;
 }
 
-const props = defineProps<GeolocateControlProps>();
+const props = defineProps<Partial<GeolocateControlProps>>();
 const emits = defineEmits<Emits>();
 
 const mapInstance = inject(MapProvideKey, ref(null));

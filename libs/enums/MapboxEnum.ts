@@ -1,4 +1,4 @@
-import type { GeolocateEventTypes, MapEventTypes } from '../types';
+import type { GeolocateEventTypes, MapEventTypes } from '@libs/types';
 
 export enum MapboxStatus {
   Disposed = -1,

@@ -6,17 +6,17 @@ import type { CreateGeoJsonSourceActions } from '@libs/composables';
 import type { GeoJSONSourceSpecification } from 'maplibre-gl';
 
 interface GeoJsonSourceProps {
-  id?: string;
+  id: string;
   data: GeoJSONSourceSpecification['data'];
-  options?: Partial<GeoJSONSourceSpecification>;
-  register?: (actions: CreateGeoJsonSourceActions) => void;
+  options: Partial<GeoJSONSourceSpecification>;
+  register: (actions: CreateGeoJsonSourceActions) => void;
 }
 
 interface Emits {
   (e: 'register', actions: CreateGeoJsonSourceActions): void;
 }
 
-const props = withDefaults(defineProps<GeoJsonSourceProps>(), {
+const props = withDefaults(defineProps<Partial<GeoJsonSourceProps>>(), {
   data: () => ({
     type: 'FeatureCollection',
     features: [],

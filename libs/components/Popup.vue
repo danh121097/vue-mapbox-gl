@@ -5,12 +5,12 @@ import { useCreatePopup } from '@libs/composables';
 import type { LngLatLike, PopupOptions } from 'maplibre-gl';
 
 interface PopupProps {
-  className?: string;
-  lnglat?: LngLatLike;
-  show?: boolean;
-  withMap?: boolean;
-  options?: PopupOptions;
-  html?: string;
+  className: string;
+  lnglat: LngLatLike;
+  show: boolean;
+  withMap: boolean;
+  options: PopupOptions;
+  html: string;
 }
 
 interface Emits {
@@ -19,7 +19,7 @@ interface Emits {
   (event: 'update:show', show: boolean): void;
 }
 
-const props = withDefaults(defineProps<PopupProps>(), {
+const props = withDefaults(defineProps<Partial<PopupProps>>(), {
   show: true,
   withMap: true,
 });

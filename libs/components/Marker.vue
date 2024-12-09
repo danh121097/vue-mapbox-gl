@@ -12,22 +12,22 @@ import type {
 } from 'maplibre-gl';
 
 interface MarkerProps {
-  lnglat?: LngLatLike;
-  popup?: Popup;
-  options?: MarkerOptions;
-  draggable?: boolean;
-  element?: HTMLElement | undefined;
+  lnglat: LngLatLike;
+  popup: Popup;
+  options: MarkerOptions;
+  draggable: boolean;
+  element: HTMLElement | undefined;
 
-  offset?: PointLike | undefined;
-  anchor?: Anchor | undefined;
+  offset: PointLike | undefined;
+  anchor: Anchor | undefined;
 
-  color?: string | undefined;
-  clickTolerance?: number | null | undefined;
-  rotation?: number | undefined;
-  rotationAlignment?: Alignment | undefined;
-  pitchAlignment?: Alignment | undefined;
-  scale?: number | undefined;
-  occludedOpacity?: number | undefined;
+  color: string | undefined;
+  clickTolerance: number | null | undefined;
+  rotation: number | undefined;
+  rotationAlignment: Alignment | undefined;
+  pitchAlignment: Alignment | undefined;
+  scale: number | undefined;
+  occludedOpacity: number | undefined;
 }
 
 interface Emits {
@@ -36,7 +36,7 @@ interface Emits {
   (e: 'dragend', ev: Event): void;
 }
 
-const props = withDefaults(defineProps<MarkerProps>(), {
+const props = withDefaults(defineProps<Partial<MarkerProps>>(), {
   options: () => ({}),
 });
 

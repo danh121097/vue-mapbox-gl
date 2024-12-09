@@ -1,5 +1,4 @@
 root = true
-# 匹配全部⽂件
 [*]
 charset = utf-8
 indent_style = space

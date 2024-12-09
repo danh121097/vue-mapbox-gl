@@ -21,17 +21,17 @@ import type {
 } from 'maplibre-gl';
 
 interface LayerProps {
-  id?: string;
-  filter?: FilterSpecification;
-  style?: SymbolLayerStyle;
-  maxzoom?: number;
-  minzoom?: number;
-  metadata?: object;
-  source?: string | object;
-  sourceLayer?: string;
-  beforeId?: string;
-  visible?: boolean;
-  register?: (
+  id: string;
+  filter: FilterSpecification;
+  style: SymbolLayerStyle;
+  maxzoom: number;
+  minzoom: number;
+  metadata: object;
+  source: string | object;
+  sourceLayer: string;
+  beforeId: string;
+  visible: boolean;
+  register: (
     actions: CreateLayerActions<SymbolLayerSpecification>,
     map: Map,
   ) => void;
@@ -39,23 +39,30 @@ interface LayerProps {
 
 interface Emits {
   (e: keyof MapLayerEventType, ev: any): void;
-  (e: 'register', actions: any, map: Map): void;
-  (e: 'click', ev: MapLayerMouseEvent): void;
-  (e: 'dblclick', ev: MapLayerMouseEvent): void;
-  (e: 'mousedown', ev: MapLayerMouseEvent): void;
-  (e: 'mouseup', ev: MapLayerMouseEvent): void;
-  (e: 'mousemove', ev: MapLayerMouseEvent): void;
-  (e: 'mouseenter', ev: MapLayerMouseEvent): void;
-  (e: 'mouseleave', ev: MapLayerMouseEvent): void;
-  (e: 'mouseover', ev: MapLayerMouseEvent): void;
-  (e: 'mouseout', ev: MapLayerMouseEvent): void;
-  (e: 'contextmenu', ev: MapLayerMouseEvent): void;
-  (e: 'touchstart', ev: MapLayerTouchEvent): void;
-  (e: 'touchend', ev: MapLayerTouchEvent): void;
-  (e: 'touchcancel', ev: MapLayerTouchEvent): void;
+  (
+    e: 'register',
+    actions: CreateLayerActions<SymbolLayerSpecification>,
+    map: Map,
+  ): void;
+  (
+    e:
+      | 'click'
+      | 'dblclick'
+      | 'mousedown'
+      | 'mouseup'
+      | 'mouseup'
+      | 'mousemove'
+      | 'mouseenter'
+      | 'mouseleave'
+      | 'mouseover'
+      | 'mouseout'
+      | 'contextmenu',
+    ev: MapLayerMouseEvent,
+  ): void;
+  (e: 'touchstart' | 'touchend' | 'touchcancel', ev: MapLayerTouchEvent): void;
 }
 
-const props = withDefaults(defineProps<LayerProps>(), {
+const props = withDefaults(defineProps<Partial<LayerProps>>(), {
   visible: true,
 });
 

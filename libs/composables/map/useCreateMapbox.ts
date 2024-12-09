@@ -11,9 +11,11 @@ import type {
   StyleSwapOptions,
   StyleOptions,
 } from 'maplibre-gl';
+import { useLogger } from '@libs/composables';
 
 interface CreateMapboxProps extends MapOptions {
   register?: (actions: CreateMaplibreActions) => void;
+  debug?: boolean;
 }
 
 export function useCreateMapbox(
@@ -22,7 +24,7 @@ export function useCreateMapbox(
   props: Omit<CreateMapboxProps, 'container' | 'style'> = {},
 ) {
   const { register, ...options } = props;
-
+  const { log } = useLogger(props.debug);
   const mapInstance = shallowRef<Map | null>(null);
   const mapStatus = ref<MapboxStatus>(MapboxStatus.NotLoaded);
   const mapOptions = ref<Omit<MapOptions, 'container' | 'style'>>(options);
@@ -72,12 +74,14 @@ export function useCreateMapbox(
     mapInstance.value = null;
   }
 
-  function mapEventLoad() {
+  function mapEventLoad(e: unknown) {
     mapStatus.value = MapboxStatus.Loaded;
+    log('MapLoadEvent', e);
   }
 
-  function mapEventError() {
+  function mapEventError(e: unknown) {
     mapStatus.value = MapboxStatus.Error;
+    log('MapErrorEvent', e);
   }
 
   function setCenter(centerVal: LngLatLike) {

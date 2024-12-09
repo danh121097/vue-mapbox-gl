@@ -62,7 +62,7 @@ const centerIconSources = computed(() => {
 });
 </script>
 <template>
-  <Mapbox :options="options" @register="registerMap">
+  <Mapbox :options="options" debug @register="registerMap">
     <template v-if="mapStatus === MapboxStatus.Loaded">
       <button
         style="position: absolute; top: 0; left: 0; z-index: 10"
