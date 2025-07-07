@@ -53,21 +53,25 @@ export function useCreateGeoJsonSource({
   });
 
   function sourcedataEventFn(e: MapSourceDataEvent) {
-    const map = unref(mapRef)!;
-    let isSourceLoaded = e.isSourceLoaded;
-    if (getMainVersion() > 0) isSourceLoaded = true;
+    try {
+      const map = unref(mapRef)!;
+      let isSourceLoaded = e.isSourceLoaded;
+      if (getMainVersion() > 0) isSourceLoaded = true;
 
-    if (!source.value && e.sourceId === sourceId && isSourceLoaded) {
-      source.value = map?.getSource(sourceId) as GeoJSONSource;
-      register?.(
-        {
-          sourceId,
-          getSource,
-          setData,
-        },
-        map,
-      );
-      map?.off('sourcedata', sourcedataEventFn);
+      if (!source.value && e.sourceId === sourceId && isSourceLoaded) {
+        source.value = map?.getSource(sourceId) as GeoJSONSource;
+        register?.(
+          {
+            sourceId,
+            getSource,
+            setData,
+          },
+          map,
+        );
+        map?.off('sourcedata', sourcedataEventFn);
+      }
+    } catch (error) {
+      console.error('error', error);
     }
   }
 

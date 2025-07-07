@@ -108,57 +108,61 @@ export function useCreateLayer<Layer extends LayerSpecification>(
   }
 
   function createLayer() {
-    const mapInstance = unref(mapRef);
-    const source = unref(sourceRef);
-    if (
-      mapInstance &&
-      source &&
-      !layer.value &&
-      !hasLayer(mapInstance, layerId)
-    ) {
-      let sourceData: any;
+    try {
+      const mapInstance = unref(mapRef);
+      const source = unref(sourceRef);
+      if (
+        mapInstance &&
+        source &&
+        !layer.value &&
+        !hasLayer(mapInstance, layerId)
+      ) {
+        let sourceData: any;
 
-      // Check if source is a string (source ID)
-      if (typeof source === 'string') sourceData = source;
-      else if (typeof source === 'object' && 'id' in source)
-        // If source is an object and has an 'id' property, use the 'id'
-        sourceData = source.id;
-      else if (typeof source === 'object' && 'type' in source)
-        // If source is an object and has a 'type' property, use the source object itself
-        sourceData = source;
-      // Fallback or default value if source doesn't match expected types or structure
-      else sourceData = '';
-      if (!sourceData) return;
+        // Check if source is a string (source ID)
+        if (typeof source === 'string') sourceData = source;
+        else if (typeof source === 'object' && 'id' in source)
+          // If source is an object and has an 'id' property, use the 'id'
+          sourceData = source.id;
+        else if (typeof source === 'object' && 'type' in source)
+          // If source is an object and has a 'type' property, use the source object itself
+          sourceData = source;
+        // Fallback or default value if source doesn't match expected types or structure
+        else sourceData = '';
+        if (!sourceData) return;
 
-      const LAYER = {
-        id: layerId,
-        type,
-        source: sourceData,
-        layout,
-        paint,
-        'source-layer': sourceLayer,
-        minzoom,
-        maxzoom,
-        metadata,
-        filter,
-      };
+        const LAYER = {
+          id: layerId,
+          type,
+          source: sourceData,
+          layout,
+          paint,
+          'source-layer': sourceLayer,
+          minzoom,
+          maxzoom,
+          metadata,
+          filter,
+        };
 
-      mapInstance.addLayer(LAYER, beforeId);
-      layer.value = mapInstance.getLayer(layerId);
+        mapInstance.addLayer(LAYER, beforeId);
+        layer.value = mapInstance.getLayer(layerId);
 
-      register?.(
-        {
-          layerId,
-          getLayer,
-          removeLayer,
-          setBeforeId,
-          setFilter,
-          setZoomRange,
-          setPaintProperty,
-          setLayoutProperty,
-        },
-        mapInstance,
-      );
+        register?.(
+          {
+            layerId,
+            getLayer,
+            removeLayer,
+            setBeforeId,
+            setFilter,
+            setZoomRange,
+            setPaintProperty,
+            setLayoutProperty,
+          },
+          mapInstance,
+        );
+      }
+    } catch (error) {
+      console.error('error', error);
     }
   }
 
