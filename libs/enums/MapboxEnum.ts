@@ -1,11 +1,12 @@
 import type { GeolocateEventTypes, MapEventTypes } from '@libs/types';
 
-export enum MapboxStatus {
-  Disposed = -1,
-  NotLoaded,
-  Loading,
-  Loaded,
-  Error,
+export enum MapCreationStatus {
+  NotInitialized = 'not-initialized',
+  Initializing = 'initializing',
+  Loading = 'loading',
+  Loaded = 'loaded',
+  Error = 'error',
+  Destroyed = 'destroyed',
 }
 
 export const MapboxEvents: (keyof MapEventTypes)[] = [

@@ -7,13 +7,19 @@ import {
   watch,
   nextTick,
   onBeforeMount,
+  onUnmounted,
   watchEffect,
 } from 'vue';
-import { MapProvideKey, MapboxEvents } from '@libs/enums';
-import { useCreateMapbox, useMapEventListener } from '@libs/composables';
+import { MapProvideKey, MapboxEvents, MapCreationStatus } from '@libs/enums';
+import {
+  useCreateMapbox,
+  useMapEventListener,
+  useLogger,
+} from '@libs/composables';
 import { MapTouchEvent, MapWheelEvent } from 'maplibre-gl';
 import type { CreateMaplibreActions, MaplibreActions } from '@libs/types';
 import type {
+  Map,
   MapContextEvent,
   MapDataEvent,
   MapEventType,
@@ -27,10 +33,26 @@ import type {
   MapTerrainEvent,
 } from 'maplibre-gl';
 
+/**
+ * Enhanced Mapbox component props with comprehensive configuration options
+ */
 interface MapboxProps {
+  /** Map configuration options */
   options?: Partial<MapOptions>;
+  /** Callback for registering map actions */
   register?: (actions: MaplibreActions) => void;
+  /** Enable debug logging */
   debug?: boolean;
+  /** Automatically cleanup resources on unmount */
+  autoCleanup?: boolean;
+  /** Container ID for the map element */
+  containerId?: string;
+  /** Custom container class names */
+  containerClass?: string;
+  /** Error handling callback */
+  onError?: (error: any) => void;
+  /** Load success callback */
+  onLoad?: (map: Map) => void;
 }
 
 interface Emits {
@@ -96,29 +118,99 @@ interface Emits {
 
 const props = withDefaults(defineProps<MapboxProps>(), {
   options: () => ({}),
+  debug: false,
+  autoCleanup: true,
+  containerId: 'maplibre',
+  containerClass: '',
 });
 const emits = defineEmits<Emits>();
 
+// Enhanced logging and error handling
+const { logError } = useLogger(props.debug);
+
+// Reactive state management
 const innerOptions = ref<Partial<MapOptions>>();
 const maplibreElRef = ref<HTMLElement>();
 const styleRef = ref(props.options.style as string);
 
+const isComponentMounted = ref(false);
+const mapCreationStatus = ref<MapCreationStatus>(
+  MapCreationStatus.NotInitialized,
+);
+
+// Enhanced computed properties for better reactivity and performance
 const mapOptions = computed(() => {
-  const options = { ...props.options };
-  Object.assign(options, innerOptions.value);
-  return options;
+  const baseOptions = { ...props.options };
+  const mergedOptions = { ...baseOptions, ...innerOptions.value };
+
+  // Ensure container is properly set
+  if (!mergedOptions.container) {
+    mergedOptions.container = props.containerId;
+  }
+
+  return mergedOptions;
 });
 
-function setMapOptions(options: Partial<MapOptions>) {
-  innerOptions.value = {
-    ...(unref(mapOptions) || {}),
-    ...options,
-    style: options.style,
-  };
+const isMapReady = computed(
+  () => mapCreationStatus.value === MapCreationStatus.Loaded,
+);
+const isMapLoading = computed(
+  () => mapCreationStatus.value === MapCreationStatus.Loading,
+);
+const hasMapError = computed(
+  () => mapCreationStatus.value === MapCreationStatus.Error,
+);
+
+/**
+ * Enhanced map options setter with validation and error handling
+ * @param options - Partial map options to merge
+ */
+function setMapOptions(options: Partial<MapOptions>): void {
+  try {
+    innerOptions.value = {
+      ...(unref(mapOptions) || {}),
+      ...options,
+    };
+  } catch (error) {
+    logError('Error setting map options:', error, { options });
+  }
 }
 
+/**
+ * Enhanced container creation with error handling and validation
+ */
+function createMapContainer(): HTMLElement | null {
+  try {
+    const wrapper = document.getElementById('maplibre_container');
+    if (!wrapper) {
+      logError('Map container wrapper not found');
+      return null;
+    }
+
+    // Remove existing container if present
+    const existingContainer = document.getElementById(props.containerId);
+    if (existingContainer) {
+      existingContainer.remove();
+    }
+
+    const container = document.createElement('div');
+    container.id = props.containerId;
+    container.className = props.containerClass;
+    container.style.width = '100%';
+    container.style.height = '100%';
+
+    wrapper.appendChild(container);
+    return container;
+  } catch (error) {
+    logError('Error creating map container:', error);
+    return null;
+  }
+}
+
+// Enhanced map creation with comprehensive error handling and performance monitoring
 const {
   mapInstance,
+
   setCenter,
   setBearing,
   setZoom,
@@ -133,78 +225,200 @@ const {
 } = useCreateMapbox(maplibreElRef, styleRef, {
   ...unref(mapOptions),
   register: (actions: CreateMaplibreActions) => {
-    props.register?.({
-      ...actions,
-      setMapOptions,
-    });
-    emits('register', {
-      ...actions,
-      setMapOptions,
-    });
+    try {
+      const enhancedActions = {
+        ...actions,
+        setMapOptions,
+        // Additional enhanced methods
+        isMapReady: isMapReady.value,
+        isMapLoading: isMapLoading.value,
+        hasMapError: hasMapError.value,
+      };
+
+      props.register?.(enhancedActions as MaplibreActions);
+      emits('register', enhancedActions as MaplibreActions);
+    } catch (error) {
+      logError('Error during map registration:', error);
+      props.onError?.(error);
+    }
+  },
+  onLoad: (map) => {
+    try {
+      mapCreationStatus.value = MapCreationStatus.Loaded;
+      props.onLoad?.(map);
+    } catch (error) {
+      logError('Error in map load handler:', error);
+      props.onError?.(error);
+    }
+  },
+  onError: (error) => {
+    try {
+      mapCreationStatus.value = MapCreationStatus.Error;
+      logError('Map creation error:', error);
+      props.onError?.(error);
+    } catch (handlerError) {
+      logError('Error in error handler:', handlerError);
+    }
   },
   debug: props.debug,
 });
 
+// Provide map instance to child components
 provide(MapProvideKey, mapInstance);
 
+// Enhanced event listeners with error handling and performance monitoring
 MapboxEvents.map((evt) => {
-  useMapEventListener({
+  return useMapEventListener({
     map: mapInstance,
     event: evt,
     on: (data) => {
-      emits(evt, data);
+      try {
+        emits(evt, data);
+      } catch (error) {
+        logError(`Error in ${evt} event handler:`, error, { data });
+      }
     },
+    debug: props.debug,
   });
 });
 
-watch(() => unref(mapOptions).center!, setCenter);
+// Create optimized watchers for map properties with null safety
+const watchers = [
+  watch(
+    () => unref(mapOptions).center,
+    (value) => value && setCenter(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).bearing,
+    (value) => value !== undefined && setBearing(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).zoom,
+    (value) => value !== undefined && setZoom(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).pitch,
+    (value) => value !== undefined && setPitch(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).style,
+    (value) => value && setStyle(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).maxBounds,
+    (value) => value && setMaxBounds(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).maxPitch,
+    (value) => value !== undefined && value !== null && setMaxPitch(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).maxZoom,
+    (value) => value !== undefined && value !== null && setMaxZoom(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).minPitch,
+    (value) => value !== undefined && value !== null && setMinPitch(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).minZoom,
+    (value) => value !== undefined && value !== null && setMinZoom(value),
+    { flush: 'post' },
+  ),
+  watch(
+    () => unref(mapOptions).renderWorldCopies,
+    (value) => value !== undefined && setRenderWorldCopies(value),
+    { flush: 'post' },
+  ),
+];
 
-watch(() => unref(mapOptions).bearing!, setBearing);
-
-watch(() => unref(mapOptions).zoom!, setZoom);
-
-watch(() => unref(mapOptions).pitch!, setPitch);
-
-watch(() => unref(mapOptions).style!, setStyle);
-
-watch(() => unref(mapOptions).maxBounds!, setMaxBounds);
-
-watch(() => unref(mapOptions).maxPitch!, setMaxPitch);
-
-watch(() => unref(mapOptions).maxZoom!, setMaxZoom);
-
-watch(() => unref(mapOptions).minPitch!, setMinPitch);
-
-watch(() => unref(mapOptions).minZoom!, setMinZoom);
-
-watch(() => unref(mapOptions).renderWorldCopies!, setRenderWorldCopies);
-
+// Enhanced container management
 watchEffect(async () => {
-  await nextTick();
-  const wrapper = document.getElementById('maplibre_container');
-  maplibreElRef.value = document.createElement('div');
-  maplibreElRef.value.id = props.options?.container
-    ? String(props.options?.container)
-    : 'maplibre';
-  maplibreElRef.value.style.width = '100%';
-  maplibreElRef.value.style.height = '100%';
-  wrapper?.appendChild(maplibreElRef.value);
+  try {
+    await nextTick();
+
+    const container = createMapContainer();
+    if (container) {
+      maplibreElRef.value = container;
+      isComponentMounted.value = true;
+      mapCreationStatus.value = MapCreationStatus.Initializing;
+    } else {
+      logError('Failed to create map container');
+      mapCreationStatus.value = MapCreationStatus.Error;
+    }
+  } catch (error) {
+    logError('Error in container creation watchEffect:', error);
+    mapCreationStatus.value = MapCreationStatus.Error;
+    props.onError?.(error);
+  }
 });
 
+// Enhanced cleanup with comprehensive resource disposal
+function cleanup(): void {
+  try {
+    // Stop all watchers
+    watchers.forEach((stopWatcher) => stopWatcher?.());
+
+    // Remove container
+    maplibreElRef.value?.remove();
+
+    // Reset state
+    isComponentMounted.value = false;
+    mapCreationStatus.value = MapCreationStatus.Destroyed;
+  } catch (error) {
+    logError('Error during cleanup:', error);
+  }
+}
+
 onBeforeMount(() => {
-  maplibreElRef.value?.remove();
+  if (props.autoCleanup) {
+    cleanup();
+  }
+});
+
+onUnmounted(() => {
+  if (props.autoCleanup) {
+    cleanup();
+  }
 });
 </script>
 
 <template>
   <div id="maplibre_container">
-    <slot />
+    <!-- Loading state -->
+    <div v-if="isMapLoading">
+      <slot name="loading"> </slot>
+    </div>
+
+    <!-- Error state -->
+    <div v-if="hasMapError">
+      <slot name="error"> </slot>
+    </div>
+
+    <!-- Map content -->
+    <slot v-if="isMapReady || (!isMapLoading && !hasMapError)" />
   </div>
 </template>
 
 <style lang="scss">
-#maplibre_container {
+.maplibre-container {
+  position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+}
+
+// Legacy support
+#maplibre_container {
+  @extend .maplibre-container;
 }
 </style>

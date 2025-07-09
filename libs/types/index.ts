@@ -1,4 +1,3 @@
-import type { MapboxStatus } from '@libs/enums';
 import type { ComputedRef } from 'vue';
 import type {
   FeatureIdentifier,
@@ -21,6 +20,7 @@ import type {
   StyleSetterOptions,
   StyleSpecification,
 } from 'maplibre-gl';
+import type { MapCreationStatus } from '@libs/enums';
 
 export type Nullable<T> = T | null;
 
@@ -28,7 +28,10 @@ export type Undefinedable<T> = T | undefined;
 
 export interface CreateMaplibreActions {
   mapInstance: ComputedRef<Map | null>;
-  mapStatus: ComputedRef<MapboxStatus>;
+  mapCreationStatus: MapCreationStatus;
+  isMapReady: boolean;
+  isMapLoading: boolean;
+  hasMapError: boolean;
   setStyle: (style: string | StyleSpecification) => void;
   setCenter: (center: LngLatLike) => void;
   setBearing: (bearing: number) => void;
