@@ -16,6 +16,13 @@ export default defineConfig({
     ssr: {
       noExternal: ['vitepress'],
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: undefined,
+        },
+      },
+    },
   },
 
   // Ensure CSS is properly included

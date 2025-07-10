@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { GeolocateControls, Mapbox } from '@libs/components';
 import { useMapbox } from '@libs/composables';
-import { type MapOptions } from 'vue3-mapbox';
-import 'vue3-mapbox/dist/style.css';
+import { type MapOptions, GeolocateControls, Mapbox } from 'vue3-maplibre-gl';
+import 'vue3-maplibre-gl/dist/style.css';
 
 const options = computed<MapOptions>(() => ({
   container: 'map',
