@@ -1,0 +1,234 @@
+/* Import all VitePress theme CSS files that exist */
+@import 'vitepress/dist/client/theme-default/styles/fonts.css';
+@import 'vitepress/dist/client/theme-default/styles/vars.css';
+@import 'vitepress/dist/client/theme-default/styles/base.css';
+@import 'vitepress/dist/client/theme-default/styles/utils.css';
+@import 'vitepress/dist/client/theme-default/styles/icons.css';
+@import 'vitepress/dist/client/theme-default/styles/components/custom-block.css';
+@import 'vitepress/dist/client/theme-default/styles/components/vp-code.css';
+@import 'vitepress/dist/client/theme-default/styles/components/vp-code-group.css';
+@import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css';
+@import 'vitepress/dist/client/theme-default/styles/components/vp-sponsor.css';
+
+/* Custom theme overrides */
+:root {
+  --vp-c-brand-1: #3c82f6;
+  --vp-c-brand-2: #2563eb;
+  --vp-c-brand-3: #1d4ed8;
+}
+
+/* Ensure proper styling for the documentation */
+.VPDoc {
+  max-width: none;
+}
+
+.VPContent {
+  padding-top: var(--vp-nav-height);
+}
+
+/* Fix any missing styles */
+.vp-doc {
+  line-height: 1.7;
+}
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.vp-doc p {
+  margin: 16px 0;
+}
+
+.vp-doc a {
+  color: var(--vp-c-brand-1);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.25s;
+}
+
+.vp-doc a:hover {
+  color: var(--vp-c-brand-2);
+}
+
+/* Navigation styles */
+.VPNav {
+  background-color: var(--vp-c-bg);
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+/* Home page styles */
+.VPHome {
+  padding: 0 24px;
+}
+
+.VPHero {
+  padding: 48px 0;
+  text-align: center;
+}
+
+.VPFeatures {
+  padding: 48px 0;
+}
+
+/* Button styles */
+.VPButton {
+  display: inline-block;
+  border: 1px solid transparent;
+  text-align: center;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    color 0.25s,
+    border-color 0.25s,
+    background-color 0.25s;
+}
+
+.VPButton.brand {
+  border-color: var(--vp-button-brand-border);
+  color: var(--vp-button-brand-text);
+  background-color: var(--vp-button-brand-bg);
+}
+
+.VPButton.brand:hover {
+  border-color: var(--vp-button-brand-hover-border);
+  color: var(--vp-button-brand-hover-text);
+  background-color: var(--vp-button-brand-hover-bg);
+}
+
+.VPButton.alt {
+  border-color: var(--vp-button-alt-border);
+  color: var(--vp-button-alt-text);
+  background-color: var(--vp-button-alt-bg);
+}
+
+.VPButton.alt:hover {
+  border-color: var(--vp-button-alt-hover-border);
+  color: var(--vp-button-alt-hover-text);
+  background-color: var(--vp-button-alt-hover-bg);
+}
+
+.VPButton.medium {
+  border-radius: 20px;
+  padding: 0 20px;
+  line-height: 38px;
+  font-size: 14px;
+}
+
+/* Code block styles */
+.vp-code-group {
+  margin: 16px 0;
+}
+
+div[class*='language-'] {
+  position: relative;
+  margin: 16px 0;
+  background-color: var(--vp-code-block-bg);
+  overflow-x: auto;
+  transition: background-color 0.5s;
+}
+
+div[class*='language-'] code {
+  display: block;
+  padding: 0 24px;
+  width: fit-content;
+  min-width: 100%;
+  line-height: var(--vp-code-line-height);
+  font-size: var(--vp-code-font-size);
+  color: var(--vp-code-block-color);
+  transition: color 0.5s;
+}
+
+/* Feature grid styles */
+.VPFeatures .items {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -8px;
+}
+
+.VPFeatures .item {
+  padding: 8px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .VPFeatures .item {
+    width: 50%;
+  }
+}
+
+@media (min-width: 960px) {
+  .VPFeatures .item {
+    width: 33.333333%;
+  }
+}
+
+.VPFeature {
+  display: block;
+  border: 1px solid var(--vp-c-bg-soft);
+  border-radius: 12px;
+  height: 100%;
+  background-color: var(--vp-c-bg-soft);
+  transition:
+    border-color 0.25s,
+    background-color 0.25s;
+}
+
+.VPFeature:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.VPFeature .box {
+  padding: 28px 32px;
+  height: 100%;
+}
+
+.VPFeature .icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  background-color: var(--vp-c-default-soft);
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  transition: background-color 0.25s;
+}
+
+.VPFeature .title {
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.VPFeature .details {
+  flex-grow: 1;
+  padding-top: 8px;
+  line-height: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 639px) {
+  .VPHome {
+    padding: 0 16px;
+  }
+
+  .VPHero {
+    padding: 32px 0;
+  }
+
+  .VPFeatures {
+    padding: 32px 0;
+  }
+}

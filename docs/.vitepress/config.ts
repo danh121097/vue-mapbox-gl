@@ -19,16 +19,7 @@ export default defineConfig({
   },
 
   // Ensure CSS is properly included
-  head: [
-    ['meta', { name: 'theme-color', content: '#3c82f6' }],
-    [
-      'link',
-      {
-        rel: 'stylesheet',
-        href: 'https://unpkg.com/vitepress@1.6.3/dist/client/theme-default/style.css',
-      },
-    ],
-  ],
+  head: [['meta', { name: 'theme-color', content: '#3c82f6' }]],
 
   themeConfig: {
     nav: [
