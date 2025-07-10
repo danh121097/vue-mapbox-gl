@@ -1,7 +1,7 @@
 {
   "name": "vue3-maplibre-gl",
   "description": "Vue 3 components and composables for MapLibre GL JS - Build interactive maps with ease",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "author": {
     "name": "Danh Nguyen"
   },
