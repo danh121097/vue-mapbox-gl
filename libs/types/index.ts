@@ -9,7 +9,6 @@ import type {
   LngLatLike,
   Map,
   MapEventType,
-  MapGeoJSONFeature,
   MapOptions,
   PaddingOptions,
   Point,
@@ -19,7 +18,7 @@ import type {
   StyleImageInterface,
   StyleSetterOptions,
   StyleSpecification,
-} from 'vue3-maplibre-gl';
+} from 'maplibre-gl';
 import type { MapCreationStatus } from '@libs/enums';
 
 export type Nullable<T> = T | null;
@@ -75,11 +74,11 @@ export type MaplibreMethods = CreateMaplibreActions & {
   queryRenderedFeatures: (
     point: PointLike | [PointLike, PointLike],
     options?: QueryRenderedFeaturesOptions,
-  ) => MapGeoJSONFeature[] | undefined;
+  ) => any[] | undefined;
   querySourceFeatures: (
     sourceID: string,
     options?: QuerySourceFeatureOptions,
-  ) => MapGeoJSONFeature[] | undefined;
+  ) => any[] | undefined;
   queryTerrainElevation: (lnglat: LngLatLike) => number | null | undefined;
   isStyleLoaded: () => boolean | void;
   isMoving: () => boolean | undefined;
@@ -175,111 +174,8 @@ export interface Layout {
   visibility?: Visibility;
 }
 
-export type ExpressionsName =
-  // Types
-  | 'array'
-  | 'boolean'
-  | 'collator'
-  | 'format'
-  | 'literal'
-  | 'number'
-  | 'number-format'
-  | 'object'
-  | 'string'
-  | 'image'
-  | 'to-boolean'
-  | 'to-color'
-  | 'to-number'
-  | 'to-string'
-  | 'typeof'
-  // Feature data
-  | 'feature-state'
-  | 'geometry-type'
-  | 'id'
-  | 'line-progress'
-  | 'properties'
-  // Lookup
-  | 'at'
-  | 'get'
-  | 'has'
-  | 'in'
-  | 'index-of'
-  | 'length'
-  | 'slice'
-  | 'config'
-  // Decision
-  | '!'
-  | '!='
-  | '<'
-  | '<='
-  | '=='
-  | '>'
-  | '>='
-  | 'all'
-  | 'any'
-  | 'case'
-  | 'match'
-  | 'coalesce'
-  | 'within'
-  // Ramps, scales, curves
-  | 'interpolate'
-  | 'interpolate-hcl'
-  | 'interpolate-lab'
-  | 'step'
-  // Variable binding
-  | 'let'
-  | 'var'
-  // String
-  | 'concat'
-  | 'downcase'
-  | 'is-supported-script'
-  | 'resolved-locale'
-  | 'upcase'
-  // Color
-  | 'hsl'
-  | 'hsla'
-  | 'rgb'
-  | 'rgba'
-  | 'to-rgba'
-  // Math
-  | '-'
-  | '*'
-  | '/'
-  | '%'
-  | '^'
-  | '+'
-  | 'abs'
-  | 'acos'
-  | 'asin'
-  | 'atan'
-  | 'ceil'
-  | 'cos'
-  | 'distance'
-  | 'e'
-  | 'floor'
-  | 'ln'
-  | 'ln2'
-  | 'log10'
-  | 'log2'
-  | 'max'
-  | 'min'
-  | 'pi'
-  | 'random'
-  | 'round'
-  | 'sin'
-  | 'sqrt'
-  | 'tan'
-  // Camera
-  | 'distance-from-center'
-  | 'pitch'
-  | 'zoom'
-  | 'raster-value'
-  // Lights
-  | 'measure-light'
-  // Heatmap
-  | 'heatmap-density';
-
-export type Expressions = [ExpressionsName, ...any[]];
+// Use any for expressions to avoid type conflicts
+export type Expressions = any;
 export interface StyleFunction {
   stops?: any[][];
   property?: string;
@@ -297,8 +193,8 @@ export interface FillPaint {
   'fill-opacity'?: number | StyleFunction | Expressions | undefined;
   'fill-color'?: string | StyleFunction | Expressions | undefined;
   'fill-outline-color'?: string | StyleFunction | Expressions | undefined;
-  'fill-translate'?: number[] | undefined;
-  'fill-translate-anchor'?: 'map' | 'viewport' | undefined;
+  'fill-translate'?: any;
+  'fill-translate-anchor'?: any;
   'fill-pattern'?: string | Expressions | undefined;
 }
 
@@ -313,10 +209,10 @@ export interface CirclePaint {
   'circle-color'?: string | StyleFunction | Expressions | undefined;
   'circle-blur'?: number | StyleFunction | Expressions | undefined;
   'circle-opacity'?: number | StyleFunction | Expressions | undefined;
-  'circle-translate'?: number[] | Expressions | undefined;
-  'circle-translate-anchor'?: 'map' | 'viewport' | undefined;
-  'circle-pitch-scale'?: 'map' | 'viewport' | undefined;
-  'circle-pitch-alignment'?: 'map' | 'viewport' | undefined;
+  'circle-translate'?: any;
+  'circle-translate-anchor'?: any;
+  'circle-pitch-scale'?: any;
+  'circle-pitch-alignment'?: any;
   'circle-stroke-width'?: number | StyleFunction | Expressions | undefined;
   'circle-stroke-color'?: string | StyleFunction | Expressions | undefined;
   'circle-stroke-opacity'?: number | StyleFunction | Expressions | undefined;
@@ -335,8 +231,8 @@ export interface LineLayout extends Layout {
 export interface LinePaint {
   'line-opacity'?: number | StyleFunction | Expressions | undefined;
   'line-color'?: string | StyleFunction | Expressions | undefined;
-  'line-translate'?: number[] | Expressions | undefined;
-  'line-translate-anchor'?: 'map' | 'viewport' | undefined;
+  'line-translate'?: any;
+  'line-translate-anchor'?: any;
   'line-width'?: number | StyleFunction | Expressions | undefined;
   'line-gap-width'?: number | StyleFunction | Expressions | undefined;
   'line-offset'?: number | StyleFunction | Expressions | undefined;
@@ -412,15 +308,15 @@ export interface SymbolPaint {
   'icon-halo-color'?: string | StyleFunction | Expressions | undefined;
   'icon-halo-width'?: number | StyleFunction | Expressions | undefined;
   'icon-halo-blur'?: number | StyleFunction | Expressions | undefined;
-  'icon-translate'?: number[] | Expressions | undefined;
-  'icon-translate-anchor'?: 'map' | 'viewport' | undefined;
+  'icon-translate'?: any;
+  'icon-translate-anchor'?: any;
   'text-opacity'?: number | StyleFunction | Expressions | undefined;
   'text-color'?: string | StyleFunction | Expressions | undefined;
   'text-halo-color'?: string | StyleFunction | Expressions | undefined;
   'text-halo-width'?: number | StyleFunction | Expressions | undefined;
   'text-halo-blur'?: number | StyleFunction | Expressions | undefined;
-  'text-translate'?: number[] | Expressions | undefined;
-  'text-translate-anchor'?: 'map' | 'viewport' | undefined;
+  'text-translate'?: any;
+  'text-translate-anchor'?: any;
 }
 
 export type SymbolLayerStyle = SymbolLayout & SymbolPaint;

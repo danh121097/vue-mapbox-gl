@@ -10,16 +10,16 @@ import { useLogger } from '@libs/composables';
 import { MapCreationStatus } from '@libs/enums';
 import { type CreateMaplibreActions } from '@libs/types';
 import type { MaybeRef } from 'vue';
+import { Map } from 'maplibre-gl';
 import type {
-  Map,
   MapOptions,
   LngLatBoundsLike,
   LngLatLike,
   StyleSpecification,
+  CameraOptions,
   StyleSwapOptions,
   StyleOptions,
-  CameraOptions,
-} from 'vue3-maplibre-gl';
+} from 'maplibre-gl';
 
 interface CreateMapboxProps extends MapOptions {
   register?: (actions: EnhancedCreateMaplibreActions) => void;

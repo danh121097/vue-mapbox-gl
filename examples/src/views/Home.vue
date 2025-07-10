@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useMapbox } from '@libs/composables';
-import { type MapOptions, GeolocateControls, Mapbox } from 'vue3-maplibre-gl';
+import GeolocateControls from '@libs/components/GeolocateControls.vue';
+import Mapbox from '@libs/components/Mapbox.vue';
 import 'vue3-maplibre-gl/dist/style.css';
 
-const options = computed<MapOptions>(() => ({
+const options = computed(() => ({
   container: 'map',
   style: 'https://worldwidemaps.sqkii.com/api/maps/purple/style.json',
   center: [103.8198, 1.3521],
@@ -13,7 +14,6 @@ const options = computed<MapOptions>(() => ({
   maxZoom: 20,
 }));
 
-// Enhanced useMapbox with better error handling and validation
 const { register: registerMap } = useMapbox();
 </script>
 <template>

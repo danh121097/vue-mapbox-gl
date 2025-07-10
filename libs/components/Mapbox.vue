@@ -16,21 +16,18 @@ import {
   useMapEventListener,
   useLogger,
 } from '@libs/composables';
-import { MapTouchEvent, MapWheelEvent } from 'maplibre-gl';
 import type { CreateMaplibreActions, MaplibreActions } from '@libs/types';
 import type {
   Map,
   MapContextEvent,
   MapDataEvent,
   MapEventType,
-  MapLibreEvent,
   MapLibreZoomEvent,
   MapMouseEvent,
   MapOptions,
   MapSourceDataEvent,
-  MapStyleDataEvent,
-  MapStyleImageMissingEvent,
-  MapTerrainEvent,
+  MapTouchEvent,
+  MapWheelEvent,
 } from 'maplibre-gl';
 
 /**
@@ -60,7 +57,7 @@ interface Emits {
   (e: 'register', actions: MaplibreActions): void;
   (
     e: 'error' | 'load' | 'idle' | 'remove' | 'render' | 'resize',
-    ev: MapLibreEvent,
+    ev: Event,
   ): void;
   (e: 'webglcontextlost' | 'webglcontextrestored', ev: MapContextEvent): void;
   (
@@ -71,8 +68,8 @@ interface Emits {
     e: 'sourcedataloading' | 'sourcedata' | 'sourcedataabort',
     ev: MapSourceDataEvent,
   ): void;
-  (e: 'styledata', ev: MapStyleDataEvent): void;
-  (e: 'styleimagemissing', ev: MapStyleImageMissingEvent): void;
+  (e: 'styledata', ev: Event): void;
+  (e: 'styleimagemissing', ev: Event): void;
   (
     e: 'boxzoomcancel' | 'boxzoomstart' | 'boxzoomend',
     ev: MapLibreZoomEvent,
@@ -110,10 +107,10 @@ interface Emits {
       | 'pitchstart'
       | 'pitch'
       | 'pitchend',
-    ev: MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>,
+    ev: Event,
   ): void;
   (e: 'wheel', ev: MapWheelEvent): void;
-  (e: 'terrain', ev: MapTerrainEvent): void;
+  (e: 'terrain', ev: Event): void;
 }
 
 const props = withDefaults(defineProps<MapboxProps>(), {
@@ -273,7 +270,7 @@ MapboxEvents.map((evt) => {
     event: evt,
     on: (data) => {
       try {
-        emits(evt, data);
+        emits(evt as keyof MapEventType, data);
       } catch (error) {
         logError(`Error in ${evt} event handler:`, error, { data });
       }

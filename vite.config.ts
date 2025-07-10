@@ -11,8 +11,8 @@ export default defineConfig({
       include: ['libs/**/*'],
       exclude: ['examples/**/*', 'node_modules/**/*'],
       insertTypesEntry: true,
-      rollupTypes: true,
-      copyDtsFiles: true,
+      rollupTypes: false,
+      copyDtsFiles: false,
     }),
   ],
   resolve: {
