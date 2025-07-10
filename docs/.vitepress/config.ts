@@ -4,6 +4,7 @@ export default defineConfig({
   title: 'Vue MapLibre GL',
   description: 'Vue 3 components and composables for MapLibre GL JS',
   base: '/vue-mapbox-gl/',
+  ignoreDeadLinks: true,
 
   themeConfig: {
     nav: [
