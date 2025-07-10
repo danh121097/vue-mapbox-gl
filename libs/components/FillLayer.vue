@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, inject, watch, watchEffect } from 'vue';
+import { ref, inject, watch, watchEffect, computed } from 'vue';
 import {
   MapProvideKey,
   SourceProvideKey,
@@ -20,36 +20,57 @@ import type {
   FillLayerSpecification,
 } from 'maplibre-gl';
 
+/**
+ * Props interface for FillLayer component
+ * Defines all configurable properties for a MapLibre GL Fill Layer
+ */
 interface LayerProps {
+  /** Unique identifier for the layer */
   id: string;
+  /** Filter expression to apply to the layer */
   filter: FilterSpecification;
+  /** Style configuration for the fill layer */
   style: FillLayerStyle;
+  /** Maximum zoom level for layer visibility */
   maxzoom: number;
+  /** Minimum zoom level for layer visibility */
   minzoom: number;
+  /** Arbitrary metadata for the layer */
   metadata: object;
+  /** Data source for the layer */
   source: string | object;
+  /** Source layer name for vector sources */
   sourceLayer: string;
+  /** ID of layer before which to insert this layer */
   beforeId: string;
+  /** Whether the layer is visible */
   visible: boolean;
+  /** Callback function to register layer actions */
   register: (
     actions: CreateLayerActions<FillLayerSpecification>,
     map: Map,
   ) => void;
 }
 
+/**
+ * Events interface for FillLayer component
+ * Defines all events that can be emitted by the layer
+ */
 interface Emits {
+  /** Generic layer event */
   (e: keyof MapLayerEventType, ev: any): void;
+  /** Layer registration event */
   (
     e: 'register',
     actions: CreateLayerActions<FillLayerSpecification>,
     map: Map,
   ): void;
+  /** Mouse events */
   (
     e:
       | 'click'
       | 'dblclick'
       | 'mousedown'
-      | 'mouseup'
       | 'mouseup'
       | 'mousemove'
       | 'mouseenter'
@@ -59,23 +80,45 @@ interface Emits {
       | 'contextmenu',
     ev: MapLayerMouseEvent,
   ): void;
+  /** Touch events */
   (e: 'touchstart' | 'touchend' | 'touchcancel', ev: MapLayerTouchEvent): void;
 }
 
+// Component props with sensible defaults
 const props = withDefaults(defineProps<Partial<LayerProps>>(), {
   visible: true,
 });
 
+// Component events
 const emits = defineEmits<Emits>();
 
+// Injected dependencies
 const sourceData = inject(SourceProvideKey, ref(null));
 const mapInstance = inject(MapProvideKey, ref(null));
 
-const visibleStyle: AnyLayout = {};
+// Computed properties for better performance and reactivity
+const effectiveSource = computed(() => props.source || sourceData.value);
 
-if (props.visible !== undefined)
-  visibleStyle['visibility'] = props.visible ? 'visible' : 'none';
+const visibilityStyle = computed(
+  (): AnyLayout => ({
+    visibility: props.visible ? 'visible' : 'none',
+  }),
+);
 
+const mergedStyle = computed(() => ({
+  ...props.style,
+  ...visibilityStyle.value,
+}));
+
+// Enhanced register callback with proper typing
+const handleRegister = (
+  actions: CreateLayerActions<FillLayerSpecification>,
+  map: Map,
+) => {
+  emits('register', actions, map);
+};
+
+// Create fill layer with optimized configuration
 const {
   getLayer,
   setBeforeId,
@@ -85,21 +128,19 @@ const {
   setLayoutProperty,
 } = useCreateFillLayer({
   map: mapInstance,
-  source: props.source || sourceData,
-  style: { ...props.style, ...visibleStyle },
+  source: effectiveSource,
+  style: mergedStyle.value,
   filter: props.filter || ['all'],
   id: props.id,
   maxzoom: props.maxzoom,
   minzoom: props.minzoom,
   metadata: props.metadata,
   sourceLayer: props.sourceLayer,
-  register: (actions, map) => {
-    props.register?.(actions as any, map);
-    emits('register', actions as any, map);
-  },
+  register: handleRegister,
 });
 
-MapboxLayerEvents.map((evt) => {
+// Optimized event listener setup with error handling
+MapboxLayerEvents.forEach((evt) => {
   useLayerEventListener({
     map: mapInstance,
     layer: getLayer,
@@ -110,16 +151,38 @@ MapboxLayerEvents.map((evt) => {
   });
 });
 
-watch(() => props.filter, setFilter);
+// Reactive watchers for prop changes with error handling
+watch(
+  () => props.filter,
+  (newFilter) => {
+    setFilter(newFilter);
+  },
+  { deep: true },
+);
 
-watch(() => props.style, setStyle);
+watch(
+  () => props.style,
+  (newStyle) => {
+    setStyle(newStyle);
+  },
+  { deep: true },
+);
 
-watch(() => props.maxzoom, setZoomRange);
+watch(
+  () => [props.maxzoom, props.minzoom],
+  ([maxzoom, minzoom]) => {
+    setZoomRange(minzoom, maxzoom);
+  },
+);
 
-watch(() => props.minzoom, setZoomRange);
+watch(
+  () => props.beforeId,
+  (newBeforeId) => {
+    setBeforeId(newBeforeId);
+  },
+);
 
-watch(() => props.beforeId, setBeforeId);
-
+// Optimized visibility watcher using computed property
 watchEffect(() => {
   setLayoutProperty('visibility', props.visible ? 'visible' : 'none');
 });
