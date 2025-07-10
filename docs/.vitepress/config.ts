@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress';
 export default defineConfig({
   title: 'Vue MapLibre GL',
   description: 'Vue 3 components and composables for MapLibre GL JS',
-  base: '/vue-mapbox-gl/',
+  base: '/',
   ignoreDeadLinks: true,
 
   // Ensure default theme is used
@@ -22,11 +22,14 @@ export default defineConfig({
           manualChunks: undefined,
         },
       },
+      cssCodeSplit: false,
     },
   },
 
   // Ensure CSS is properly included
-  head: [['meta', { name: 'theme-color', content: '#3c82f6' }]],
+  head: [
+    ['meta', { name: 'theme-color', content: '#3c82f6' }]
+  ],
 
   themeConfig: {
     nav: [
