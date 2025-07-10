@@ -6,6 +6,11 @@ export default defineConfig({
   base: '/vue-mapbox-gl/',
   ignoreDeadLinks: true,
 
+  // Ensure default theme is used
+  appearance: 'dark',
+  lastUpdated: true,
+  cleanUrls: true,
+
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },

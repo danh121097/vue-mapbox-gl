@@ -5,9 +5,6 @@ hero:
   name: 'Vue MapLibre GL'
   text: 'Vue 3 Components for MapLibre GL JS'
   tagline: 'Build interactive maps with ease using Vue 3 and MapLibre GL JS'
-  image:
-    src: /logo.svg
-    alt: Vue MapLibre GL
   actions:
     - theme: brand
       text: Get Started
