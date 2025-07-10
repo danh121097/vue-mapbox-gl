@@ -11,6 +11,25 @@ export default defineConfig({
   lastUpdated: true,
   cleanUrls: true,
 
+  // Vite configuration to ensure CSS is included
+  vite: {
+    ssr: {
+      noExternal: ['vitepress'],
+    },
+  },
+
+  // Ensure CSS is properly included
+  head: [
+    ['meta', { name: 'theme-color', content: '#3c82f6' }],
+    [
+      'link',
+      {
+        rel: 'stylesheet',
+        href: 'https://unpkg.com/vitepress@1.6.3/dist/client/theme-default/style.css',
+      },
+    ],
+  ],
+
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
