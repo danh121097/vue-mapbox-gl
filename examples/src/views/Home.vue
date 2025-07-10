@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useMapbox } from '@libs/composables';
-import GeolocateControls from '@libs/components/GeolocateControls.vue';
-import Mapbox from '@libs/components/Mapbox.vue';
+import {
+  GeolocateControls,
+  Mapbox,
+  useMapbox,
+  type MapOptions,
+} from 'vue3-maplibre-gl';
 import 'vue3-maplibre-gl/dist/style.css';
 
-const options = computed(() => ({
+const options = computed<MapOptions>(() => ({
   container: 'map',
   style: 'https://worldwidemaps.sqkii.com/api/maps/purple/style.json',
   center: [103.8198, 1.3521],

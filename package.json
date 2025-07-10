@@ -70,7 +70,7 @@
   "dependencies": {
     "maplibre-gl": "^5.6.1",
     "vue": "^3.5.17",
-    "vue3-maplibre-gl": "^3.2.0"
+    "vue3-maplibre-gl": "^3.2.1"
   },
   "peerDependencies": {
     "vue": "^3.0.0"

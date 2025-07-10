@@ -3261,6 +3261,15 @@ vue3-maplibre-gl@^3.2.0:
     maplibre-gl "^4.3.2"
     vue "^3.4.27"
 
+vue3-maplibre-gl@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/vue3-maplibre-gl/-/vue3-maplibre-gl-3.2.1.tgz#a194d454682ad2b4d3d22231c0be9adcdc210700"
+  integrity sha512-ZNTak3OUraIhg1ZDmHePSzaDzmJJ0taOqQsTi5qhbb83vup8M/zxnO5AvDs3YscJcSV99uW2aIng3mVVw4YCrw==
+  dependencies:
+    maplibre-gl "^5.6.1"
+    vue "^3.5.17"
+    vue3-maplibre-gl "^3.2.0"
+
 vue@^3.4.27, vue@^3.5.13, vue@^3.5.17:
   version "3.5.17"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.5.17.tgz#ea8a6a45abb2b0620e7d479319ce8434b55650cf"
