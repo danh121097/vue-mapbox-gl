@@ -2,5 +2,10 @@
   "buildCommand": "yarn docs:build",
   "outputDirectory": "docs/.vitepress/dist",
   "framework": "vitepress",
-  "installCommand": "yarn install"
+  "installCommand": "yarn install --frozen-lockfile",
+  "functions": {
+    "app.js": {
+      "includeFiles": "docs/.vitepress/dist/**"
+    }
+  }
 }
