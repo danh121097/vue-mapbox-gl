@@ -38,6 +38,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./
-          scope: ${{ secrets.VERCEL_ORG_ID }}
           vercel-args: '--prod'
+          github-comment: true
+          github-deployment: false
         if: github.ref == 'refs/heads/v3' && github.event_name == 'push'
