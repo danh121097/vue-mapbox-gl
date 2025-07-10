@@ -99,7 +99,7 @@
     "vite-plugin-dts": "^3.9.1",
     "vite-plugin-eslint": "^1.8.1",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitepress": "^1.0.0",
+    "vitepress": "^1.0.0-rc.44",
     "vue-eslint-parser": "^9.4.3",
     "vue-router": "^4.3.2",
     "vue-tsc": "^2.0.19"
