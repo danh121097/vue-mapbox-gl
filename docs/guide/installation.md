@@ -2,7 +2,7 @@
 
 ## Package Manager Installation
 
-Vue MapLibre GL is available on npm and can be installed using your preferred package manager.
+Vue3 MapLibre GL is available on npm and can be installed using your preferred package manager. The package includes all dependencies and is self-contained with bundled CSS.
 
 ### Using Yarn (Recommended)
 
@@ -51,15 +51,67 @@ app.use(VueMapLibreGl);
 app.mount('#app');
 ```
 
-### Local Registration
+### Local Registration (Recommended)
 
-Import components as needed in your components:
+Import components as needed in your components for better tree-shaking:
 
 ```vue
 <script setup>
-import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
+import {
+  Mapbox,
+  GeoJsonSource,
+  FillLayer,
+  CircleLayer,
+  Marker,
+  PopUp,
+} from 'vue3-maplibre-gl';
 import 'vue3-maplibre-gl/dist/style.css';
 </script>
+```
+
+### Available Components
+
+All components are exported from the main package:
+
+```js
+import {
+  // Main Components
+  Mapbox,
+  GeoJsonSource,
+
+  // Layer Components
+  FillLayer,
+  CircleLayer,
+  LineLayer,
+  SymbolLayer,
+
+  // Interactive Components
+  Marker,
+  PopUp,
+
+  // Utility Components
+  Image,
+  GeolocateControls,
+
+  // Composables
+  useCreateMapbox,
+  useMapbox,
+  useCreateGeoJsonSource,
+  useGeoJsonSource,
+  useCreateFillLayer,
+  useCreateCircleLayer,
+  useCreateLineLayer,
+  useCreateSymbolLayer,
+  useGeolocateControl,
+  useMapEventListener,
+  useLayerEventListener,
+  useFlyTo,
+  useEaseTo,
+  useJumpTo,
+  useBounds,
+  useZoom,
+  useLogger,
+} from 'vue3-maplibre-gl';
 ```
 
 ## TypeScript Support
@@ -80,14 +132,72 @@ The package includes comprehensive type definitions for:
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue';
-import { MapLibreMap } from 'vue3-maplibre-gl';
-import type { LngLatLike, StyleSpecification } from 'maplibre-gl';
+import { Mapbox, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
+import type {
+  LngLatLike,
+  StyleSpecification,
+  FillLayerStyle,
+  GeoJSONSourceSpecification,
+} from 'vue3-maplibre-gl';
 
 const center = ref<LngLatLike>([0, 0]);
 const mapStyle = ref<string | StyleSpecification>(
   'https://demotiles.maplibre.org/style.json',
 );
+
+const geoJsonData = ref<GeoJSONSourceSpecification['data']>({
+  type: 'FeatureCollection',
+  features: [],
+});
+
+const fillStyle = ref<FillLayerStyle>({
+  'fill-color': '#088',
+  'fill-opacity': 0.8,
+});
 </script>
+```
+
+### Type Definitions
+
+Vue3 MapLibre GL exports comprehensive TypeScript definitions:
+
+```typescript
+// Component Props Types
+import type {
+  MapboxProps,
+  GeoJsonSourceProps,
+  FillLayerProps,
+  CircleLayerProps,
+  LineLayerProps,
+  SymbolLayerProps,
+  MarkerProps,
+  PopUpProps,
+} from 'vue3-maplibre-gl';
+
+// Style Types
+import type {
+  FillLayerStyle,
+  CircleLayerStyle,
+  LineLayerStyle,
+  SymbolLayerStyle,
+} from 'vue3-maplibre-gl';
+
+// Composable Types
+import type {
+  CreateMaplibreActions,
+  CreateGeoJsonSourceActions,
+  CreateLayerActions,
+} from 'vue3-maplibre-gl';
+
+// Re-exported MapLibre GL Types
+import type {
+  Map,
+  LngLat,
+  LngLatLike,
+  MapOptions,
+  StyleSpecification,
+  GeoJSONSourceSpecification,
+} from 'vue3-maplibre-gl';
 ```
 
 ## Vite Configuration

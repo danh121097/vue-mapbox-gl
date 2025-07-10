@@ -4,7 +4,7 @@ export default defineConfig({
   title: 'Vue MapLibre GL',
   description: 'Vue 3 components and composables for MapLibre GL JS',
   base: '/',
-  ignoreDeadLinks: true,
+  ignoreDeadLinks: false,
 
   // Ensure default theme is used
   appearance: 'dark',
@@ -27,9 +27,7 @@ export default defineConfig({
   },
 
   // Ensure CSS is properly included
-  head: [
-    ['meta', { name: 'theme-color', content: '#3c82f6' }]
-  ],
+  head: [['meta', { name: 'theme-color', content: '#3c82f6' }]],
 
   themeConfig: {
     nav: [

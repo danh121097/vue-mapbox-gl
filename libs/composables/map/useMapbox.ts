@@ -20,7 +20,7 @@ import type {
   QueryRenderedFeaturesOptions,
   QuerySourceFeatureOptions,
   StyleSpecification,
-} from 'maplibre-gl';
+} from 'vue3-maplibre-gl';
 
 import { useLogger } from '@libs/composables';
 import { MapCreationStatus } from '@libs/enums';

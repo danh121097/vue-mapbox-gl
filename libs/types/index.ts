@@ -19,7 +19,7 @@ import type {
   StyleImageInterface,
   StyleSetterOptions,
   StyleSpecification,
-} from 'maplibre-gl';
+} from 'vue3-maplibre-gl';
 import type { MapCreationStatus } from '@libs/enums';
 
 export type Nullable<T> = T | null;

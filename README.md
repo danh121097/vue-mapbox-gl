@@ -1,19 +1,21 @@
-# Vue MapLibre GL
+# Vue3 MapLibre GL
 
 [![npm](https://img.shields.io/npm/v/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Downloads](https://img.shields.io/npm/dt/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-maplibre-gl)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE)
 
-> Vue 3 components and composables for MapLibre GL JS - Build interactive maps with ease
+> **The most comprehensive Vue 3 library for MapLibre GL JS** - Build interactive maps with 10+ components and 15+ composables
 
-A comprehensive Vue 3 component library for MapLibre GL JS that provides an intuitive, reactive way to build interactive maps in your Vue applications.
+A powerful, feature-rich Vue 3 component library that provides an intuitive, reactive way to build interactive maps in your Vue applications using MapLibre GL JS.
 
 ## ✨ Features
 
-- 🗺️ **Interactive Maps** - Create beautiful, interactive maps with MapLibre GL JS
-- 🧩 **Component-Based** - Use Vue components for markers, layers, controls, and more
-- 🎯 **TypeScript Support** - Full TypeScript support with comprehensive type definitions
-- 🚀 **Performance** - Optimized for performance with efficient rendering
-- 🔧 **Composables** - Powerful composables for map interactions and state management
-- 📱 **Responsive** - Mobile-friendly maps that work across all devices
+- 🗺️ **Interactive Maps** - High-performance vector maps with WebGL rendering
+- 🧩 **10+ Vue Components** - Mapbox, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, GeolocateControls
+- 🔧 **15+ Composables** - Complete map management, animations, events, and utilities
+- 🎯 **Full TypeScript Support** - Comprehensive type definitions and interfaces
+- ⚡ **High Performance** - Optimized rendering with automatic resource cleanup
+- 📱 **Mobile-Friendly** - Touch controls and responsive design for all devices
+- 🌐 **Self-Contained** - Bundled CSS and automatic dependency management
+- 🔄 **Reactive Data Binding** - Seamless integration with Vue 3's reactivity system
 
 ## 📦 Installation
 
@@ -39,32 +41,237 @@ pnpm add vue3-maplibre-gl
 
 ```vue
 <template>
-  <MapLibreMap
-    :map-style="mapStyle"
-    :center="[0, 0]"
-    :zoom="2"
-    style="height: 400px"
-  >
-    <MapLibreMarker :lng-lat="[0, 0]">
+  <Mapbox :options="mapOptions" style="height: 500px" @load="onMapLoad">
+    <!-- GeoJSON Data Source -->
+    <GeoJsonSource :data="geoJsonData">
+      <FillLayer :style="fillStyle" />
+      <CircleLayer :style="circleStyle" />
+    </GeoJsonSource>
+
+    <!-- Interactive Marker -->
+    <Marker :lnglat="[0, 0]" :draggable="true">
       <div class="marker">📍</div>
-    </MapLibreMarker>
-  </MapLibreMap>
+    </Marker>
+
+    <!-- Popup -->
+    <PopUp :lnglat="[0, 0]" :show="true">
+      <div class="popup-content">
+        <h3>Welcome to Vue3 MapLibre GL!</h3>
+        <p>Interactive maps made easy with Vue 3</p>
+      </div>
+    </PopUp>
+
+    <!-- Geolocation Control -->
+    <GeolocateControls position="top-right" />
+  </Mapbox>
 </template>
 
 <script setup>
-import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
+import { ref } from 'vue';
+import {
+  Mapbox,
+  GeoJsonSource,
+  FillLayer,
+  CircleLayer,
+  Marker,
+  PopUp,
+  GeolocateControls,
+} from 'vue3-maplibre-gl';
 import 'vue3-maplibre-gl/dist/style.css';
 
-const mapStyle = 'https://demotiles.maplibre.org/style.json';
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const geoJsonData = ref({
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [0, 0] },
+      properties: { name: 'Sample Point' },
+    },
+  ],
+});
+
+const fillStyle = ref({
+  'fill-color': '#088',
+  'fill-opacity': 0.8,
+});
+
+const circleStyle = ref({
+  'circle-radius': 6,
+  'circle-color': '#007cbf',
+});
+
+function onMapLoad(map) {
+  console.log('Map loaded:', map);
+}
+</script>
+
+<style>
+.marker {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.popup-content {
+  padding: 10px;
+  max-width: 200px;
+}
+</style>
+```
+
+## 🧩 Components
+
+Vue3 MapLibre GL provides 10+ reactive Vue components:
+
+| Component             | Description                                                   |
+| --------------------- | ------------------------------------------------------------- |
+| **Mapbox**            | Main map container with comprehensive event handling          |
+| **GeoJsonSource**     | Reactive data source for GeoJSON data with clustering support |
+| **FillLayer**         | Render filled polygons with customizable styling              |
+| **CircleLayer**       | Display point data as circles with dynamic sizing             |
+| **LineLayer**         | Render linear features like routes and boundaries             |
+| **SymbolLayer**       | Display icons and text labels                                 |
+| **Marker**            | HTML markers with drag support and custom content             |
+| **PopUp**             | Interactive popup windows with custom HTML                    |
+| **Image**             | Manage and load images for map styles                         |
+| **GeolocateControls** | User location tracking with comprehensive events              |
+
+## 🔧 Composables
+
+15+ powerful composables for advanced map functionality:
+
+### Map Management
+
+- `useCreateMapbox` - Enhanced map creation with error handling
+- `useMapbox` - Simplified map state management
+
+### Layer Management
+
+- `useCreateFillLayer` - Fill layer creation and management
+- `useCreateCircleLayer` - Circle layer for point visualization
+- `useCreateLineLayer` - Line layer for linear features
+- `useCreateSymbolLayer` - Symbol layer for icons and text
+
+### Source Management
+
+- `useCreateGeoJsonSource` - GeoJSON source with reactive data
+- `useGeoJsonSource` - Simplified source management
+
+### Controls
+
+- `useGeolocateControl` - User location tracking
+
+### Events
+
+- `useMapEventListener` - Map event handling
+- `useLayerEventListener` - Layer-specific events
+
+### Utilities
+
+- `useFlyTo` - Smooth map animations
+- `useEaseTo` - Easing animations
+- `useJumpTo` - Instant position changes
+- `useBounds` - Bounds management
+- `useZoom` - Zoom controls
+- `useLogger` - Consistent logging
+
+## 🎯 TypeScript Support
+
+Vue3 MapLibre GL includes comprehensive TypeScript support:
+
+```typescript
+import { ref } from 'vue';
+import {
+  Mapbox,
+  GeoJsonSource,
+  FillLayer,
+  type MapboxProps,
+  type FillLayerStyle,
+  type GeoJSONSourceSpecification,
+} from 'vue3-maplibre-gl';
+
+const mapOptions = ref<MapboxProps['options']>({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const fillStyle = ref<FillLayerStyle>({
+  'fill-color': '#088',
+  'fill-opacity': 0.8,
+});
+
+const geoJsonData = ref<GeoJSONSourceSpecification['data']>({
+  type: 'FeatureCollection',
+  features: [],
+});
+```
+
+## 🌟 Advanced Example with Composables
+
+```vue
+<script setup>
+import { ref } from 'vue';
+import {
+  useCreateMapbox,
+  useFlyTo,
+  useMapEventListener,
+  useCreateGeoJsonSource,
+} from 'vue3-maplibre-gl';
+
+const mapContainer = ref();
+const mapStyle = ref('https://demotiles.maplibre.org/style.json');
+
+// Create map with enhanced error handling
+const { mapInstance, setCenter, setZoom } = useCreateMapbox(
+  mapContainer,
+  mapStyle,
+  {
+    onLoad: (map) => console.log('Map loaded:', map),
+    onError: (error) => console.error('Map error:', error),
+    debug: true,
+  },
+);
+
+// Add smooth animations
+const { flyTo } = useFlyTo({ map: mapInstance });
+
+// Create reactive data source
+const { setData } = useCreateGeoJsonSource({
+  map: mapInstance,
+  id: 'my-source',
+  data: { type: 'FeatureCollection', features: [] },
+});
+
+// Listen to map events
+useMapEventListener({
+  map: mapInstance,
+  event: 'click',
+  handler: (event) => {
+    flyTo({
+      center: event.lngLat,
+      zoom: 12,
+      duration: 2000,
+    });
+  },
+});
 </script>
 ```
 
 ## 📚 Documentation
 
-- **[Getting Started](https://danh121097.github.io/vue-mapbox-gl/guide/getting-started)** - Learn the basics
+- **[Getting Started](https://danh121097.github.io/vue-mapbox-gl/guide/getting-started)** - Learn the basics and see examples
 - **[Installation Guide](https://danh121097.github.io/vue-mapbox-gl/guide/installation)** - Detailed setup instructions
-- **[API Reference](https://danh121097.github.io/vue-mapbox-gl/api/components)** - Complete component documentation
-- **[Examples](https://danh121097.github.io/vue-mapbox-gl/examples/)** - Live examples and demos
+- **[Configuration](https://danh121097.github.io/vue-mapbox-gl/guide/configuration)** - Advanced configuration options
+- **[Components API](https://danh121097.github.io/vue-mapbox-gl/api/components)** - Complete component documentation
+- **[Composables API](https://danh121097.github.io/vue-mapbox-gl/api/composables)** - Composables reference
+- **[TypeScript Types](https://danh121097.github.io/vue-mapbox-gl/api/types)** - Type definitions
+- **[Live Examples](https://danh121097.github.io/vue-mapbox-gl/examples/)** - Interactive demos
 
 ## 🛠️ Development
 
@@ -86,9 +293,43 @@ yarn build
 yarn docs:dev
 ```
 
+## 🌟 Why Choose Vue3 MapLibre GL?
+
+- **🎯 Vue 3 Native** - Built specifically for Vue 3 with Composition API support
+- **🗺️ MapLibre GL JS** - Uses the open-source MapLibre GL JS for high-performance rendering
+- **🧩 Component-Based** - 10+ Vue components for maps, layers, sources, markers, and controls
+- **🔧 Powerful Composables** - 15+ composables for map management, animations, and utilities
+- **📚 Comprehensive Documentation** - Detailed guides, API references, and examples
+- **⚡ High Performance** - Optimized for performance with automatic resource cleanup
+- **🌐 Open Source** - MIT licensed with active community support
+- **📱 Mobile Ready** - Touch-friendly controls and responsive design
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/danh121097/vue-mapbox-gl.git
+cd vue-mapbox-gl
+
+# Install dependencies
+yarn install
+
+# Start development server
+yarn dev
+
+# Run tests
+yarn test
+
+# Build the library
+yarn build
+
+# Run documentation
+yarn docs:dev
+```
 
 ## 📄 License
 
@@ -96,11 +337,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js/docs/)
+- Built on top of [MapLibre GL JS](https://maplibre.org/maplibre-gl-js/docs/) - The open-source mapping library
 - Inspired by the Vue.js ecosystem and community
+- Thanks to all contributors and users who make this project better
 
 ## 📞 Support
 
-- 📖 [Documentation](https://danh121097.github.io/vue-mapbox-gl/)
-- 🐛 [Issues](https://github.com/danh121097/vue-mapbox-gl/issues)
-- 💬 [Discussions](https://github.com/danh121097/vue-mapbox-gl/discussions)
+- 📖 [Documentation](https://danh121097.github.io/vue-mapbox-gl/) - Comprehensive guides and API reference
+- 🐛 [Issues](https://github.com/danh121097/vue-mapbox-gl/issues) - Bug reports and feature requests
+- 💬 [Discussions](https://github.com/danh121097/vue-mapbox-gl/discussions) - Community discussions and questions
+- ⭐ [GitHub](https://github.com/danh121097/vue-mapbox-gl) - Star the project if you find it useful!
+
+---
+
+**Made with ❤️ for the Vue.js community**

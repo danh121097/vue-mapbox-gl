@@ -2263,7 +2263,7 @@ magic-string@^0.30.17, magic-string@^0.30.8:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.5.0"
 
-maplibre-gl@*:
+maplibre-gl@*, maplibre-gl@^5.6.1:
   version "5.6.1"
   resolved "https://registry.yarnpkg.com/maplibre-gl/-/maplibre-gl-5.6.1.tgz#d6fd215f14274aef9b695cd2a34eb3b4ad788049"
   integrity sha512-TTSfoTaF7RqKUR9wR5qDxCHH2J1XfZ1E85luiLOx0h8r50T/LnwAwwfV0WVNh9o8dA7rwt57Ucivf1emyeukXg==
@@ -3261,7 +3261,7 @@ vue3-maplibre-gl@^3.2.0:
     maplibre-gl "^4.3.2"
     vue "^3.4.27"
 
-vue@^3.4.27, vue@^3.5.13:
+vue@^3.4.27, vue@^3.5.13, vue@^3.5.17:
   version "3.5.17"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.5.17.tgz#ea8a6a45abb2b0620e7d479319ce8434b55650cf"
   integrity sha512-LbHV3xPN9BeljML+Xctq4lbz2lVHCR6DtbpTf5XIO6gugpXUN49j2QQPcMj086r9+AkJ0FfUT8xjulKKBkkr9g==
