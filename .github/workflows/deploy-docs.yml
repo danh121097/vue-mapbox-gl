@@ -27,7 +27,7 @@ jobs:
 
       - name: Build documentation
         run: |
-          yarn docs:build
+          yarn docs:build --debug
         env:
           NODE_ENV: production
 
