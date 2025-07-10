@@ -1,5 +1,5 @@
 {
-  "name": "vue-maplibre-gl",
+  "name": "vue3-maplibre-gl",
   "description": "Vue 3 components and composables for MapLibre GL JS - Build interactive maps with ease",
   "version": "3.1.27",
   "author": {

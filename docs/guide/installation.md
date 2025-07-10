@@ -7,19 +7,19 @@ Vue MapLibre GL is available on npm and can be installed using your preferred pa
 ### Using Yarn (Recommended)
 
 ```bash
-yarn add vue-maplibre-gl maplibre-gl
+yarn add vue3-maplibre-gl maplibre-gl
 ```
 
 ### Using npm
 
 ```bash
-npm install vue-maplibre-gl maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ### Using pnpm
 
 ```bash
-pnpm add vue-maplibre-gl maplibre-gl
+pnpm add vue3-maplibre-gl maplibre-gl
 ```
 
 ## CDN Installation
@@ -29,10 +29,13 @@ You can also use Vue MapLibre GL directly from a CDN:
 ```html
 <!-- MapLibre GL JS -->
 <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
-<link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+<link
+  href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css"
+  rel="stylesheet"
+/>
 
 <!-- Vue MapLibre GL -->
-<script src="https://unpkg.com/vue-maplibre-gl@latest/dist/index.umd.cjs"></script>
+<script src="https://unpkg.com/vue3-maplibre-gl@latest/dist/index.umd.cjs"></script>
 ```
 
 ## Setup in Vue 3
@@ -42,13 +45,13 @@ You can also use Vue MapLibre GL directly from a CDN:
 Register the components globally in your main.js:
 
 ```js
-import { createApp } from 'vue'
-import VueMapLibreGl from 'vue-maplibre-gl'
-import 'maplibre-gl/dist/maplibre-gl.css'
+import { createApp } from 'vue';
+import VueMapLibreGl from 'vue3-maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
-const app = createApp(App)
-app.use(VueMapLibreGl)
-app.mount('#app')
+const app = createApp(App);
+app.use(VueMapLibreGl);
+app.mount('#app');
 ```
 
 ### Local Registration
@@ -57,8 +60,8 @@ Import components as needed in your components:
 
 ```vue
 <script setup>
-import { MapLibreMap, MapLibreMarker } from 'vue-maplibre-gl'
-import 'maplibre-gl/dist/maplibre-gl.css'
+import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 </script>
 ```
 
@@ -79,12 +82,14 @@ The package includes comprehensive type definitions for:
 
 ```vue
 <script setup lang="ts">
-import { ref } from 'vue'
-import { MapLibreMap } from 'vue-maplibre-gl'
-import type { LngLatLike, StyleSpecification } from 'maplibre-gl'
+import { ref } from 'vue';
+import { MapLibreMap } from 'vue3-maplibre-gl';
+import type { LngLatLike, StyleSpecification } from 'maplibre-gl';
 
-const center = ref<LngLatLike>([0, 0])
-const mapStyle = ref<string | StyleSpecification>('https://demotiles.maplibre.org/style.json')
+const center = ref<LngLatLike>([0, 0]);
+const mapStyle = ref<string | StyleSpecification>(
+  'https://demotiles.maplibre.org/style.json',
+);
 </script>
 ```
 
@@ -94,15 +99,15 @@ If you're using Vite, you might need to add some configuration for optimal perfo
 
 ```js
 // vite.config.js
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
   optimizeDeps: {
-    include: ['maplibre-gl']
-  }
-})
+    include: ['maplibre-gl'],
+  },
+});
 ```
 
 ## Webpack Configuration
@@ -114,10 +119,10 @@ For Webpack users, you might need to configure module resolution:
 module.exports = {
   resolve: {
     alias: {
-      'maplibre-gl': 'maplibre-gl/dist/maplibre-gl.js'
-    }
-  }
-}
+      'maplibre-gl': 'maplibre-gl/dist/maplibre-gl.js',
+    },
+  },
+};
 ```
 
 ## Nuxt 3 Setup
@@ -126,12 +131,12 @@ For Nuxt 3 applications, create a plugin:
 
 ```js
 // plugins/vue-maplibre-gl.client.js
-import VueMapLibreGl from 'vue-maplibre-gl'
-import 'maplibre-gl/dist/maplibre-gl.css'
+import VueMapLibreGl from 'vue3-maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(VueMapLibreGl)
-})
+  nuxtApp.vueApp.use(VueMapLibreGl);
+});
 ```
 
 ## Troubleshooting
@@ -145,11 +150,13 @@ export default defineNuxtPlugin((nuxtApp) => {
 ### Browser Compatibility
 
 Vue MapLibre GL supports all modern browsers that support:
+
 - ES6+ features
 - WebGL
 - Vue 3
 
 Minimum browser versions:
+
 - Chrome 51+
 - Firefox 53+
 - Safari 10+

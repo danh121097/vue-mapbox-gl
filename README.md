@@ -1,6 +1,6 @@
 # Vue MapLibre GL
 
-[![npm](https://img.shields.io/npm/v/vue-maplibre-gl)](https://www.npmjs.com/package/vue-maplibre-gl) [![Downloads](https://img.shields.io/npm/dt/vue-maplibre-gl)](https://www.npmjs.com/package/vue-maplibre-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/vue-maplibre-gl)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE)
+[![npm](https://img.shields.io/npm/v/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Downloads](https://img.shields.io/npm/dt/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-maplibre-gl)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE)
 
 > Vue 3 components and composables for MapLibre GL JS - Build interactive maps with ease
 
@@ -20,19 +20,19 @@ A comprehensive Vue 3 component library for MapLibre GL JS that provides an intu
 ### Using Yarn (Recommended)
 
 ```bash
-yarn add vue-maplibre-gl maplibre-gl
+yarn add vue3-maplibre-gl maplibre-gl
 ```
 
 ### Using npm
 
 ```bash
-npm install vue-maplibre-gl maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ### Using pnpm
 
 ```bash
-pnpm add vue-maplibre-gl maplibre-gl
+pnpm add vue3-maplibre-gl maplibre-gl
 ```
 
 ## 🚀 Quick Start
@@ -52,7 +52,7 @@ pnpm add vue-maplibre-gl maplibre-gl
 </template>
 
 <script setup>
-import { MapLibreMap, MapLibreMarker } from 'vue-maplibre-gl';
+import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 const mapStyle = 'https://demotiles.maplibre.org/style.json';

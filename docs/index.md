@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: "Vue MapLibre GL"
-  text: "Vue 3 Components for MapLibre GL JS"
-  tagline: "Build interactive maps with ease using Vue 3 and MapLibre GL JS"
+  name: 'Vue MapLibre GL'
+  text: 'Vue 3 Components for MapLibre GL JS'
+  tagline: 'Build interactive maps with ease using Vue 3 and MapLibre GL JS'
   image:
     src: /logo.svg
     alt: Vue MapLibre GL
@@ -43,10 +43,10 @@ Install the package:
 
 ```bash
 # Using yarn
-yarn add vue-maplibre-gl maplibre-gl
+yarn add vue3-maplibre-gl maplibre-gl
 
 # Using npm
-npm install vue-maplibre-gl maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 Use in your Vue 3 application:
@@ -66,10 +66,10 @@ Use in your Vue 3 application:
 </template>
 
 <script setup>
-import { MapLibreMap, MapLibreMarker } from 'vue-maplibre-gl'
-import 'maplibre-gl/dist/maplibre-gl.css'
+import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
-const mapStyle = 'https://demotiles.maplibre.org/style.json'
+const mapStyle = 'https://demotiles.maplibre.org/style.json';
 </script>
 ```
 
