@@ -7,19 +7,19 @@ Vue MapLibre GL is available on npm and can be installed using your preferred pa
 ### Using Yarn (Recommended)
 
 ```bash
-yarn add vue3-maplibre-gl maplibre-gl
+yarn add vue3-maplibre-gl
 ```
 
 ### Using npm
 
 ```bash
-npm install vue3-maplibre-gl maplibre-gl
+npm install vue3-maplibre-gl
 ```
 
 ### Using pnpm
 
 ```bash
-pnpm add vue3-maplibre-gl maplibre-gl
+pnpm add vue3-maplibre-gl
 ```
 
 ## CDN Installation
@@ -27,15 +27,12 @@ pnpm add vue3-maplibre-gl maplibre-gl
 You can also use Vue MapLibre GL directly from a CDN:
 
 ```html
-<!-- MapLibre GL JS -->
-<script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+<!-- Vue MapLibre GL (includes MapLibre GL JS) -->
+<script src="https://unpkg.com/vue3-maplibre-gl@latest/dist/index.umd.cjs"></script>
 <link
-  href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css"
+  href="https://unpkg.com/vue3-maplibre-gl@latest/dist/style.css"
   rel="stylesheet"
 />
-
-<!-- Vue MapLibre GL -->
-<script src="https://unpkg.com/vue3-maplibre-gl@latest/dist/index.umd.cjs"></script>
 ```
 
 ## Setup in Vue 3
@@ -47,7 +44,7 @@ Register the components globally in your main.js:
 ```js
 import { createApp } from 'vue';
 import VueMapLibreGl from 'vue3-maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import 'vue3-maplibre-gl/dist/style.css';
 
 const app = createApp(App);
 app.use(VueMapLibreGl);
@@ -61,7 +58,7 @@ Import components as needed in your components:
 ```vue
 <script setup>
 import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import 'vue3-maplibre-gl/dist/style.css';
 </script>
 ```
 
@@ -132,7 +129,7 @@ For Nuxt 3 applications, create a plugin:
 ```js
 // plugins/vue-maplibre-gl.client.js
 import VueMapLibreGl from 'vue3-maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import 'vue3-maplibre-gl/dist/style.css';
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(VueMapLibreGl);

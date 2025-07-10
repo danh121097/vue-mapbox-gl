@@ -1,0 +1,6 @@
+{
+  "buildCommand": "yarn docs:build",
+  "outputDirectory": "docs/.vitepress/dist",
+  "framework": "vitepress",
+  "installCommand": "yarn install"
+}

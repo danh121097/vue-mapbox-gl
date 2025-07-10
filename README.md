@@ -20,19 +20,19 @@ A comprehensive Vue 3 component library for MapLibre GL JS that provides an intu
 ### Using Yarn (Recommended)
 
 ```bash
-yarn add vue3-maplibre-gl maplibre-gl
+yarn add vue3-maplibre-gl
 ```
 
 ### Using npm
 
 ```bash
-npm install vue3-maplibre-gl maplibre-gl
+npm install vue3-maplibre-gl
 ```
 
 ### Using pnpm
 
 ```bash
-pnpm add vue3-maplibre-gl maplibre-gl
+pnpm add vue3-maplibre-gl
 ```
 
 ## 🚀 Quick Start
@@ -53,7 +53,7 @@ pnpm add vue3-maplibre-gl maplibre-gl
 
 <script setup>
 import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import 'vue3-maplibre-gl/dist/style.css';
 
 const mapStyle = 'https://demotiles.maplibre.org/style.json';
 </script>

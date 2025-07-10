@@ -21,25 +21,25 @@ Choose your preferred package manager:
 ::: code-group
 
 ```bash [yarn]
-yarn add vue3-maplibre-gl maplibre-gl
+yarn add vue3-maplibre-gl
 ```
 
 ```bash [npm]
-npm install vue3-maplibre-gl maplibre-gl
+npm install vue3-maplibre-gl
 ```
 
 ```bash [pnpm]
-pnpm add vue3-maplibre-gl maplibre-gl
+pnpm add vue3-maplibre-gl
 ```
 
 :::
 
 ## Import Styles
 
-Don't forget to import the MapLibre GL CSS:
+Don't forget to import the CSS:
 
 ```js
-import 'maplibre-gl/dist/maplibre-gl.css';
+import 'vue3-maplibre-gl/dist/style.css';
 ```
 
 You can import this in your main.js file or in individual components.
@@ -63,7 +63,7 @@ Here's a simple example to get you started:
 <script setup>
 import { ref } from 'vue';
 import { MapLibreMap } from 'vue3-maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import 'vue3-maplibre-gl/dist/style.css';
 
 const mapStyle = ref('https://demotiles.maplibre.org/style.json');
 const center = ref([0, 0]);

@@ -1,5 +1,5 @@
 // Import CSS for convenience
-import 'maplibre-gl/dist/maplibre-gl.css';
+import './style.css';
 
 // Export all composables
 export * from './composables';

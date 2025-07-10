@@ -29,14 +29,13 @@ export default defineConfig({
   build: {
     cssCodeSplit: false,
     rollupOptions: {
-      external: ['vue', 'maplibre-gl'],
+      external: ['vue'],
       output: [
         {
           format: 'es',
           entryFileNames: 'index.js',
           globals: {
             vue: 'Vue',
-            'maplibre-gl': 'maplibregl',
           },
           exports: 'named',
         },
@@ -46,7 +45,6 @@ export default defineConfig({
           name: 'VueMapbox',
           globals: {
             vue: 'Vue',
-            'maplibre-gl': 'maplibregl',
           },
           exports: 'named',
         },

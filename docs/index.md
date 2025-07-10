@@ -43,10 +43,10 @@ Install the package:
 
 ```bash
 # Using yarn
-yarn add vue3-maplibre-gl maplibre-gl
+yarn add vue3-maplibre-gl
 
 # Using npm
-npm install vue3-maplibre-gl maplibre-gl
+npm install vue3-maplibre-gl
 ```
 
 Use in your Vue 3 application:
@@ -67,7 +67,7 @@ Use in your Vue 3 application:
 
 <script setup>
 import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import 'vue3-maplibre-gl/dist/style.css';
 
 const mapStyle = 'https://demotiles.maplibre.org/style.json';
 </script>

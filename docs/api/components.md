@@ -48,6 +48,7 @@ The main map component that renders the MapLibre GL JS map.
 <script setup>
 import { ref } from 'vue';
 import { MapLibreMap } from 'vue3-maplibre-gl';
+import 'vue3-maplibre-gl/dist/style.css';
 
 const mapStyle = ref('https://demotiles.maplibre.org/style.json');
 const center = ref([0, 0]);
@@ -102,6 +103,7 @@ A component for adding markers to the map.
 <script setup>
 import { ref } from 'vue';
 import { MapLibreMap, MapLibreMarker } from 'vue3-maplibre-gl';
+import 'vue3-maplibre-gl/dist/style.css';
 
 const markerPosition = ref([0, 0]);
 
