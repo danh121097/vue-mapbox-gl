@@ -160,8 +160,8 @@ export {
   CanvasSource,
 
   // ===== MARKER & POPUP CLASSES =====
-  Marker,
-  Popup,
+  // Marker,
+  // Popup,
 
   // ===== EVENT CLASSES =====
   MapMouseEvent,
