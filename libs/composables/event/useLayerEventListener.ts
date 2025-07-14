@@ -140,10 +140,17 @@ export function useLayerEventListener<T extends keyof MapLayerEventType>(
     }
   }
 
-  // Watch for map and layer changes and manage listener lifecycle
+  // Optimized watch for map and layer changes with reduced overhead
+  let lastMapInstance: any = null;
+  let lastLayerInstance: any = null;
   const stopEffect = watchEffect((onCleanUp) => {
     const map = mapInstance.value;
     const layer = layerInstance.value;
+
+    // Only process if instances actually changed
+    if (map === lastMapInstance && layer === lastLayerInstance) return;
+    lastMapInstance = map;
+    lastLayerInstance = layer;
 
     if (
       map &&

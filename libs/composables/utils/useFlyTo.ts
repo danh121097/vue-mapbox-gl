@@ -1,4 +1,4 @@
-import { watchEffect, ref, computed, unref } from 'vue';
+import { watchEffect, ref, computed, unref, onUnmounted } from 'vue';
 import { useLogger } from '@libs/composables';
 import type { Nullable, Undefinedable } from '@libs/types';
 import type { MaybeRef } from 'vue';
@@ -42,6 +42,7 @@ interface FlyToActions {
   getCurrentCamera: () => CameraOptions | null;
   flyStatus: Readonly<FlyStatus>;
   isFlying: boolean;
+  cleanup: () => void;
 }
 
 /**
@@ -269,8 +270,8 @@ export function useFlyTo(props: FlyToProps): FlyToActions {
     }
   }
 
-  // Watch for map and options changes
-  watchEffect(() => {
+  // Watch for map and options changes with cleanup
+  const stopWatchEffect = watchEffect(() => {
     const map = mapInstance.value;
     if (map && flyOptions.value && flyStatus.value === FlyStatus.NotStarted) {
       flyTo(flyOptions.value).catch((error) => {
@@ -278,6 +279,26 @@ export function useFlyTo(props: FlyToProps): FlyToActions {
       });
     }
   });
+
+  // Enhanced cleanup function
+  function cleanup(): void {
+    try {
+      // Stop any ongoing animation
+      stopFlying();
+
+      // Stop watch effect
+      stopWatchEffect();
+
+      // Clear references
+      flyOptions.value = undefined;
+      flyStatus.value = FlyStatus.NotStarted;
+    } catch (error) {
+      logError('Error during useFlyTo cleanup:', error);
+    }
+  }
+
+  // Automatic cleanup on unmount
+  onUnmounted(cleanup);
 
   return {
     flyTo,
@@ -289,5 +310,6 @@ export function useFlyTo(props: FlyToProps): FlyToActions {
     getCurrentCamera,
     flyStatus: flyStatus.value as Readonly<FlyStatus>,
     isFlying: isFlying.value,
+    cleanup, // Expose cleanup for manual use
   };
 }

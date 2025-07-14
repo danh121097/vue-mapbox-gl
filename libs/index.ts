@@ -1,6 +1,3 @@
-// Import CSS for convenience
-import './style.css';
-
 // Export all composables
 export * from './composables';
 
@@ -16,59 +13,168 @@ export * from './types';
 // Export all components
 export * from './components';
 
-// Re-export MapLibre GL types and classes for convenience (excluding conflicting names)
+// Re-export comprehensive MapLibre GL types and interfaces for convenience
+// Note: Classes are not re-exported to reduce bundle size
+// Users should import them directly from 'maplibre-gl' if needed
+export type {
+  // ===== CORE TYPES =====
+  MapOptions,
+  LngLatLike,
+  LngLatBoundsLike,
+  PointLike,
+  PaddingOptions,
+  CameraOptions,
+  AnimationOptions,
+  RequestParameters,
+  GetResourceResponse,
+  AddProtocolAction,
+  Config,
+
+  // ===== COORDINATE & GEOMETRY TYPES =====
+  IMercatorCoordinate,
+  Padding,
+
+  // ===== STYLE SPECIFICATION TYPES =====
+  StyleSpecification,
+  LayerSpecification,
+  SourceSpecification,
+  FilterSpecification,
+  ExpressionSpecification,
+  TransitionSpecification,
+  PropertyValueSpecification,
+  DataDrivenPropertyValueSpecification,
+  StylePropertySpecification,
+  StylePropertyExpression,
+  ProjectionSpecification,
+  SkySpecification,
+  SpriteSpecification,
+  StateSpecification,
+
+  // ===== BOUNDS AND CAMERA TYPES =====
+  CameraForBoundsOptions,
+  FitBoundsOptions,
+
+  // ===== EVENT TYPES =====
+  MapEventType,
+  MapLayerEventType,
+  MapSourceDataEvent,
+  MapContextEvent,
+  MapDataEvent,
+  MapLibreZoomEvent,
+
+  // ===== FEATURE TYPES =====
+  MapGeoJSONFeature,
+  QueryRenderedFeaturesOptions,
+  QuerySourceFeatureOptions,
+  FeatureIdentifier,
+  Feature,
+  FeatureState,
+  FeatureFilter,
+
+  // ===== SOURCE TYPES =====
+  GeoJSONSourceSpecification,
+  VectorSourceSpecification,
+  RasterSourceSpecification,
+  RasterDEMSourceSpecification,
+  ImageSourceSpecification,
+  VideoSourceSpecification,
+  CanvasSourceSpecification,
+  SourceExpression,
+
+  // ===== LAYER SPECIFICATION TYPES =====
+  FillLayerSpecification,
+  LineLayerSpecification,
+  SymbolLayerSpecification,
+  CircleLayerSpecification,
+  HeatmapLayerSpecification,
+  FillExtrusionLayerSpecification,
+  RasterLayerSpecification,
+  HillshadeLayerSpecification,
+  BackgroundLayerSpecification,
+
+  // ===== CONTROL TYPES =====
+  ControlPosition,
+  IControl,
+
+  // ===== TERRAIN & LIGHTING TYPES =====
+  TerrainSpecification,
+  LightSpecification,
+
+  // ===== EXPRESSION & FORMATTING TYPES =====
+  CompositeExpression,
+  InterpolationType,
+  GlobalProperties,
+  PromoteIdSpecification,
+  VariableAnchorOffsetCollection,
+
+  // ===== COLOR & STYLING TYPES =====
+  ColorArray,
+  NumberArray,
+  ResolvedImage,
+
+  // ===== DIFF & OPERATIONS TYPES =====
+  DiffCommand,
+  DiffOperations,
+
+  // ===== TILE & CANONICAL TYPES =====
+  ICanonicalTileID,
+
+  // ===== STYLE IMAGE TYPES =====
+  StyleImageInterface,
+  StyleImageData,
+  StyleImageMetadata,
+  StyleImage,
+  SpriteOnDemandStyleImage,
+
+  // ===== ERROR TYPES =====
+  ErrorLike,
+} from 'maplibre-gl';
+
+// Re-export essential MapLibre GL classes for convenience
+// These are the main classes users typically need
 export {
+  // ===== CORE CLASSES =====
   Map,
   LngLat,
   LngLatBounds,
   Point,
   MercatorCoordinate,
-  EdgeInsets,
-  CanvasSource,
-  GeoJSONSource,
-  ImageSource,
-  RasterDEMTileSource,
-  RasterTileSource,
-  VectorTileSource,
-  VideoSource,
-  // Controls (excluding conflicting ones)
-  AttributionControl,
-  FullscreenControl,
+
+  // ===== CONTROL CLASSES =====
   NavigationControl,
+  GeolocateControl,
   ScaleControl,
-  // Events and other utilities
-  Evented,
-  // Style and layer related
-  Style,
-  // Types
-  type MapOptions,
-  type LngLatLike,
-  type LngLatBoundsLike,
-  type PointLike,
-  type PaddingOptions,
-  type CameraOptions,
-  type AnimationOptions,
-  type StyleSpecification,
-  type LayerSpecification,
-  type SourceSpecification,
-  type FilterSpecification,
-  type ExpressionSpecification,
-  type TransitionSpecification,
-  type PropertyValueSpecification,
-  type DataDrivenPropertyValueSpecification,
-  type CameraForBoundsOptions,
-  type FitBoundsOptions,
-  type MapEventType,
-  type MapLayerEventType,
-  type MapSourceDataEvent,
-  type MapContextEvent,
-  type MapDataEvent,
-  type MapMouseEvent,
-  type MapTouchEvent,
-  type MapWheelEvent,
-  type MapLibreZoomEvent,
-  type MapGeoJSONFeature,
-  type QueryRenderedFeaturesOptions,
-  type QuerySourceFeatureOptions,
-  type FeatureIdentifier,
+  FullscreenControl,
+  AttributionControl,
+
+  // ===== SOURCE CLASSES =====
+  GeoJSONSource,
+  VectorTileSource,
+  RasterTileSource,
+  RasterDEMTileSource,
+  ImageSource,
+  VideoSource,
+  CanvasSource,
+
+  // ===== MARKER & POPUP CLASSES =====
+  Marker,
+  Popup,
+
+  // ===== EVENT CLASSES =====
+  MapMouseEvent,
+  MapTouchEvent,
+  MapWheelEvent,
+  ErrorEvent,
+  Event,
+
+  // ===== UTILITY CLASSES =====
+  EdgeInsets,
+
+  // ===== STYLE & FORMATTING CLASSES =====
+  Color,
+  Formatted,
+  FormattedSection,
+
+  // ===== ERROR CLASSES =====
+  AJAXError,
 } from 'maplibre-gl';

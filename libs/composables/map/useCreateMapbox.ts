@@ -22,36 +22,24 @@ import type {
 } from 'maplibre-gl';
 
 interface CreateMapboxProps extends MapOptions {
-  register?: (actions: EnhancedCreateMaplibreActions) => void;
+  register?: (actions: SimplifiedCreateMaplibreActions) => void;
   debug?: boolean;
   onLoad?: (map: Map) => void;
   onError?: (error: any) => void;
 }
 
-interface EnhancedCreateMaplibreActions extends CreateMaplibreActions {
-  // Enhanced camera controls
+interface SimplifiedCreateMaplibreActions extends CreateMaplibreActions {
+  // Essential camera controls
   getCurrentCamera: () => CameraOptions | null;
-  resetCamera: () => void;
-  validateMapBounds: (bounds: LngLatBoundsLike) => boolean;
 
-  // Enhanced status and state
+  // Essential status and state
   mapCreationStatus: Readonly<MapCreationStatus>;
   isMapReady: boolean;
   isMapLoading: boolean;
   hasMapError: boolean;
 
-  // Enhanced map management
-  refreshMap: () => void;
-  destroyMap: () => void;
-  retryMapCreation: () => void;
-
-  // Enhanced style management
+  // Essential style management
   getCurrentStyle: () => StyleSpecification | string | null;
-
-  // Enhanced bounds and limits management
-  resetBounds: () => void;
-  resetZoomLimits: () => void;
-  resetPitchLimits: () => void;
 }
 
 /**
@@ -100,25 +88,6 @@ export function useCreateMapbox(
   function validateMapOperation(): boolean {
     const map = mapInstance.value;
     if (!map) return false;
-    return true;
-  }
-
-  /**
-   * Validates map bounds
-   * @param bounds - Bounds to validate
-   * @returns boolean indicating if bounds are valid
-   */
-  function validateMapBounds(bounds: LngLatBoundsLike): boolean {
-    if (!bounds) return false;
-
-    // Additional validation for array format
-    if (Array.isArray(bounds)) {
-      if (bounds.length !== 4 && bounds.length !== 2) {
-        logWarn('Invalid bounds array: must have 2 or 4 elements', { bounds });
-        return false;
-      }
-    }
-
     return true;
   }
 
@@ -362,8 +331,6 @@ export function useCreateMapbox(
   function setMaxBounds(bounds?: LngLatBoundsLike): void {
     if (!validateMapOperation()) return;
 
-    if (bounds && !validateMapBounds(bounds)) return;
-
     try {
       mapInstance.value!.setMaxBounds(bounds);
       mapOptions.value.maxBounds = bounds;
@@ -470,86 +437,11 @@ export function useCreateMapbox(
   }
 
   /**
-   * Resets the camera to initial state
-   */
-  function resetCamera(): void {
-    if (!validateMapOperation()) return;
-
-    try {
-      const initialOptions = unref(mapOptions);
-      if (initialOptions.center) setCenter(initialOptions.center);
-      if (initialOptions.zoom !== undefined) setZoom(initialOptions.zoom);
-      if (initialOptions.bearing !== undefined)
-        setBearing(initialOptions.bearing);
-      if (initialOptions.pitch !== undefined) setPitch(initialOptions.pitch);
-    } catch (error) {
-      logError('Error resetting camera:', error);
-    }
-  }
-
-  /**
-   * Resets map bounds to initial state
-   */
-  function resetBounds(): void {
-    if (!validateMapOperation()) return;
-
-    try {
-      setMaxBounds(undefined);
-    } catch (error) {
-      logError('Error resetting bounds:', error);
-    }
-  }
-
-  /**
-   * Resets zoom limits to default values
-   */
-  function resetZoomLimits(): void {
-    if (!validateMapOperation()) return;
-
-    try {
-      setMinZoom(0);
-      setMaxZoom(24);
-    } catch (error) {
-      logError('Error resetting zoom limits:', error);
-    }
-  }
-
-  /**
-   * Resets pitch limits to default values
-   */
-  function resetPitchLimits(): void {
-    if (!validateMapOperation()) return;
-
-    try {
-      setMinPitch(0);
-      setMaxPitch(60);
-    } catch (error) {
-      logError('Error resetting pitch limits:', error);
-    }
-  }
-
-  /**
-   * Refreshes the map by removing and recreating it
-   */
-  function refreshMap(): void {
-    removeMap();
-    initMap();
-  }
-
-  /**
    * Destroys the map permanently
    */
   function destroyMap(): void {
     removeMap();
     mapCreationStatus.value = MapCreationStatus.Destroyed;
-  }
-
-  /**
-   * Retries map creation after an error
-   */
-  function retryMapCreation(): void {
-    retryCount.value = 0;
-    initMap();
   }
 
   /**
@@ -578,7 +470,7 @@ export function useCreateMapbox(
     destroyMap();
   });
 
-  const methods: EnhancedCreateMaplibreActions = {
+  const methods: SimplifiedCreateMaplibreActions = {
     // Original CreateMaplibreActions
     mapInstance: mapInstanceComputed,
     setRenderWorldCopies,
@@ -593,30 +485,23 @@ export function useCreateMapbox(
     setBearing,
     setCenter,
 
-    // Enhanced actions
+    // Simplified essential actions
     getCurrentCamera,
-    resetCamera,
-    validateMapBounds,
     mapCreationStatus: mapCreationStatusComputed.value,
     isMapReady: isMapReady.value,
     isMapLoading: isMapLoading.value,
     hasMapError: hasMapError.value,
-    refreshMap,
-    destroyMap,
-    retryMapCreation,
     getCurrentStyle,
-    resetBounds,
-    resetZoomLimits,
-    resetPitchLimits,
   };
 
-  // Register the enhanced methods
+  // Register the simplified methods
   register?.(methods);
 
   return {
     initMap,
     removeMap,
     checkInitMap,
+    destroyMap,
     ...methods,
   };
 }

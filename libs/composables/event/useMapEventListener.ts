@@ -107,9 +107,15 @@ export function useMapEventListener(
     }
   }
 
-  // Watch for map changes and manage listener lifecycle
+  // Optimized watch for map changes with reduced overhead
+  let lastMapInstance: any = null;
   const stopEffect = watchEffect((onCleanUp) => {
     const map = mapInstance.value;
+
+    // Only process if map instance actually changed
+    if (map === lastMapInstance) return;
+    lastMapInstance = map;
+
     if (map && listenerStatus.value === EventListenerStatus.NotAttached) {
       attachListener();
     } else if (!map && listenerStatus.value === EventListenerStatus.Attached) {

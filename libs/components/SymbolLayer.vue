@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, inject, watch, watchEffect, computed } from 'vue';
+import { ref, inject, watch, computed, onUnmounted } from 'vue';
 import {
   MapProvideKey,
   SourceProvideKey,
@@ -152,40 +152,46 @@ MapboxLayerEvents.forEach((evt) => {
   });
 });
 
-// Reactive watchers for prop changes with error handling
-watch(
-  () => props.filter,
-  (newFilter) => {
-    setFilter(newFilter);
+// Optimized single watcher for all prop changes to reduce overhead
+const stopPropsWatcher = watch(
+  () => ({
+    filter: props.filter,
+    style: props.style,
+    maxzoom: props.maxzoom,
+    minzoom: props.minzoom,
+    beforeId: props.beforeId,
+    visible: props.visible,
+  }),
+  (newProps, oldProps) => {
+    // Only update if values actually changed to prevent unnecessary operations
+    if (newProps.filter !== oldProps?.filter) {
+      setFilter(newProps.filter);
+    }
+    if (newProps.style !== oldProps?.style) {
+      setStyle(newProps.style);
+    }
+    if (
+      newProps.maxzoom !== oldProps?.maxzoom ||
+      newProps.minzoom !== oldProps?.minzoom
+    ) {
+      setZoomRange(newProps.minzoom, newProps.maxzoom);
+    }
+    if (newProps.beforeId !== oldProps?.beforeId) {
+      setBeforeId(newProps.beforeId);
+    }
+    if (newProps.visible !== oldProps?.visible) {
+      setLayoutProperty('visibility', newProps.visible ? 'visible' : 'none');
+    }
   },
-  { deep: true },
+  {
+    deep: true,
+    flush: 'post', // Run after DOM updates for better performance
+  },
 );
 
-watch(
-  () => props.style,
-  (newStyle) => {
-    setStyle(newStyle);
-  },
-  { deep: true },
-);
-
-watch(
-  () => [props.maxzoom, props.minzoom],
-  ([maxzoom, minzoom]) => {
-    setZoomRange(minzoom, maxzoom);
-  },
-);
-
-watch(
-  () => props.beforeId,
-  (newBeforeId) => {
-    setBeforeId(newBeforeId);
-  },
-);
-
-// Optimized visibility watcher using computed property
-watchEffect(() => {
-  setLayoutProperty('visibility', props.visible ? 'visible' : 'none');
+// Enhanced cleanup
+onUnmounted(() => {
+  stopPropsWatcher();
 });
 </script>
 <template></template>

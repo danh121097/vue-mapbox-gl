@@ -15,6 +15,7 @@ import {
   useCreateMapbox,
   useMapEventListener,
   useLogger,
+  useOptimizedComputed,
 } from '@libs/composables';
 import type { CreateMaplibreActions, MaplibreActions } from '@libs/types';
 import type {
@@ -114,10 +115,28 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<MapboxProps>(), {
-  options: () => ({}),
+  options: () => ({
+    // Provide sensible defaults for better performance
+    style: 'https://demotiles.maplibre.org/style.json',
+    center: [0, 0] as [number, number],
+    zoom: 1,
+    pitch: 0,
+    bearing: 0,
+    antialias: true,
+    optimizeForTerrain: true,
+    // Performance optimizations
+    preserveDrawingBuffer: false,
+    refreshExpiredTiles: true,
+    maxTileCacheSize: null,
+    localIdeographFontFamily: false,
+    transformRequest: undefined,
+    collectResourceTiming: false,
+    fadeDuration: 300,
+    crossSourceCollisions: true,
+  }),
   debug: false,
   autoCleanup: true,
-  containerId: 'maplibre',
+  containerId: () => `maplibre-${Math.random().toString(36).substring(2, 11)}`,
   containerClass: '',
 });
 const emits = defineEmits<Emits>();
@@ -136,17 +155,23 @@ const mapCreationStatus = ref<MapCreationStatus>(
 );
 
 // Enhanced computed properties for better reactivity and performance
-const mapOptions = computed(() => {
-  const baseOptions = { ...props.options };
-  const mergedOptions = { ...baseOptions, ...innerOptions.value };
+const mapOptions = useOptimizedComputed(
+  () => {
+    const baseOptions = { ...props.options };
+    const mergedOptions = { ...baseOptions, ...innerOptions.value };
 
-  // Ensure container is properly set
-  if (!mergedOptions.container) {
-    mergedOptions.container = props.containerId;
-  }
+    // Ensure container is properly set
+    if (!mergedOptions.container) {
+      mergedOptions.container = props.containerId;
+    }
 
-  return mergedOptions;
-});
+    return mergedOptions;
+  },
+  {
+    deepEqual: true, // Use deep equality for complex objects
+    debug: props.debug,
+  },
+);
 
 const isMapReady = computed(
   () => mapCreationStatus.value === MapCreationStatus.Loaded,

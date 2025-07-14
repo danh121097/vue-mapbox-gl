@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-import { inject, ref, provide, watch, computed, onUnmounted } from 'vue';
+import { inject, ref, provide, computed, onUnmounted } from 'vue';
 import { MapProvideKey, SourceProvideKey } from '@libs/enums';
-import { useCreateGeoJsonSource, useLogger } from '@libs/composables';
+import {
+  useCreateGeoJsonSource,
+  useLogger,
+  useDebouncedWatch,
+} from '@libs/composables';
 import type { CreateGeoJsonSourceActions } from '@libs/composables';
 import type { GeoJSONSource, GeoJSONSourceSpecification } from 'maplibre-gl';
 
@@ -27,6 +31,8 @@ interface GeoJsonSourceProps {
   onLoad?: (source: GeoJSONSource) => void;
   /** Data update callback */
   onDataUpdate?: (data: GeoJSONSourceSpecification['data']) => void;
+  /** Debounce delay for data updates in milliseconds (default: 100) */
+  debounceDelay?: number;
 }
 
 /**
@@ -47,6 +53,7 @@ const props = withDefaults(defineProps<GeoJsonSourceProps>(), {
   options: () => ({}),
   debug: false,
   autoCleanup: true,
+  debounceDelay: 100,
 });
 
 const emits = defineEmits<Emits>();
@@ -157,8 +164,8 @@ const {
 // Provide source to child components
 provide(SourceProvideKey, getSource);
 
-// Enhanced data watcher with validation and error handling
-watch(
+// Enhanced debounced data watcher with validation and error handling for better performance
+const stopDataWatcher = useDebouncedWatch(
   () => props.data,
   (newData, oldData) => {
     if (newData === oldData) return;
@@ -179,9 +186,11 @@ watch(
     }
   },
   {
+    delay: props.debounceDelay,
     deep: true,
     immediate: true,
     flush: 'post', // Optimize by running after DOM updates
+    debug: props.debug,
   },
 );
 
@@ -191,6 +200,9 @@ watch(
 function cleanup(): void {
   try {
     if (props.autoCleanup) {
+      // Stop debounced watcher
+      stopDataWatcher();
+
       // Reset state
       isSourceRegistered.value = false;
       lastDataUpdate.value = undefined;
