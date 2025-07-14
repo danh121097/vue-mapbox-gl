@@ -10,8 +10,6 @@ interface OptimizedComputedOptions<T> {
   equalityFn?: (a: T, b: T) => boolean;
   /** Cache duration in milliseconds (default: no expiration) */
   cacheDuration?: number;
-  /** Enable debug logging */
-  debug?: boolean;
 }
 
 /**
@@ -26,12 +24,7 @@ export function useOptimizedComputed<T>(
   getter: () => T,
   options: OptimizedComputedOptions<T> = {},
 ): ComputedRef<T> {
-  const {
-    deepEqual = false,
-    equalityFn,
-    cacheDuration,
-    debug = false,
-  } = options;
+  const { deepEqual = false, equalityFn, cacheDuration } = options;
 
   const lastValue = ref<T>();
   const lastComputedTime = ref<number>(0);
@@ -56,9 +49,6 @@ export function useOptimizedComputed<T>(
     if (cacheDuration && hasInitialValue.value) {
       const timeSinceLastCompute = now - lastComputedTime.value;
       if (timeSinceLastCompute < cacheDuration) {
-        if (debug) {
-          console.log('useOptimizedComputed: returning cached value');
-        }
         return lastValue.value as T;
       }
     }
@@ -67,9 +57,6 @@ export function useOptimizedComputed<T>(
 
     // Check if value actually changed
     if (hasInitialValue.value && isEqual(newValue, lastValue.value as T)) {
-      if (debug) {
-        console.log('useOptimizedComputed: value unchanged, returning cached');
-      }
       return lastValue.value as T;
     }
 
@@ -77,10 +64,6 @@ export function useOptimizedComputed<T>(
     lastValue.value = newValue;
     lastComputedTime.value = now;
     hasInitialValue.value = true;
-
-    if (debug) {
-      console.log('useOptimizedComputed: computed new value', newValue);
-    }
 
     return newValue;
   });

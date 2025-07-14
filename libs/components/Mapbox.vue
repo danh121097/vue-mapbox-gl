@@ -169,7 +169,6 @@ const mapOptions = useOptimizedComputed(
   },
   {
     deepEqual: true, // Use deep equality for complex objects
-    debug: props.debug,
   },
 );
 

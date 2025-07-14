@@ -45,6 +45,16 @@ export default defineConfig({
         {
           format: 'es',
           entryFileNames: 'index.js',
+          assetFileNames: (assetInfo) => {
+            // Ensure CSS files are named style.css
+            if (
+              assetInfo.names &&
+              assetInfo.names.some((name) => name.endsWith('.css'))
+            ) {
+              return 'style.css';
+            }
+            return '[name].[ext]';
+          },
           globals: {
             vue: 'Vue',
             'maplibre-gl': 'maplibregl',
@@ -135,8 +145,8 @@ export default defineConfig({
     },
     // Enable CSS optimization
     cssMinify: true,
-    // CSS code splitting
-    cssCodeSplit: true,
+    // Disable CSS code splitting to bundle all CSS into one file
+    cssCodeSplit: false,
   },
   // Optimize dependencies
   optimizeDeps: {

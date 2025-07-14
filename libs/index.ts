@@ -1,3 +1,6 @@
+// Import CSS styles
+import './style.css';
+
 // Export all composables
 export * from './composables';
 

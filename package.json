@@ -113,7 +113,7 @@
     "vue-eslint-parser": "^9.4.3",
     "vue-router": "^4.3.2",
     "vue-tsc": "^2.0.19",
-    "vue3-maplibre-gl": "^3.2.1"
+    "vue3-maplibre-gl": "^3.2.2"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,cjs,mjs,vue}": "eslint --fix",
