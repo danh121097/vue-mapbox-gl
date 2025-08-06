@@ -30,12 +30,19 @@ interface ImageProps {
   showLoading?: boolean;
   /** Whether to enable debug logging */
   debug?: boolean;
+  /**
+   * Force recreation when image dimensions change instead of throwing error.
+   * When true (default), images are always removed and re-added to prevent dimension mismatch errors.
+   * This solves the common "width and height must be the same as the previous version" error.
+   */
+  forceRecreateOnDimensionChange?: boolean;
 }
 
 // Component props with sensible defaults
 const props = withDefaults(defineProps<ImageProps>(), {
   images: () => [],
   showLoading: true,
+  forceRecreateOnDimensionChange: true,
 });
 
 const { logError } = useLogger(props.debug);
@@ -69,6 +76,8 @@ async function loadImages(images: ImageItem[]): Promise<void> {
           id: image.id,
           image: image.image,
           options: image.options || props.options,
+          debug: props.debug,
+          forceRecreateOnDimensionChange: props.forceRecreateOnDimensionChange,
         });
         await actions.loadPromise;
       } catch (error) {

@@ -21,6 +21,12 @@ interface CreateImageProps {
   image: ImageDatas | string;
   options?: Partial<StyleImageMetadata>;
   debug?: boolean;
+  /**
+   * Force recreation when image dimensions change instead of throwing error.
+   * When true (default), images are always removed and re-added to prevent dimension mismatch errors.
+   * When false, uses the legacy behavior of trying updateImage first and falling back to recreation on error.
+   */
+  forceRecreateOnDimensionChange?: boolean;
 }
 
 interface CreateImageActions {
@@ -37,6 +43,9 @@ interface CreateImageActions {
 /**
  * Composable for creating and managing MapLibre GL Images
  * Provides reactive image management with error handling, performance optimizations, and enhanced API
+ *
+ * **Important:** MapLibre GL requires that updated images have the same dimensions as the previous version.
+ * This composable automatically handles dimension changes by removing and re-adding images when necessary.
  *
  * @param props - Configuration options for the image
  * @returns Enhanced actions and state for the image
@@ -69,6 +78,41 @@ export function useCreateImage(props: CreateImageProps): CreateImageActions {
     const map = mapInstance.value;
     if (!map) return false;
     return true;
+  }
+
+  /**
+   * Gets the dimensions of an image data object
+   * @param imageData - Image data to get dimensions from
+   * @returns Object with width and height properties, or null if not determinable
+   */
+  function getImageDimensions(
+    imageData: ImageDatas,
+  ): { width: number; height: number } | null {
+    try {
+      if (imageData instanceof HTMLImageElement) {
+        return {
+          width: imageData.naturalWidth || imageData.width,
+          height: imageData.naturalHeight || imageData.height,
+        };
+      }
+      if (imageData instanceof ImageBitmap) {
+        return { width: imageData.width, height: imageData.height };
+      }
+      if (imageData instanceof ImageData) {
+        return { width: imageData.width, height: imageData.height };
+      }
+      if (
+        typeof imageData === 'object' &&
+        'width' in imageData &&
+        'height' in imageData
+      ) {
+        return { width: imageData.width, height: imageData.height };
+      }
+      return null;
+    } catch (error) {
+      logError('Error getting image dimensions:', error);
+      return null;
+    }
   }
 
   /**
@@ -138,8 +182,60 @@ export function useCreateImage(props: CreateImageProps): CreateImageActions {
 
       // Update or add the image
       if (hasImage()) {
-        map.updateImage(props.id, imageData);
-        imageStatus.value = ImageStatus.Updated;
+        // Check if we should force recreation when dimensions change
+        const forceRecreate = props.forceRecreateOnDimensionChange ?? true; // Default to true for better UX
+
+        if (forceRecreate) {
+          // Safe approach: always remove and re-add to avoid dimension mismatch errors
+          const newDimensions = getImageDimensions(imageData);
+
+          try {
+            // Remove the existing image
+            map.removeImage(props.id);
+
+            // Add the new image
+            map.addImage(props.id, imageData, props.options);
+            imageStatus.value = ImageStatus.Updated;
+          } catch (recreateError) {
+            logError('Error recreating image:', recreateError, {
+              imageId: props.id,
+              newDimensions,
+            });
+            throw recreateError;
+          }
+        } else {
+          // Legacy approach: try update first, fallback to recreate on dimension errors
+          try {
+            map.updateImage(props.id, imageData);
+            imageStatus.value = ImageStatus.Updated;
+          } catch (updateError: any) {
+            // If update fails due to dimension mismatch, remove and re-add the image
+            if (
+              updateError?.message?.includes('width and height') ||
+              updateError?.message?.includes('same as the previous version')
+            ) {
+              const newDimensions = getImageDimensions(imageData);
+              logError(
+                'Image dimensions changed, removing and re-adding image:',
+                updateError,
+                {
+                  imageId: props.id,
+                  newDimensions,
+                },
+              );
+
+              // Remove the existing image
+              map.removeImage(props.id);
+
+              // Add the new image with updated dimensions
+              map.addImage(props.id, imageData, props.options);
+              imageStatus.value = ImageStatus.Created;
+            } else {
+              // Re-throw if it's a different error
+              throw updateError;
+            }
+          }
+        }
       } else {
         map.addImage(props.id, imageData, props.options);
         imageStatus.value = ImageStatus.Created;
