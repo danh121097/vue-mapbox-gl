@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, ref, watch, computed } from 'vue';
+import { inject, ref, watch, computed, shallowRef } from 'vue';
 import { MapProvideKey } from '@libs/enums';
 import { useCreatePopup } from '@libs/composables';
 import type { LngLatLike, PopupOptions } from 'maplibre-gl';
@@ -57,7 +57,7 @@ const props = withDefaults(defineProps<Partial<PopupProps>>(), {
 const emits = defineEmits<Emits>();
 
 // Injected dependencies
-const mapInstance = inject(MapProvideKey, ref(null));
+const mapInstance = inject(MapProvideKey, shallowRef(null));
 const popupElRef = ref<HTMLElement>();
 
 // Computed properties for better performance

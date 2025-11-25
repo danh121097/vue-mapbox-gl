@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, ref, useSlots, watch, computed } from 'vue';
+import { inject, ref, useSlots, watch, computed, shallowRef } from 'vue';
 import { MapProvideKey } from '@libs/enums';
 import { useCreateMarker } from '@libs/composables';
 import type { Anchor } from '@libs/types';
@@ -71,7 +71,7 @@ const emits = defineEmits<Emits>();
 const slots = useSlots();
 
 // Injected dependencies
-const mapInstance = inject(MapProvideKey, ref(null));
+const mapInstance = inject(MapProvideKey, shallowRef(null));
 const markerElRef = ref<HTMLElement>();
 
 // Computed properties for better performance

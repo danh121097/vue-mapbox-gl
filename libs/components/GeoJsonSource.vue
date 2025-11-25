@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, ref, provide, computed, onUnmounted } from 'vue';
+import { inject, ref, provide, computed, onUnmounted, shallowRef } from 'vue';
 import { MapProvideKey, SourceProvideKey } from '@libs/enums';
 import {
   useCreateGeoJsonSource,
@@ -62,9 +62,9 @@ const emits = defineEmits<Emits>();
 const { logError } = useLogger(props.debug);
 
 // Reactive state management
-const mapInstance = inject(MapProvideKey, ref(null));
+const mapInstance = inject(MapProvideKey, shallowRef(null));
 const isSourceRegistered = ref(false);
-const lastDataUpdate = ref<GeoJSONSourceSpecification['data']>();
+const lastDataUpdate = shallowRef<GeoJSONSourceSpecification['data']>();
 
 // Computed properties for better reactivity and performance
 const isDataValid = computed(() => {

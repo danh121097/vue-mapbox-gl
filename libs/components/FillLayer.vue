@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, inject, watch, computed, onUnmounted } from 'vue';
+import { inject, watch, computed, onUnmounted, shallowRef } from 'vue';
 import {
   MapProvideKey,
   SourceProvideKey,
@@ -93,8 +93,8 @@ const props = withDefaults(defineProps<Partial<LayerProps>>(), {
 const emits = defineEmits<Emits>();
 
 // Injected dependencies
-const sourceData = inject(SourceProvideKey, ref(null));
-const mapInstance = inject(MapProvideKey, ref(null));
+const sourceData = inject(SourceProvideKey, shallowRef(null));
+const mapInstance = inject(MapProvideKey, shallowRef(null));
 
 // Computed properties for better performance and reactivity
 const effectiveSource = computed(() => props.source || sourceData.value);

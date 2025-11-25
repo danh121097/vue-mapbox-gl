@@ -52,7 +52,7 @@ interface SimplifiedCreateMaplibreActions extends CreateMaplibreActions {
  * @returns Enhanced actions and state for map management
  */
 export function useCreateMapbox(
-  elRef: MaybeRef<HTMLElement | undefined>,
+  elRef: MaybeRef<HTMLElement | undefined | null>,
   styleRef: MaybeRef<StyleSpecification | string>,
   props: Omit<CreateMapboxProps, 'container' | 'style'> = {},
 ) {
@@ -64,9 +64,10 @@ export function useCreateMapbox(
   const mapCreationStatus = ref<MapCreationStatus>(
     MapCreationStatus.NotInitialized,
   );
-  const mapOptions = ref<Omit<MapOptions, 'container' | 'style'>>(options);
+  const mapOptions =
+    shallowRef<Omit<MapOptions, 'container' | 'style'>>(options);
   const retryCount = ref<number>(0);
-  const currentStyle = ref<StyleSpecification | string | null>(null);
+  const currentStyle = shallowRef<StyleSpecification | string | null>(null);
 
   // Computed properties for better reactivity and performance
   const mapInstanceComputed = computed(() => mapInstance.value);
@@ -135,7 +136,7 @@ export function useCreateMapbox(
     const style = unref(styleRef);
 
     if (!el) {
-      mapCreationStatus.value = MapCreationStatus.Error;
+      // Don't set error here, just wait for element to be available
       return;
     }
 
@@ -143,6 +144,9 @@ export function useCreateMapbox(
       mapCreationStatus.value = MapCreationStatus.Error;
       return;
     }
+
+    // Prevent double initialization
+    if (mapInstance.value) return;
 
     mapCreationStatus.value = MapCreationStatus.Initializing;
 
@@ -236,7 +240,11 @@ export function useCreateMapbox(
 
     try {
       mapInstance.value!.setCenter(centerVal);
-      mapOptions.value.center = centerVal;
+      // Update local state but avoid triggering watchers if possible
+      const currentOpts = mapOptions.value;
+      if (currentOpts.center !== centerVal) {
+        mapOptions.value.center = centerVal;
+      }
     } catch (error) {
       logError('Error setting map center:', error, { center: centerVal });
     }
@@ -458,15 +466,17 @@ export function useCreateMapbox(
 
   // Watch effect for automatic map initialization
   const stopWatchEffect = watchEffect(() => {
-    removeMap();
-    if (!unref(mapInstance) && unref(elRef)) {
+    const el = unref(elRef);
+    if (el && !mapInstance.value) {
       initMap();
-      stopWatchEffect();
+    } else if (!el && mapInstance.value) {
+      removeMap();
     }
   });
 
   // Cleanup on unmount
   onUnmounted(() => {
+    stopWatchEffect();
     destroyMap();
   });
 

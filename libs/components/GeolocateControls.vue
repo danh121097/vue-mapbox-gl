@@ -1,5 +1,12 @@
 <script lang="ts" setup>
-import { inject, ref, watchEffect, computed, onUnmounted } from 'vue';
+import {
+  inject,
+  ref,
+  watchEffect,
+  computed,
+  onUnmounted,
+  shallowRef,
+} from 'vue';
 import { MapProvideKey, GeolocateEvents } from '@libs/enums';
 import {
   useGeolocateControl,
@@ -66,7 +73,7 @@ const emits = defineEmits<Emits>();
 const { logError } = useLogger(props.debug);
 
 // Reactive state management
-const mapInstance = inject(MapProvideKey, ref(null));
+const mapInstance = inject(MapProvideKey, shallowRef(null));
 const isControlRegistered = ref(false);
 const controlError = ref<any>(null);
 

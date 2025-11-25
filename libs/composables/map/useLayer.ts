@@ -77,7 +77,7 @@ export function useLayer<T extends LayerSpecification>(
   const { debug = false, autoCleanup = true } = props;
   const { logError } = useLogger(debug);
 
-  const instanceRef = ref<CreateLayerActions<T>>();
+  const instanceRef = shallowRef<CreateLayerActions<T>>();
   const layerStatus = ref<LayerManagementStatus>(
     LayerManagementStatus.NotRegistered,
   );

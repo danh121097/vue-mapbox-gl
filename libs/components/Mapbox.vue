@@ -9,6 +9,7 @@ import {
   onBeforeMount,
   onUnmounted,
   watchEffect,
+  shallowRef,
 } from 'vue';
 import { MapProvideKey, MapboxEvents, MapCreationStatus } from '@libs/enums';
 import {
@@ -146,7 +147,7 @@ const { logError } = useLogger(props.debug);
 
 // Reactive state management
 const innerOptions = ref<Partial<MapOptions>>();
-const maplibreElRef = ref<HTMLElement>();
+const mapContainerRef = shallowRef<HTMLElement | null>(null);
 const styleRef = ref(props.options.style as string);
 
 const isComponentMounted = ref(false);
@@ -159,12 +160,6 @@ const mapOptions = useOptimizedComputed(
   () => {
     const baseOptions = { ...props.options };
     const mergedOptions = { ...baseOptions, ...innerOptions.value };
-
-    // Ensure container is properly set
-    if (!mergedOptions.container) {
-      mergedOptions.container = props.containerId;
-    }
-
     return mergedOptions;
   },
   {
@@ -197,37 +192,6 @@ function setMapOptions(options: Partial<MapOptions>): void {
   }
 }
 
-/**
- * Enhanced container creation with error handling and validation
- */
-function createMapContainer(): HTMLElement | null {
-  try {
-    const wrapper = document.getElementById('maplibre_container');
-    if (!wrapper) {
-      logError('Map container wrapper not found');
-      return null;
-    }
-
-    // Remove existing container if present
-    const existingContainer = document.getElementById(props.containerId);
-    if (existingContainer) {
-      existingContainer.remove();
-    }
-
-    const container = document.createElement('div');
-    container.id = props.containerId;
-    container.className = props.containerClass;
-    container.style.width = '100%';
-    container.style.height = '100%';
-
-    wrapper.appendChild(container);
-    return container;
-  } catch (error) {
-    logError('Error creating map container:', error);
-    return null;
-  }
-}
-
 // Enhanced map creation with comprehensive error handling and performance monitoring
 const {
   mapInstance,
@@ -243,7 +207,7 @@ const {
   setMinPitch,
   setMinZoom,
   setRenderWorldCopies,
-} = useCreateMapbox(maplibreElRef, styleRef, {
+} = useCreateMapbox(mapContainerRef, styleRef, {
   ...unref(mapOptions),
   register: (actions: CreateMaplibreActions) => {
     try {
@@ -367,14 +331,12 @@ watchEffect(async () => {
   try {
     await nextTick();
 
-    const container = createMapContainer();
-    if (container) {
-      maplibreElRef.value = container;
+    if (mapContainerRef.value) {
       isComponentMounted.value = true;
       mapCreationStatus.value = MapCreationStatus.Initializing;
     } else {
-      logError('Failed to create map container');
-      mapCreationStatus.value = MapCreationStatus.Error;
+      // Wait for next tick if container is not ready yet
+      return;
     }
   } catch (error) {
     logError('Error in container creation watchEffect:', error);
@@ -388,9 +350,6 @@ function cleanup(): void {
   try {
     // Stop all watchers
     watchers.forEach((stopWatcher) => stopWatcher?.());
-
-    // Remove container
-    maplibreElRef.value?.remove();
 
     // Reset state
     isComponentMounted.value = false;
@@ -414,7 +373,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="maplibre_container">
+  <div
+    :id="containerId"
+    ref="mapContainerRef"
+    :class="['maplibre-container', containerClass]"
+  >
     <!-- Loading state -->
     <div v-if="isMapLoading">
       <slot name="loading"> </slot>
@@ -436,10 +399,5 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   overflow: hidden;
-}
-
-// Legacy support
-#maplibre_container {
-  @extend .maplibre-container;
 }
 </style>

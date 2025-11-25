@@ -59,7 +59,7 @@ export function useGeoJsonSource(
   const { logError } = useLogger(debug);
 
   // State management with better typing and performance
-  const instanceRef = ref<CreateGeoJsonSourceActions>();
+  const instanceRef = shallowRef<CreateGeoJsonSourceActions>();
   const sourceRef = shallowRef<Nullable<GeoJSONSource>>(null);
   const sourceIdRef = ref<string>();
   const sourceStatus = ref<GeoJsonSourceStatus>(
