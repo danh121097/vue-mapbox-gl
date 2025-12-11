@@ -1,6 +1,6 @@
 import { shallowRef, unref, computed, watch, ref } from 'vue';
 import type { CreateBaseLayerActions, Nullable, LayerTypes } from '@libs/types';
-import { getNanoid, hasLayer } from '@libs/helpers';
+import { getNanoid, hasLayer, hasSource } from '@libs/helpers';
 import { useMapReloadEvent, useLogger } from '@libs/composables';
 import type { MaybeRef } from 'vue';
 import type {
@@ -269,6 +269,17 @@ export function useCreateLayer<Layer extends LayerSpecification>(
       const sourceData = resolveSourceData(source);
       if (!sourceData) {
         layerStatus.value = LayerStatus.Error;
+        return;
+      }
+
+      // Validate source exists before adding layer
+      if (!hasSource(map, sourceData)) {
+        layerStatus.value = LayerStatus.Error;
+        logError(
+          `Error creating layer: Source '${sourceData}' does not exist`,
+          null,
+          { layerId, type, sourceId: sourceData },
+        );
         return;
       }
 
