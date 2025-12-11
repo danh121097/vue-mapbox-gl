@@ -98,7 +98,8 @@ const { setLngLat, show, hide } = useCreatePopup({
 watch(
   () => props.show,
   (isShow) => {
-    isShow ? show() : hide();
+    if (isShow) show();
+    else hide();
   },
 );
 
