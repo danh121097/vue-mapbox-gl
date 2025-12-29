@@ -3203,10 +3203,10 @@ vue-tsc@^2.0.19:
     "@volar/typescript" "2.4.15"
     "@vue/language-core" "2.2.12"
 
-vue3-maplibre-gl@^3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/vue3-maplibre-gl/-/vue3-maplibre-gl-3.2.2.tgz#f5112bfb26930687fe1e3991f9215eb49565d361"
-  integrity sha512-kr1sCCt8+s866qQuYR/WYLM9njsgAFGL9U+K4LisEzjLHzg/+nbxxWWZtmLC9ej9pTdsLwnxCDeFKMrvyfwTSQ==
+vue3-maplibre-gl@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/vue3-maplibre-gl/-/vue3-maplibre-gl-4.2.1.tgz#96ba3e821d16353373708e95eceef8768e6671d2"
+  integrity sha512-IetbdgRdsC9q9WwwysDcNsFGBzt7x4rs5VxmurSaiazf3tJ2EIDcChNTRjw/0LbXoI0WKenAi+sXEYnjl0VK6A==
 
 vue@^3.5.13, vue@^3.5.17:
   version "3.5.17"

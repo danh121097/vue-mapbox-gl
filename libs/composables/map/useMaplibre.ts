@@ -70,7 +70,9 @@ interface UseMaplibreReturn
  * @param options - Configuration options for the composable
  * @returns Reactive map management interface
  */
-export function Maplibre(options: UseMaplibreOptions = {}): UseMaplibreReturn {
+export function useMaplibre(
+  options: UseMaplibreOptions = {},
+): UseMaplibreReturn {
   const { debug = false, autoCleanup = true } = options;
   const { logError } = useLogger(debug);
 
