@@ -73,7 +73,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/danh121097/vue-mapbox-gl' },
+      { icon: 'github', link: 'https://github.com/danh121097/vue-maplibre-gl' },
       {
         icon: 'npm',
         link: 'https://www.npmjs.com/package/vue3-maplibre-gl',

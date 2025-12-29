@@ -2,7 +2,7 @@
 
 Vue3 MapLibre GL provides a comprehensive set of Vue 3 components for building interactive maps with MapLibre GL JS. All components are designed with TypeScript support, reactive data binding, and comprehensive error handling.
 
-## Mapbox
+## Maplibre
 
 The main map component that renders the MapLibre GL JS map. This is the core component that provides the map container and manages the MapLibre GL instance.
 
@@ -64,7 +64,7 @@ The main map component that renders the MapLibre GL JS map. This is the core com
 
 ```vue
 <template>
-  <Mapbox
+  <Maplibre
     :options="mapOptions"
     :debug="true"
     @load="onMapLoad"
@@ -83,12 +83,12 @@ The main map component that renders the MapLibre GL JS map. This is the core com
     <GeoJsonSource :data="geoJsonData">
       <FillLayer :style="fillStyle" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -147,7 +147,7 @@ A component for adding GeoJSON data sources to the map. This component provides 
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <GeoJsonSource
       id="my-source"
       :data="geoJsonData"
@@ -157,12 +157,12 @@ A component for adding GeoJSON data sources to the map. This component provides 
     >
       <CircleLayer :style="circleStyle" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
 
 const geoJsonData = ref({
   type: 'FeatureCollection',
@@ -229,7 +229,7 @@ A component for rendering filled polygons from a data source. Supports all MapLi
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <GeoJsonSource :data="polygonData">
       <FillLayer
         id="polygon-fill"
@@ -238,12 +238,12 @@ A component for rendering filled polygons from a data source. Supports all MapLi
         @click="onPolygonClick"
       />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
 
 const fillStyle = ref({
   'fill-color': [
@@ -288,16 +288,16 @@ Same events as FillLayer (click, mousemove, etc.)
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <GeoJsonSource :data="pointData">
       <CircleLayer id="points" :style="circleStyle" @click="onPointClick" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
 
 const circleStyle = ref({
   'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, 2, 15, 10],
@@ -349,16 +349,16 @@ Same events as FillLayer (click, mousemove, etc.)
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <GeoJsonSource :data="lineData">
       <LineLayer id="routes" :style="lineStyle" @click="onLineClick" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, LineLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, LineLayer } from 'vue3-maplibre-gl';
 
 const lineStyle = ref({
   'line-color': '#007cbf',
@@ -399,16 +399,16 @@ Same events as FillLayer (click, mousemove, etc.)
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <GeoJsonSource :data="pointData">
       <SymbolLayer id="labels" :style="symbolStyle" @click="onSymbolClick" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, SymbolLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, SymbolLayer } from 'vue3-maplibre-gl';
 
 const symbolStyle = ref({
   'text-field': ['get', 'name'],
@@ -462,7 +462,7 @@ A component for adding HTML markers to the map. Supports custom HTML content, dr
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <Marker
       :lng-lat="markerPosition"
       :draggable="true"
@@ -470,12 +470,12 @@ A component for adding HTML markers to the map. Supports custom HTML content, dr
     >
       <div class="custom-marker">📍</div>
     </Marker>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, Marker } from 'vue3-maplibre-gl';
+import { Maplibre, Marker } from 'vue3-maplibre-gl';
 
 const markerPosition = ref([0, 0]);
 
@@ -524,19 +524,19 @@ A component for displaying popup windows on the map. Supports custom HTML conten
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <PopUp :lng-lat="popupPosition" :close-button="true" @close="onPopupClose">
       <div class="popup-content">
         <h3>Hello World!</h3>
         <p>This is a popup at {{ popupPosition }}.</p>
       </div>
     </PopUp>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, PopUp } from 'vue3-maplibre-gl';
+import { Maplibre, PopUp } from 'vue3-maplibre-gl';
 
 const popupPosition = ref([0, 0]);
 
@@ -578,17 +578,17 @@ A component for managing and loading images for use in MapLibre GL styles. Suppo
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <Image :images="mapImages" :show-loading="true" />
     <GeoJsonSource :data="pointData">
       <SymbolLayer :style="symbolStyle" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, Image, GeoJsonSource, SymbolLayer } from 'vue3-maplibre-gl';
+import { Maplibre, Image, GeoJsonSource, SymbolLayer } from 'vue3-maplibre-gl';
 
 const mapImages = ref([
   {
@@ -638,19 +638,19 @@ A component for adding geolocation controls to the map. Provides user location t
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions">
+  <Maplibre :options="mapOptions">
     <GeolocateControls
       position="top-right"
       :options="geolocateOptions"
       @geolocate="onGeolocate"
       @error="onGeolocateError"
     />
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeolocateControls } from 'vue3-maplibre-gl';
+import { Maplibre, GeolocateControls } from 'vue3-maplibre-gl';
 
 const geolocateOptions = ref({
   positionOptions: {

@@ -4,7 +4,7 @@ Vue3 MapLibre GL provides a comprehensive set of composables for building intera
 
 ## Map Composables
 
-### useCreateMapbox
+### useCreateMaplibre
 
 The core composable for creating and managing MapLibre GL Maps with enhanced error handling and reactive state management.
 
@@ -14,9 +14,9 @@ The core composable for creating and managing MapLibre GL Maps with enhanced err
 | ---------- | ---------------------------------------- | --------------------------------------- |
 | `elRef`    | `MaybeRef<HTMLElement \| undefined>`     | Reference to the HTML element container |
 | `styleRef` | `MaybeRef<StyleSpecification \| string>` | Reference to the map style              |
-| `props`    | `CreateMapboxProps`                      | Configuration options for the map       |
+| `props`    | `CreateMaplibreProps`                    | Configuration options for the map       |
 
-#### CreateMapboxProps Interface
+#### CreateMaplibreProps Interface
 
 | Property   | Type                                               | Default     | Description                          |
 | ---------- | -------------------------------------------------- | ----------- | ------------------------------------ |
@@ -51,13 +51,13 @@ The core composable for creating and managing MapLibre GL Maps with enhanced err
 
 ```typescript
 import { ref } from 'vue';
-import { useCreateMapbox } from 'vue3-maplibre-gl';
+import { useCreateMaplibre } from 'vue3-maplibre-gl';
 
 const mapContainer = ref<HTMLElement>();
 const mapStyle = ref('https://demotiles.maplibre.org/style.json');
 
 const { mapInstance, setCenter, setZoom, isMapReady, isMapLoading } =
-  useCreateMapbox(mapContainer, mapStyle, {
+  useCreateMaplibre(mapContainer, mapStyle, {
     debug: true,
     onLoad: (map) => {
       console.log('Map loaded:', map);
@@ -76,15 +76,15 @@ watch(isMapReady, (ready) => {
 });
 ```
 
-### useMapbox
+### useMaplibre
 
 A simplified composable for basic map operations and state management.
 
 #### Parameters
 
-| Parameter | Type             | Description           |
-| --------- | ---------------- | --------------------- |
-| `props`   | `UseMapboxProps` | Configuration options |
+| Parameter | Type               | Description           |
+| --------- | ------------------ | --------------------- |
+| `props`   | `UseMaplibreProps` | Configuration options |
 
 #### Returns
 
@@ -96,9 +96,9 @@ A simplified composable for basic map operations and state management.
 #### Example
 
 ```typescript
-import { useMapbox } from 'vue3-maplibre-gl';
+import { useMaplibre } from 'vue3-maplibre-gl';
 
-const { mapInstance, isReady } = useMapbox({
+const { mapInstance, isReady } = useMaplibre({
   debug: true,
 });
 ```

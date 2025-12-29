@@ -8,16 +8,16 @@ Create areas with fill styling:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
+  <Maplibre :options="mapOptions" style="height: 400px;">
     <GeoJsonSource :data="polygonData" source-id="polygons">
       <FillLayer :style="fillStyle" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -32,25 +32,27 @@ const polygonData = ref({
       type: 'Feature',
       geometry: {
         type: 'Polygon',
-        coordinates: [[
-          [-74.0059, 40.7128],
-          [-74.0059, 40.7589],
-          [-73.9352, 40.7589],
-          [-73.9352, 40.7128],
-          [-74.0059, 40.7128]
-        ]]
+        coordinates: [
+          [
+            [-74.0059, 40.7128],
+            [-74.0059, 40.7589],
+            [-73.9352, 40.7589],
+            [-73.9352, 40.7128],
+            [-74.0059, 40.7128],
+          ],
+        ],
       },
       properties: {
-        name: 'Manhattan Area'
-      }
-    }
-  ]
+        name: 'Manhattan Area',
+      },
+    },
+  ],
 });
 
 const fillStyle = ref({
   'fill-color': '#088',
   'fill-opacity': 0.6,
-  'fill-outline-color': '#fff'
+  'fill-outline-color': '#fff',
 });
 </script>
 ```
@@ -64,25 +66,20 @@ Display points as circles with customizable styling:
   <div>
     <div class="controls">
       <label>Circle Size: {{ circleRadius }}</label>
-      <input 
-        type="range" 
-        min="5" 
-        max="50" 
-        v-model="circleRadius"
-      />
+      <input type="range" min="5" max="50" v-model="circleRadius" />
     </div>
-    
-    <Mapbox :options="mapOptions" style="height: 400px;">
+
+    <Maplibre :options="mapOptions" style="height: 400px;">
       <GeoJsonSource :data="pointData" source-id="points">
         <CircleLayer :style="circleStyle" @click="onCircleClick" />
       </GeoJsonSource>
-    </Mapbox>
+    </Maplibre>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import { Mapbox, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -98,19 +95,19 @@ const pointData = ref({
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [0, 0] },
-      properties: { name: 'Point 1', value: 100 }
+      properties: { name: 'Point 1', value: 100 },
     },
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-74.006, 40.7128] },
-      properties: { name: 'Point 2', value: 200 }
+      properties: { name: 'Point 2', value: 200 },
     },
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [2.3522, 48.8566] },
-      properties: { name: 'Point 3', value: 150 }
-    }
-  ]
+      properties: { name: 'Point 3', value: 150 },
+    },
+  ],
 });
 
 const circleStyle = computed(() => ({
@@ -119,17 +116,22 @@ const circleStyle = computed(() => ({
     'interpolate',
     ['linear'],
     ['get', 'value'],
-    100, '#ff6b6b',
-    150, '#feca57',
-    200, '#48dbfb'
+    100,
+    '#ff6b6b',
+    150,
+    '#feca57',
+    200,
+    '#48dbfb',
   ],
   'circle-stroke-width': 2,
-  'circle-stroke-color': '#ffffff'
+  'circle-stroke-color': '#ffffff',
 }));
 
 function onCircleClick(event) {
   const feature = event.features[0];
-  alert(`Clicked on ${feature.properties.name} (Value: ${feature.properties.value})`);
+  alert(
+    `Clicked on ${feature.properties.name} (Value: ${feature.properties.value})`,
+  );
 }
 </script>
 
@@ -164,18 +166,18 @@ Create lines and paths:
       <button @click="animateLine">Animate Line Drawing</button>
       <button @click="resetLine">Reset</button>
     </div>
-    
-    <Mapbox :options="mapOptions" style="height: 400px;">
+
+    <Maplibre :options="mapOptions" style="height: 400px;">
       <GeoJsonSource :data="lineData" source-id="route">
         <LineLayer :style="lineStyle" />
       </GeoJsonSource>
-    </Mapbox>
+    </Maplibre>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, LineLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, LineLayer } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -188,7 +190,7 @@ const fullRoute = [
   [-73.9857, 40.7589],
   [-73.9665, 40.7812],
   [-73.9441, 40.8176],
-  [-73.9297, 40.8448]
+  [-73.9297, 40.8448],
 ];
 
 const lineData = ref({
@@ -198,23 +200,23 @@ const lineData = ref({
       type: 'Feature',
       geometry: {
         type: 'LineString',
-        coordinates: []
+        coordinates: [],
       },
-      properties: {}
-    }
-  ]
+      properties: {},
+    },
+  ],
 });
 
 const lineStyle = ref({
   'line-color': '#007cbf',
   'line-width': 4,
-  'line-opacity': 0.8
+  'line-opacity': 0.8,
 });
 
 function animateLine() {
   const coordinates = [];
   let index = 0;
-  
+
   const addPoint = () => {
     if (index < fullRoute.length) {
       coordinates.push(fullRoute[index]);
@@ -223,7 +225,7 @@ function animateLine() {
       setTimeout(addPoint, 500);
     }
   };
-  
+
   addPoint();
 }
 
@@ -260,16 +262,16 @@ Add text and icon symbols:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
+  <Maplibre :options="mapOptions" style="height: 400px;">
     <GeoJsonSource :data="symbolData" source-id="symbols">
       <SymbolLayer :style="symbolStyle" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, SymbolLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, SymbolLayer } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -283,28 +285,28 @@ const symbolData = ref({
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-74.006, 40.7128] },
-      properties: { 
+      properties: {
         name: 'New York City',
-        type: 'city'
-      }
+        type: 'city',
+      },
     },
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-73.9857, 40.7589] },
-      properties: { 
+      properties: {
         name: 'Times Square',
-        type: 'landmark'
-      }
+        type: 'landmark',
+      },
     },
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-73.9665, 40.7812] },
-      properties: { 
+      properties: {
         name: 'Central Park',
-        type: 'park'
-      }
-    }
-  ]
+        type: 'park',
+      },
+    },
+  ],
 });
 
 const symbolStyle = ref({
@@ -315,7 +317,7 @@ const symbolStyle = ref({
   'text-halo-color': '#fff',
   'text-halo-width': 2,
   'text-offset': [0, 1.5],
-  'text-anchor': 'top'
+  'text-anchor': 'top',
 });
 </script>
 ```
@@ -341,20 +343,26 @@ Combine different layer types:
         Show Labels
       </label>
     </div>
-    
-    <Mapbox :options="mapOptions" style="height: 400px;">
+
+    <Maplibre :options="mapOptions" style="height: 400px;">
       <GeoJsonSource :data="combinedData" source-id="combined">
         <FillLayer v-if="showFill" :style="fillStyle" />
         <CircleLayer v-if="showCircles" :style="circleStyle" />
         <SymbolLayer v-if="showLabels" :style="symbolStyle" />
       </GeoJsonSource>
-    </Mapbox>
+    </Maplibre>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, FillLayer, CircleLayer, SymbolLayer } from 'vue3-maplibre-gl';
+import {
+  Maplibre,
+  GeoJsonSource,
+  FillLayer,
+  CircleLayer,
+  SymbolLayer,
+} from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -374,58 +382,64 @@ const combinedData = ref({
       type: 'Feature',
       geometry: {
         type: 'Polygon',
-        coordinates: [[
-          [-74.0059, 40.7128],
-          [-74.0059, 40.7589],
-          [-73.9352, 40.7589],
-          [-73.9352, 40.7128],
-          [-74.0059, 40.7128]
-        ]]
+        coordinates: [
+          [
+            [-74.0059, 40.7128],
+            [-74.0059, 40.7589],
+            [-73.9352, 40.7589],
+            [-73.9352, 40.7128],
+            [-74.0059, 40.7128],
+          ],
+        ],
       },
       properties: {
         name: 'Manhattan',
-        type: 'area'
-      }
+        type: 'area',
+      },
     },
     // Point features
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-74.006, 40.7128] },
-      properties: { name: 'Financial District', type: 'district' }
+      properties: { name: 'Financial District', type: 'district' },
     },
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-73.9857, 40.7589] },
-      properties: { name: 'Times Square', type: 'landmark' }
+      properties: { name: 'Times Square', type: 'landmark' },
     },
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-73.9665, 40.7812] },
-      properties: { name: 'Central Park', type: 'park' }
-    }
-  ]
+      properties: { name: 'Central Park', type: 'park' },
+    },
+  ],
 });
 
 const fillStyle = ref({
   'fill-color': '#088',
-  'fill-opacity': 0.3
+  'fill-opacity': 0.3,
 });
 
 const circleStyle = ref({
   'circle-radius': [
     'case',
-    ['==', ['get', 'type'], 'landmark'], 8,
-    ['==', ['get', 'type'], 'park'], 6,
-    4
+    ['==', ['get', 'type'], 'landmark'],
+    8,
+    ['==', ['get', 'type'], 'park'],
+    6,
+    4,
   ],
   'circle-color': [
     'case',
-    ['==', ['get', 'type'], 'landmark'], '#ff6b6b',
-    ['==', ['get', 'type'], 'park'], '#4ecdc4',
-    '#45b7d1'
+    ['==', ['get', 'type'], 'landmark'],
+    '#ff6b6b',
+    ['==', ['get', 'type'], 'park'],
+    '#4ecdc4',
+    '#45b7d1',
   ],
   'circle-stroke-width': 2,
-  'circle-stroke-color': '#ffffff'
+  'circle-stroke-color': '#ffffff',
 });
 
 const symbolStyle = ref({
@@ -436,7 +450,7 @@ const symbolStyle = ref({
   'text-halo-color': '#fff',
   'text-halo-width': 1,
   'text-offset': [0, 1.5],
-  'text-anchor': 'top'
+  'text-anchor': 'top',
 });
 </script>
 

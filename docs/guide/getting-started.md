@@ -6,7 +6,7 @@ Vue3 MapLibre GL is a comprehensive Vue 3 component library that provides an int
 
 Vue3 MapLibre GL offers:
 
-- **10+ Vue Components** - Mapbox, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, and GeolocateControls
+- **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, and GeolocateControls
 - **15+ Composables** - For map management, layers, sources, controls, events, and utilities
 - **Full TypeScript Support** - Comprehensive type definitions and interfaces
 - **Reactive Data Binding** - Seamless integration with Vue 3's reactivity system
@@ -14,7 +14,7 @@ Vue3 MapLibre GL offers:
 
 ## What is MapLibre GL JS?
 
-MapLibre GL JS is an open-source library for publishing maps on your websites. It's a fork of Mapbox GL JS and provides vector tile rendering with WebGL for high-performance, interactive maps.
+MapLibre GL JS is an open-source library for publishing maps on your websites. It's a fork of Maplibre GL JS and provides vector tile rendering with WebGL for high-performance, interactive maps.
 
 ## Prerequisites
 
@@ -62,7 +62,7 @@ Here's a simple example to get you started:
 ```vue
 <template>
   <div id="app">
-    <Mapbox
+    <Maplibre
       :options="mapOptions"
       style="height: 500px; width: 100%;"
       @load="onMapLoad"
@@ -72,7 +72,7 @@ Here's a simple example to get you started:
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox } from 'vue3-maplibre-gl';
+import { Maplibre } from 'vue3-maplibre-gl';
 import 'vue3-maplibre-gl/dist/style.css';
 
 const mapOptions = ref({
@@ -94,7 +94,7 @@ Here's a more comprehensive example showcasing multiple components:
 ```vue
 <template>
   <div id="app">
-    <Mapbox
+    <Maplibre
       :options="mapOptions"
       style="height: 500px; width: 100%;"
       @load="onMapLoad"
@@ -126,14 +126,14 @@ Here's a more comprehensive example showcasing multiple components:
 
       <!-- Geolocation Control -->
       <GeolocateControls position="top-right" @geolocate="onGeolocate" />
-    </Mapbox>
+    </Maplibre>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import {
-  Mapbox,
+  Maplibre,
   GeoJsonSource,
   FillLayer,
   CircleLayer,
@@ -209,7 +209,7 @@ Vue3 MapLibre GL also provides powerful composables for advanced map interaction
 <script setup>
 import { ref } from 'vue';
 import {
-  useCreateMapbox,
+  useCreateMaplibre,
   useFlyTo,
   useMapEventListener,
 } from 'vue3-maplibre-gl';
@@ -218,7 +218,7 @@ const mapContainer = ref();
 const mapStyle = ref('https://demotiles.maplibre.org/style.json');
 
 // Create map with composable
-const { mapInstance, setCenter, setZoom } = useCreateMapbox(
+const { mapInstance, setCenter, setZoom } = useCreateMaplibre(
   mapContainer,
   mapStyle,
   {
@@ -250,7 +250,7 @@ useMapEventListener({
 
 ### 🧩 **Components**
 
-- **Mapbox** - Main map container with comprehensive event handling
+- **Maplibre** - Main map container with comprehensive event handling
 - **GeoJsonSource** - Reactive data source for GeoJSON data
 - **Layer Components** - FillLayer, CircleLayer, LineLayer, SymbolLayer
 - **Interactive Elements** - Marker, PopUp with custom content
@@ -259,7 +259,7 @@ useMapEventListener({
 
 ### 🔧 **Composables**
 
-- **Map Management** - `useCreateMapbox`, `useMapbox`
+- **Map Management** - `useCreateMaplibre`, `useMaplibre`
 - **Layer Management** - `useCreateFillLayer`, `useCreateCircleLayer`, etc.
 - **Source Management** - `useCreateGeoJsonSource`, `useGeoJsonSource`
 - **Event Handling** - `useMapEventListener`, `useLayerEventListener`
@@ -288,4 +288,4 @@ Now that you have a basic understanding, you can:
 - Browse the [API documentation](/api/components) for detailed component references
 - Explore [composables documentation](/api/composables) for advanced functionality
 - Review [TypeScript types](/api/types) for type definitions
-- Visit our [GitHub repository](https://github.com/danh121097/vue-mapbox-gl) for issues and discussions
+- Visit our [GitHub repository](https://github.com/danh121097/vue-maplibre-gl) for issues and discussions

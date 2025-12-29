@@ -3,7 +3,7 @@ import { inject, watch, computed, onUnmounted, shallowRef } from 'vue';
 import {
   MapProvideKey,
   SourceProvideKey,
-  MapboxLayerEvents,
+  MaplibreLayerEvents,
 } from '@libs/enums';
 import { useCreateFillLayer, useLayerEventListener } from '@libs/composables';
 import type {
@@ -140,7 +140,7 @@ const {
 });
 
 // Optimized event listener setup with error handling
-MapboxLayerEvents.forEach((evt) => {
+MaplibreLayerEvents.forEach((evt) => {
   useLayerEventListener({
     map: mapInstance,
     layer: getLayer,

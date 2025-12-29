@@ -3,7 +3,7 @@ import { ref, inject, watch, computed, onUnmounted } from 'vue';
 import {
   MapProvideKey,
   SourceProvideKey,
-  MapboxLayerEvents,
+  MaplibreLayerEvents,
 } from '@libs/enums';
 import { useLayerEventListener, useCreateCircleLayer } from '@libs/composables';
 import type {
@@ -146,7 +146,7 @@ const {
 });
 
 // Optimized event listener setup with error handling
-MapboxLayerEvents.forEach((evt) => {
+MaplibreLayerEvents.forEach((evt) => {
   useLayerEventListener({
     map: mapInstance,
     layer: getLayer,

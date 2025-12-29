@@ -114,7 +114,7 @@ watch(
 );
 </script>
 <template>
-  <div ref="popupElRef" class="mapboxgl-popup-content-inner">
+  <div ref="popupElRef" class="Maplibregl-popup-content-inner">
     <slot />
   </div>
 </template>

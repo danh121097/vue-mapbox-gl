@@ -58,7 +58,7 @@ Import components as needed in your components for better tree-shaking:
 ```vue
 <script setup>
 import {
-  Mapbox,
+  Maplibre,
   GeoJsonSource,
   FillLayer,
   CircleLayer,
@@ -76,7 +76,7 @@ All components are exported from the main package:
 ```js
 import {
   // Main Components
-  Mapbox,
+  Maplibre,
   GeoJsonSource,
 
   // Layer Components
@@ -94,8 +94,8 @@ import {
   GeolocateControls,
 
   // Composables
-  useCreateMapbox,
-  useMapbox,
+  useCreateMaplibre,
+  useMaplibre,
   useCreateGeoJsonSource,
   useGeoJsonSource,
   useCreateFillLayer,
@@ -132,7 +132,7 @@ The package includes comprehensive type definitions for:
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
 import type {
   LngLatLike,
   StyleSpecification,
@@ -164,7 +164,7 @@ Vue3 MapLibre GL exports comprehensive TypeScript definitions:
 ```typescript
 // Component Props Types
 import type {
-  MapboxProps,
+  MaplibreProps,
   GeoJsonSourceProps,
   FillLayerProps,
   CircleLayerProps,

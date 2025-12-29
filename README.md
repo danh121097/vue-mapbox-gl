@@ -1,6 +1,6 @@
 # Vue3 MapLibre GL
 
-[![npm](https://img.shields.io/npm/v/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Downloads](https://img.shields.io/npm/dt/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-mapbox-gl?style=flat-square)](https://github.com/danh121097/vue-mapbox-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-maplibre-gl)](https://github.com/danh121097/vue-mapbox-gl/blob/main/LICENSE)
+[![npm](https://img.shields.io/npm/v/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Downloads](https://img.shields.io/npm/dt/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-maplibre-gl?style=flat-square)](https://github.com/danh121097/vue-maplibre-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-maplibre-gl)](https://github.com/danh121097/vue-maplibre-gl/blob/main/LICENSE)
 
 > **The most comprehensive Vue 3 library for MapLibre GL JS** - Build interactive maps with 10+ components and 15+ composables
 
@@ -9,7 +9,7 @@ A powerful, feature-rich Vue 3 component library that provides an intuitive, rea
 ## ✨ Features
 
 - 🗺️ **Interactive Maps** - High-performance vector maps with WebGL rendering
-- 🧩 **10+ Vue Components** - Mapbox, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, GeolocateControls
+- 🧩 **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, GeolocateControls
 - 🔧 **15+ Composables** - Complete map management, animations, events, and utilities
 - 🎯 **Full TypeScript Support** - Comprehensive type definitions and interfaces
 - ⚡ **High Performance** - Optimized rendering with automatic resource cleanup
@@ -41,7 +41,7 @@ pnpm add vue3-maplibre-gl
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 500px" @load="onMapLoad">
+  <Maplibre :options="mapOptions" style="height: 500px" @load="onMapLoad">
     <!-- GeoJSON Data Source -->
     <GeoJsonSource :data="geoJsonData">
       <FillLayer :style="fillStyle" />
@@ -63,13 +63,13 @@ pnpm add vue3-maplibre-gl
 
     <!-- Geolocation Control -->
     <GeolocateControls position="top-right" />
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import {
-  Mapbox,
+  Maplibre,
   GeoJsonSource,
   FillLayer,
   CircleLayer,
@@ -130,7 +130,7 @@ Vue3 MapLibre GL provides 10+ reactive Vue components:
 
 | Component             | Description                                                   |
 | --------------------- | ------------------------------------------------------------- |
-| **Mapbox**            | Main map container with comprehensive event handling          |
+| **Maplibre**          | Main map container with comprehensive event handling          |
 | **GeoJsonSource**     | Reactive data source for GeoJSON data with clustering support |
 | **FillLayer**         | Render filled polygons with customizable styling              |
 | **CircleLayer**       | Display point data as circles with dynamic sizing             |
@@ -147,8 +147,8 @@ Vue3 MapLibre GL provides 10+ reactive Vue components:
 
 ### Map Management
 
-- `useCreateMapbox` - Enhanced map creation with error handling
-- `useMapbox` - Simplified map state management
+- `useCreateMaplibre` - Enhanced map creation with error handling
+- `useMaplibre` - Simplified map state management
 
 ### Layer Management
 
@@ -187,15 +187,15 @@ Vue3 MapLibre GL includes comprehensive TypeScript support:
 ```typescript
 import { ref } from 'vue';
 import {
-  Mapbox,
+  Maplibre,
   GeoJsonSource,
   FillLayer,
-  type MapboxProps,
+  type MaplibreProps,
   type FillLayerStyle,
   type GeoJSONSourceSpecification,
 } from 'vue3-maplibre-gl';
 
-const mapOptions = ref<MapboxProps['options']>({
+const mapOptions = ref<MaplibreProps['options']>({
   style: 'https://demotiles.maplibre.org/style.json',
   center: [0, 0],
   zoom: 2,
@@ -218,7 +218,7 @@ const geoJsonData = ref<GeoJSONSourceSpecification['data']>({
 <script setup>
 import { ref } from 'vue';
 import {
-  useCreateMapbox,
+  useCreateMaplibre,
   useFlyTo,
   useMapEventListener,
   useCreateGeoJsonSource,
@@ -228,7 +228,7 @@ const mapContainer = ref();
 const mapStyle = ref('https://demotiles.maplibre.org/style.json');
 
 // Create map with enhanced error handling
-const { mapInstance, setCenter, setZoom } = useCreateMapbox(
+const { mapInstance, setCenter, setZoom } = useCreateMaplibre(
   mapContainer,
   mapStyle,
   {
@@ -265,20 +265,20 @@ useMapEventListener({
 
 ## 📚 Documentation
 
-- **[Getting Started](https://danh121097.github.io/vue-mapbox-gl/guide/getting-started)** - Learn the basics and see examples
-- **[Installation Guide](https://danh121097.github.io/vue-mapbox-gl/guide/installation)** - Detailed setup instructions
-- **[Configuration](https://danh121097.github.io/vue-mapbox-gl/guide/configuration)** - Advanced configuration options
-- **[Components API](https://danh121097.github.io/vue-mapbox-gl/api/components)** - Complete component documentation
-- **[Composables API](https://danh121097.github.io/vue-mapbox-gl/api/composables)** - Composables reference
-- **[TypeScript Types](https://danh121097.github.io/vue-mapbox-gl/api/types)** - Type definitions
-- **[Live Examples](https://danh121097.github.io/vue-mapbox-gl/examples/)** - Interactive demos
+- **[Getting Started](https://danh121097.github.io/vue-maplibre-gl/guide/getting-started)** - Learn the basics and see examples
+- **[Installation Guide](https://danh121097.github.io/vue-maplibre-gl/guide/installation)** - Detailed setup instructions
+- **[Configuration](https://danh121097.github.io/vue-maplibre-gl/guide/configuration)** - Advanced configuration options
+- **[Components API](https://danh121097.github.io/vue-maplibre-gl/api/components)** - Complete component documentation
+- **[Composables API](https://danh121097.github.io/vue-maplibre-gl/api/composables)** - Composables reference
+- **[TypeScript Types](https://danh121097.github.io/vue-maplibre-gl/api/types)** - Type definitions
+- **[Live Examples](https://danh121097.github.io/vue-maplibre-gl/examples/)** - Interactive demos
 
 ## 🛠️ Development
 
 ```bash
 # Clone the repository
-git clone https://github.com/danh121097/vue-mapbox-gl.git
-cd vue-mapbox-gl
+git clone https://github.com/danh121097/vue-maplibre-gl.git
+cd vue-maplibre-gl
 
 # Install dependencies
 yarn install
@@ -312,8 +312,8 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ```bash
 # Clone the repository
-git clone https://github.com/danh121097/vue-mapbox-gl.git
-cd vue-mapbox-gl
+git clone https://github.com/danh121097/vue-maplibre-gl.git
+cd vue-maplibre-gl
 
 # Install dependencies
 yarn install
@@ -343,10 +343,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📖 [Documentation](https://danh121097.github.io/vue-mapbox-gl/) - Comprehensive guides and API reference
-- 🐛 [Issues](https://github.com/danh121097/vue-mapbox-gl/issues) - Bug reports and feature requests
-- 💬 [Discussions](https://github.com/danh121097/vue-mapbox-gl/discussions) - Community discussions and questions
-- ⭐ [GitHub](https://github.com/danh121097/vue-mapbox-gl) - Star the project if you find it useful!
+- 📖 [Documentation](https://danh121097.github.io/vue-maplibre-gl/) - Comprehensive guides and API reference
+- 🐛 [Issues](https://github.com/danh121097/vue-maplibre-gl/issues) - Bug reports and feature requests
+- 💬 [Discussions](https://github.com/danh121097/vue-maplibre-gl/discussions) - Community discussions and questions
+- ⭐ [GitHub](https://github.com/danh121097/vue-maplibre-gl) - Star the project if you find it useful!
 
 ---
 

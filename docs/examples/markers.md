@@ -8,16 +8,16 @@ Add a simple marker to your map:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
+  <Maplibre :options="mapOptions" style="height: 400px;">
     <Marker :lnglat="[0, 0]">
       <div class="marker">📍</div>
     </Marker>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, Marker } from 'vue3-maplibre-gl';
+import { Maplibre, Marker } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -44,22 +44,22 @@ Create a marker that users can drag around:
     <div class="info">
       <p>Marker position: {{ markerPosition }}</p>
     </div>
-    
-    <Mapbox :options="mapOptions" style="height: 400px;">
-      <Marker 
-        :lnglat="markerPosition" 
+
+    <Maplibre :options="mapOptions" style="height: 400px;">
+      <Marker
+        :lnglat="markerPosition"
         :draggable="true"
         @dragend="onMarkerDragEnd"
       >
         <div class="draggable-marker">🎯</div>
       </Marker>
-    </Mapbox>
+    </Maplibre>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, Marker } from 'vue3-maplibre-gl';
+import { Maplibre, Marker } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -72,8 +72,8 @@ const markerPosition = ref([0, 0]);
 function onMarkerDragEnd(event) {
   const { lng, lat } = event.target.getLngLat();
   markerPosition.value = [
-    Math.round(lng * 1000) / 1000, 
-    Math.round(lat * 1000) / 1000
+    Math.round(lng * 1000) / 1000,
+    Math.round(lat * 1000) / 1000,
   ];
 }
 </script>
@@ -104,26 +104,23 @@ Display multiple markers with different styles:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
-    <Marker 
-      v-for="marker in markers" 
+  <Maplibre :options="mapOptions" style="height: 400px;">
+    <Marker
+      v-for="marker in markers"
       :key="marker.id"
       :lnglat="marker.coordinates"
       @click="onMarkerClick(marker)"
     >
-      <div 
-        class="custom-marker" 
-        :style="{ backgroundColor: marker.color }"
-      >
+      <div class="custom-marker" :style="{ backgroundColor: marker.color }">
         {{ marker.icon }}
       </div>
     </Marker>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, Marker } from 'vue3-maplibre-gl';
+import { Maplibre, Marker } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -137,29 +134,29 @@ const markers = ref([
     coordinates: [0, 0],
     icon: '🏠',
     color: '#ff6b6b',
-    name: 'Home'
+    name: 'Home',
   },
   {
     id: 2,
     coordinates: [-74.006, 40.7128],
     icon: '🏢',
     color: '#4ecdc4',
-    name: 'New York Office'
+    name: 'New York Office',
   },
   {
     id: 3,
     coordinates: [2.3522, 48.8566],
     icon: '🗼',
     color: '#45b7d1',
-    name: 'Paris Office'
+    name: 'Paris Office',
   },
   {
     id: 4,
     coordinates: [139.6917, 35.6895],
     icon: '🏯',
     color: '#f9ca24',
-    name: 'Tokyo Office'
-  }
+    name: 'Tokyo Office',
+  },
 ]);
 
 function onMarkerClick(marker) {
@@ -178,7 +175,7 @@ function onMarkerClick(marker) {
   font-size: 20px;
   cursor: pointer;
   border: 3px solid white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s;
 }
 
@@ -194,18 +191,15 @@ Combine markers with popups for rich interactions:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
+  <Maplibre :options="mapOptions" style="height: 400px;">
     <template v-for="location in locations" :key="location.id">
-      <Marker 
-        :lnglat="location.coordinates"
-        @click="showPopup(location)"
-      >
+      <Marker :lnglat="location.coordinates" @click="showPopup(location)">
         <div class="location-marker">
           {{ location.icon }}
         </div>
       </Marker>
-      
-      <PopUp 
+
+      <PopUp
         v-if="selectedLocation?.id === location.id"
         :lnglat="location.coordinates"
         :show="!!selectedLocation"
@@ -221,12 +215,12 @@ Combine markers with popups for rich interactions:
         </div>
       </PopUp>
     </template>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, Marker, PopUp } from 'vue3-maplibre-gl';
+import { Maplibre, Marker, PopUp } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -242,22 +236,23 @@ const locations = ref([
     name: 'Central Park',
     coordinates: [-73.9665, 40.7812],
     icon: '🌳',
-    description: 'A large public park in Manhattan, New York City.'
+    description: 'A large public park in Manhattan, New York City.',
   },
   {
     id: 2,
     name: 'Times Square',
     coordinates: [-73.9857, 40.7589],
     icon: '🎭',
-    description: 'A major commercial intersection and tourist destination.'
+    description: 'A major commercial intersection and tourist destination.',
   },
   {
     id: 3,
     name: 'Brooklyn Bridge',
     coordinates: [-73.9969, 40.7061],
     icon: '🌉',
-    description: 'A historic suspension bridge connecting Manhattan and Brooklyn.'
-  }
+    description:
+      'A historic suspension bridge connecting Manhattan and Brooklyn.',
+  },
 ]);
 
 function showPopup(location) {
@@ -285,13 +280,13 @@ function saveLocation(location) {
   justify-content: center;
   font-size: 18px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
 }
 
 .location-marker:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .popup-content {
@@ -357,10 +352,10 @@ Add and remove markers dynamically:
         Clear All ({{ markers.length }})
       </button>
     </div>
-    
-    <Mapbox :options="mapOptions" style="height: 400px;" @click="onMapClick">
-      <Marker 
-        v-for="marker in markers" 
+
+    <Maplibre :options="mapOptions" style="height: 400px;" @click="onMapClick">
+      <Marker
+        v-for="marker in markers"
         :key="marker.id"
         :lnglat="marker.coordinates"
         @click="removeMarker(marker.id)"
@@ -370,15 +365,17 @@ Add and remove markers dynamically:
           <span class="marker-id">{{ marker.id }}</span>
         </div>
       </Marker>
-    </Mapbox>
-    
-    <p class="hint">Click on the map to add a marker, or click on a marker to remove it.</p>
+    </Maplibre>
+
+    <p class="hint">
+      Click on the map to add a marker, or click on a marker to remove it.
+    </p>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, Marker } from 'vue3-maplibre-gl';
+import { Maplibre, Marker } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -395,27 +392,27 @@ function addRandomMarker() {
   const randomLng = (Math.random() - 0.5) * 360;
   const randomLat = (Math.random() - 0.5) * 180;
   const randomIcon = icons[Math.floor(Math.random() * icons.length)];
-  
+
   markers.value.push({
     id: nextId.value++,
     coordinates: [randomLng, randomLat],
-    icon: randomIcon
+    icon: randomIcon,
   });
 }
 
 function onMapClick(event) {
   const { lng, lat } = event.lngLat;
   const randomIcon = icons[Math.floor(Math.random() * icons.length)];
-  
+
   markers.value.push({
     id: nextId.value++,
     coordinates: [lng, lat],
-    icon: randomIcon
+    icon: randomIcon,
   });
 }
 
 function removeMarker(id) {
-  markers.value = markers.value.filter(marker => marker.id !== id);
+  markers.value = markers.value.filter((marker) => marker.id !== id);
 }
 
 function clearMarkers() {

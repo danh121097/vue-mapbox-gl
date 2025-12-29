@@ -11,7 +11,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/danh121097/vue-mapbox-gl
+      link: https://github.com/danh121097/vue-maplibre-gl
 
 features:
   - icon: 🗺️
@@ -19,7 +19,7 @@ features:
     details: Create beautiful, interactive maps with MapLibre GL JS and Vue 3 components with reactive data binding.
   - icon: 🧩
     title: Component-Based Architecture
-    details: 10+ Vue components including Mapbox, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, and GeolocateControls.
+    details: 10+ Vue components including Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, and GeolocateControls.
   - icon: 🎯
     title: TypeScript Support
     details: Full TypeScript support with comprehensive type definitions and interfaces for better development experience.
@@ -50,7 +50,7 @@ Use in your Vue 3 application:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 500px" @load="onMapLoad">
+  <Maplibre :options="mapOptions" style="height: 500px" @load="onMapLoad">
     <GeoJsonSource :data="geoJsonData">
       <FillLayer :style="fillStyle" />
       <CircleLayer :style="circleStyle" />
@@ -66,13 +66,13 @@ Use in your Vue 3 application:
         <p>Interactive maps made easy with Vue 3</p>
       </div>
     </PopUp>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import {
-  Mapbox,
+  Maplibre,
   GeoJsonSource,
   FillLayer,
   CircleLayer,

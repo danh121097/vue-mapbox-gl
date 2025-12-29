@@ -9,8 +9,8 @@ The most basic example - just a map with a style:
 ```vue
 <template>
   <div class="map-container">
-    <Mapbox 
-      :options="mapOptions" 
+    <Maplibre
+      :options="mapOptions"
       style="height: 400px; width: 100%;"
       @load="onMapLoad"
     />
@@ -19,7 +19,7 @@ The most basic example - just a map with a style:
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox } from 'vue3-maplibre-gl';
+import { Maplibre } from 'vue3-maplibre-gl';
 import 'vue3-maplibre-gl/dist/style.css';
 
 const mapOptions = ref({
@@ -49,16 +49,13 @@ Using a different map style:
 ```vue
 <template>
   <div class="map-container">
-    <Mapbox 
-      :options="mapOptions" 
-      style="height: 400px; width: 100%;"
-    />
+    <Maplibre :options="mapOptions" style="height: 400px; width: 100%;" />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox } from 'vue3-maplibre-gl';
+import { Maplibre } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: {
@@ -68,23 +65,23 @@ const mapOptions = ref({
         type: 'raster',
         tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
         tileSize: 256,
-        attribution: '© OpenStreetMap contributors'
-      }
+        attribution: '© OpenStreetMap contributors',
+      },
     },
     layers: [
       {
         id: 'background',
         type: 'background',
         paint: {
-          'background-color': '#f0f0f0'
-        }
+          'background-color': '#f0f0f0',
+        },
       },
       {
         id: 'raster-layer',
         type: 'raster',
-        source: 'raster-tiles'
-      }
-    ]
+        source: 'raster-tiles',
+      },
+    ],
   },
   center: [-74.006, 40.7128], // New York
   zoom: 10,
@@ -104,9 +101,9 @@ Handle map events and user interactions:
       <p><strong>Zoom:</strong> {{ mapZoom }}</p>
       <p><strong>Last Click:</strong> {{ lastClick }}</p>
     </div>
-    
-    <Mapbox 
-      :options="mapOptions" 
+
+    <Maplibre
+      :options="mapOptions"
       style="height: 400px; width: 100%;"
       @load="onMapLoad"
       @click="onMapClick"
@@ -118,7 +115,7 @@ Handle map events and user interactions:
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox } from 'vue3-maplibre-gl';
+import { Maplibre } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -138,14 +135,17 @@ function onMapLoad(map) {
 
 function onMapClick(event) {
   const { lng, lat } = event.lngLat;
-  lastClick.value = [Math.round(lng * 1000) / 1000, Math.round(lat * 1000) / 1000];
+  lastClick.value = [
+    Math.round(lng * 1000) / 1000,
+    Math.round(lat * 1000) / 1000,
+  ];
 }
 
 function onMapMove(event) {
   const center = event.target.getCenter();
   mapCenter.value = [
-    Math.round(center.lng * 1000) / 1000, 
-    Math.round(center.lat * 1000) / 1000
+    Math.round(center.lng * 1000) / 1000,
+    Math.round(center.lat * 1000) / 1000,
   ];
 }
 
@@ -184,9 +184,9 @@ Allow users to switch between different map styles:
         <option value="satellite">Satellite</option>
       </select>
     </div>
-    
-    <Mapbox 
-      :options="mapOptions" 
+
+    <Maplibre
+      :options="mapOptions"
       style="height: 400px; width: 100%;"
       @load="onMapLoad"
     />
@@ -195,7 +195,7 @@ Allow users to switch between different map styles:
 
 <script setup>
 import { ref, watch } from 'vue';
-import { Mapbox } from 'vue3-maplibre-gl';
+import { Maplibre } from 'vue3-maplibre-gl';
 
 const selectedStyle = ref('demotiles');
 const mapInstance = ref(null);
@@ -205,39 +205,41 @@ const styles = {
   osm: {
     version: 8,
     sources: {
-      'osm': {
+      osm: {
         type: 'raster',
         tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
         tileSize: 256,
-        attribution: '© OpenStreetMap contributors'
-      }
+        attribution: '© OpenStreetMap contributors',
+      },
     },
     layers: [
       {
         id: 'osm-layer',
         type: 'raster',
-        source: 'osm'
-      }
-    ]
+        source: 'osm',
+      },
+    ],
   },
   satellite: {
     version: 8,
     sources: {
-      'satellite': {
+      satellite: {
         type: 'raster',
-        tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+        tiles: [
+          'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        ],
         tileSize: 256,
-        attribution: '© Esri'
-      }
+        attribution: '© Esri',
+      },
     },
     layers: [
       {
         id: 'satellite-layer',
         type: 'raster',
-        source: 'satellite'
-      }
-    ]
-  }
+        source: 'satellite',
+      },
+    ],
+  },
 };
 
 const mapOptions = ref({
@@ -287,6 +289,6 @@ function changeStyle() {
 
 ## Related APIs
 
-- [Mapbox Component](/api/components#mapbox)
-- [useCreateMapbox Composable](/api/composables#usecreatemapbox)
+- [Maplibre Component](/api/components#maplibre)
+- [useCreateMaplibre Composable](/api/composables#usecreatemaplibre)
 - [Map Events](/api/types#map-events)

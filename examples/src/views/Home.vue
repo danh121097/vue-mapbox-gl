@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import {
   GeolocateControls,
-  Mapbox,
-  useMapbox,
+  Maplibre,
+  useMaplibre,
   type MapOptions,
 } from 'vue3-maplibre-gl';
 import 'vue3-maplibre-gl/dist/style.css';
@@ -17,10 +17,10 @@ const options = computed<MapOptions>(() => ({
   maxZoom: 20,
 }));
 
-const { register: registerMap } = useMapbox();
+const { register: registerMap } = useMaplibre();
 </script>
 <template>
-  <Mapbox :options="options" debug @register="registerMap">
+  <Maplibre :options="options" debug @register="registerMap">
     <GeolocateControls
       :options="{
         positionOptions: {
@@ -30,5 +30,5 @@ const { register: registerMap } = useMapbox();
         showAccuracyCircle: false,
       }"
     />
-  </Mapbox>
+  </Maplibre>
 </template>

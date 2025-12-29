@@ -4,12 +4,12 @@ Learn how to use Vue MapLibre GL components and composables in your Vue 3 applic
 
 ## Creating Your First Map
 
-The most basic usage involves creating a map with the `Mapbox` component:
+The most basic usage involves creating a map with the `Maplibre` component:
 
 ```vue
 <template>
-  <Mapbox 
-    :options="mapOptions" 
+  <Maplibre
+    :options="mapOptions"
     style="height: 400px; width: 100%;"
     @load="onMapLoad"
   />
@@ -17,7 +17,7 @@ The most basic usage involves creating a map with the `Mapbox` component:
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox } from 'vue3-maplibre-gl';
+import { Maplibre } from 'vue3-maplibre-gl';
 import 'vue3-maplibre-gl/dist/style.css';
 
 const mapOptions = ref({
@@ -38,17 +38,22 @@ Use the `GeoJsonSource` component to add data to your map:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
+  <Maplibre :options="mapOptions" style="height: 400px;">
     <GeoJsonSource :data="geoJsonData" source-id="my-data">
       <FillLayer :style="fillStyle" />
       <CircleLayer :style="circleStyle" />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, FillLayer, CircleLayer } from 'vue3-maplibre-gl';
+import {
+  Maplibre,
+  GeoJsonSource,
+  FillLayer,
+  CircleLayer,
+} from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -63,13 +68,13 @@ const geoJsonData = ref({
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [0, 0]
+        coordinates: [0, 0],
       },
       properties: {
-        name: 'Sample Point'
-      }
-    }
-  ]
+        name: 'Sample Point',
+      },
+    },
+  ],
 });
 
 const fillStyle = ref({
@@ -90,31 +95,23 @@ Add interactive markers and popups to your map:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
-    <Marker 
-      :lnglat="[0, 0]" 
-      :draggable="true"
-      @dragend="onMarkerDragEnd"
-    >
+  <Maplibre :options="mapOptions" style="height: 400px;">
+    <Marker :lnglat="[0, 0]" :draggable="true" @dragend="onMarkerDragEnd">
       <div class="custom-marker">📍</div>
     </Marker>
 
-    <PopUp 
-      :lnglat="popupLocation" 
-      :show="showPopup"
-      @close="showPopup = false"
-    >
+    <PopUp :lnglat="popupLocation" :show="showPopup" @close="showPopup = false">
       <div class="popup-content">
         <h3>Hello World!</h3>
         <p>This is a popup at {{ popupLocation }}</p>
       </div>
     </PopUp>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, Marker, PopUp } from 'vue3-maplibre-gl';
+import { Maplibre, Marker, PopUp } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -152,12 +149,8 @@ For more advanced functionality, use the provided composables:
 ```vue
 <template>
   <div>
-    <Mapbox 
-      :options="mapOptions" 
-      style="height: 400px;"
-      @load="onMapLoad"
-    />
-    
+    <Maplibre :options="mapOptions" style="height: 400px;" @load="onMapLoad" />
+
     <div class="controls">
       <button @click="flyToLocation">Fly to New York</button>
       <button @click="addRandomPoint">Add Random Point</button>
@@ -168,12 +161,12 @@ For more advanced functionality, use the provided composables:
 
 <script setup>
 import { ref } from 'vue';
-import { 
-  Mapbox, 
-  useCreateMapbox, 
-  useFlyTo, 
+import {
+  Maplibre,
+  useCreateMaplibre,
+  useFlyTo,
   useZoom,
-  useCreateGeoJsonSource 
+  useCreateGeoJsonSource,
 } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
@@ -190,7 +183,7 @@ const { zoom: currentZoom } = useZoom({ map: mapInstance });
 const { updateData } = useCreateGeoJsonSource({
   map: mapInstance,
   sourceId: 'random-points',
-  data: ref({ type: 'FeatureCollection', features: [] })
+  data: ref({ type: 'FeatureCollection', features: [] }),
 });
 
 function onMapLoad(map) {
@@ -201,29 +194,29 @@ function flyToLocation() {
   flyTo({
     center: [-74.006, 40.7128], // New York
     zoom: 10,
-    duration: 2000
+    duration: 2000,
   });
 }
 
 function addRandomPoint() {
   const randomLng = (Math.random() - 0.5) * 360;
   const randomLat = (Math.random() - 0.5) * 180;
-  
+
   const newFeature = {
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: [randomLng, randomLat]
+      coordinates: [randomLng, randomLat],
     },
     properties: {
-      id: Date.now()
-    }
+      id: Date.now(),
+    },
   };
-  
+
   // Update the data source
   updateData((currentData) => ({
     ...currentData,
-    features: [...currentData.features, newFeature]
+    features: [...currentData.features, newFeature],
   }));
 }
 </script>
@@ -257,26 +250,26 @@ Handle map and layer events:
 
 ```vue
 <template>
-  <Mapbox 
-    :options="mapOptions" 
+  <Maplibre
+    :options="mapOptions"
     style="height: 400px;"
     @load="onMapLoad"
     @click="onMapClick"
     @zoom="onMapZoom"
   >
     <GeoJsonSource :data="geoJsonData" source-id="clickable-data">
-      <CircleLayer 
-        :style="circleStyle" 
+      <CircleLayer
+        :style="circleStyle"
         layer-id="clickable-circles"
         @click="onCircleClick"
       />
     </GeoJsonSource>
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -290,16 +283,16 @@ const geoJsonData = ref({
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [0, 0] },
-      properties: { name: 'Clickable Point' }
-    }
-  ]
+      properties: { name: 'Clickable Point' },
+    },
+  ],
 });
 
 const circleStyle = ref({
   'circle-radius': 10,
   'circle-color': '#007cbf',
   'circle-stroke-width': 2,
-  'circle-stroke-color': '#ffffff'
+  'circle-stroke-color': '#ffffff',
 });
 
 function onMapLoad(map) {
@@ -325,6 +318,6 @@ function onCircleClick(event) {
 Now that you understand the basics:
 
 - Explore the [complete API reference](/api/components) for all available components
-- Learn about [advanced composables](/api/composables) for complex functionality  
+- Learn about [advanced composables](/api/composables) for complex functionality
 - Check out [configuration options](/guide/configuration) for customization
 - Browse [practical examples](/examples/) for real-world use cases

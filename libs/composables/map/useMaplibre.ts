@@ -26,14 +26,14 @@ import { useLogger } from '@libs/composables';
 import { MapCreationStatus } from '@libs/enums';
 import type { MaplibreActions, MaplibreMethods, Nullable } from '@libs/types';
 
-interface UseMapboxOptions {
+interface UseMaplibreOptions {
   /** Enable debug logging */
   debug?: boolean;
   /** Automatically cleanup resources on unmount */
   autoCleanup?: boolean;
 }
 
-interface UseMapboxReturn
+interface UseMaplibreReturn
   extends Omit<
     MaplibreMethods,
     | 'mapCreationStatus'
@@ -70,7 +70,7 @@ interface UseMapboxReturn
  * @param options - Configuration options for the composable
  * @returns Reactive map management interface
  */
-export function useMapbox(options: UseMapboxOptions = {}): UseMapboxReturn {
+export function Maplibre(options: UseMaplibreOptions = {}): UseMaplibreReturn {
   const { debug = false, autoCleanup = true } = options;
   const { logError } = useLogger(debug);
 
@@ -121,7 +121,7 @@ export function useMapbox(options: UseMapboxOptions = {}): UseMapboxReturn {
       }
 
       if (debug) {
-        console.log('🔄 Registering MapLibre instance with useMapbox', {
+        console.log('🔄 Registering MapLibre instance with useMaplibre', {
           hasMapInstance: !!instance.mapInstance,
           currentMapCreationStatus: instance.mapCreationStatus,
           isMapReady: instance.isMapReady,
@@ -144,7 +144,7 @@ export function useMapbox(options: UseMapboxOptions = {}): UseMapboxReturn {
             try {
               mapInstance.value = map;
               if (debug) {
-                console.log('🗺️ Map instance updated in useMapbox', {
+                console.log('🗺️ Map instance updated in useMaplibre', {
                   hasMap: !!map,
                   mapLoaded: map?.loaded?.(),
                 });
@@ -172,7 +172,7 @@ export function useMapbox(options: UseMapboxOptions = {}): UseMapboxReturn {
                 if (map.loaded()) {
                   mapStatus.value = MapCreationStatus.Loaded;
                   if (debug) {
-                    console.log('Map successfully registered with useMapbox');
+                    console.log('Map successfully registered with useMaplibre');
                   }
                 } else {
                   // Map exists but not loaded yet
@@ -182,7 +182,7 @@ export function useMapbox(options: UseMapboxOptions = {}): UseMapboxReturn {
                   const onLoad = () => {
                     mapStatus.value = MapCreationStatus.Loaded;
                     if (debug) {
-                      console.log('Map loaded and registered with useMapbox');
+                      console.log('Map loaded and registered with useMaplibre');
                     }
                     map.off('load', onLoad);
                   };

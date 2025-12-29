@@ -21,7 +21,7 @@ import type {
   StyleOptions,
 } from 'maplibre-gl';
 
-interface CreateMapboxProps extends MapOptions {
+interface CreateMaplibreProps extends MapOptions {
   register?: (actions: SimplifiedCreateMaplibreActions) => void;
   debug?: boolean;
   onLoad?: (map: Map) => void;
@@ -51,10 +51,10 @@ interface SimplifiedCreateMaplibreActions extends CreateMaplibreActions {
  * @param props - Configuration options for the map
  * @returns Enhanced actions and state for map management
  */
-export function useCreateMapbox(
+export function useCreateMaplibre(
   elRef: MaybeRef<HTMLElement | undefined | null>,
   styleRef: MaybeRef<StyleSpecification | string>,
-  props: Omit<CreateMapboxProps, 'container' | 'style'> = {},
+  props: Omit<CreateMaplibreProps, 'container' | 'style'> = {},
 ) {
   const { register, onLoad, onError, ...options } = props;
   const { log, logError, logWarn } = useLogger(props.debug ?? false);

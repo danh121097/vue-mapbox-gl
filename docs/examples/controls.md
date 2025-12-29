@@ -8,20 +8,20 @@ Add standard navigation controls to your map:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
+  <Maplibre :options="mapOptions" style="height: 400px;">
     <NavigationControl position="top-right" />
     <ScaleControl position="bottom-left" />
     <FullscreenControl position="top-left" />
-  </Mapbox>
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { 
-  Mapbox, 
-  NavigationControl, 
-  ScaleControl, 
-  FullscreenControl 
+import {
+  Maplibre,
+  NavigationControl,
+  ScaleControl,
+  FullscreenControl,
 } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
@@ -42,22 +42,22 @@ Add geolocation functionality:
     <div class="status" v-if="locationStatus">
       <p>{{ locationStatus }}</p>
     </div>
-    
-    <Mapbox :options="mapOptions" style="height: 400px;">
-      <GeolocateControl 
+
+    <Maplibre :options="mapOptions" style="height: 400px;">
+      <GeolocateControl
         position="top-right"
         :track-user-location="true"
         :show-accuracy-circle="true"
         @geolocate="onGeolocate"
         @error="onGeolocationError"
       />
-    </Mapbox>
+    </Maplibre>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, GeolocateControl } from 'vue3-maplibre-gl';
+import { Maplibre, GeolocateControl } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -96,31 +96,27 @@ Create a custom control component:
 ```vue
 <template>
   <div>
-    <Mapbox :options="mapOptions" style="height: 400px;" @load="onMapLoad">
+    <Maplibre :options="mapOptions" style="height: 400px;" @load="onMapLoad">
       <!-- Built-in controls -->
       <NavigationControl position="top-right" />
-      
+
       <!-- Custom control using slot -->
       <div class="custom-control-container">
         <div class="custom-control">
           <button @click="goToRandomLocation" title="Random Location">
             🎲
           </button>
-          <button @click="resetView" title="Reset View">
-            🏠
-          </button>
-          <button @click="toggleStyle" title="Toggle Style">
-            🎨
-          </button>
+          <button @click="resetView" title="Reset View">🏠</button>
+          <button @click="toggleStyle" title="Toggle Style">🎨</button>
         </div>
       </div>
-    </Mapbox>
+    </Maplibre>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, NavigationControl } from 'vue3-maplibre-gl';
+import { Maplibre, NavigationControl } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -138,19 +134,21 @@ const styles = {
     sources: {
       'dark-tiles': {
         type: 'raster',
-        tiles: ['https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'],
+        tiles: [
+          'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
+        ],
         tileSize: 256,
-        attribution: '© CartoDB'
-      }
+        attribution: '© CartoDB',
+      },
     },
     layers: [
       {
         id: 'dark-layer',
         type: 'raster',
-        source: 'dark-tiles'
-      }
-    ]
-  }
+        source: 'dark-tiles',
+      },
+    ],
+  },
 };
 
 function onMapLoad(map) {
@@ -159,30 +157,30 @@ function onMapLoad(map) {
 
 function goToRandomLocation() {
   if (!mapInstance.value) return;
-  
+
   const randomLng = (Math.random() - 0.5) * 360;
   const randomLat = (Math.random() - 0.5) * 180;
-  
+
   mapInstance.value.flyTo({
     center: [randomLng, randomLat],
     zoom: Math.random() * 10 + 2,
-    duration: 2000
+    duration: 2000,
   });
 }
 
 function resetView() {
   if (!mapInstance.value) return;
-  
+
   mapInstance.value.flyTo({
     center: [0, 0],
     zoom: 2,
-    duration: 1000
+    duration: 1000,
   });
 }
 
 function toggleStyle() {
   if (!mapInstance.value) return;
-  
+
   isDarkStyle.value = !isDarkStyle.value;
   const newStyle = isDarkStyle.value ? styles.dark : styles.light;
   mapInstance.value.setStyle(newStyle);
@@ -200,7 +198,7 @@ function toggleStyle() {
 .custom-control {
   background: white;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
 }
@@ -243,47 +241,46 @@ Create a control to toggle map layers:
 ```vue
 <template>
   <div>
-    <Mapbox :options="mapOptions" style="height: 400px;">
+    <Maplibre :options="mapOptions" style="height: 400px;">
       <GeoJsonSource :data="layerData" source-id="toggleable-layers">
         <FillLayer v-if="layers.fill.visible" :style="fillStyle" />
         <CircleLayer v-if="layers.circles.visible" :style="circleStyle" />
         <LineLayer v-if="layers.lines.visible" :style="lineStyle" />
       </GeoJsonSource>
-      
+
       <!-- Layer control panel -->
       <div class="layer-control-panel">
         <h4>Layers</h4>
         <div class="layer-item" v-for="(layer, key) in layers" :key="key">
           <label>
-            <input 
-              type="checkbox" 
-              v-model="layer.visible"
-            />
+            <input type="checkbox" v-model="layer.visible" />
             {{ layer.name }}
           </label>
-          <input 
-            type="range" 
-            min="0" 
-            max="1" 
+          <input
+            type="range"
+            min="0"
+            max="1"
             step="0.1"
             v-model="layer.opacity"
             :disabled="!layer.visible"
           />
-          <span class="opacity-value">{{ Math.round(layer.opacity * 100) }}%</span>
+          <span class="opacity-value"
+            >{{ Math.round(layer.opacity * 100) }}%</span
+          >
         </div>
       </div>
-    </Mapbox>
+    </Maplibre>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import { 
-  Mapbox, 
-  GeoJsonSource, 
-  FillLayer, 
-  CircleLayer, 
-  LineLayer 
+import {
+  Maplibre,
+  GeoJsonSource,
+  FillLayer,
+  CircleLayer,
+  LineLayer,
 } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
@@ -296,18 +293,18 @@ const layers = ref({
   fill: {
     name: 'Areas',
     visible: true,
-    opacity: 0.6
+    opacity: 0.6,
   },
   circles: {
     name: 'Points',
     visible: true,
-    opacity: 0.8
+    opacity: 0.8,
   },
   lines: {
     name: 'Routes',
     visible: true,
-    opacity: 0.7
-  }
+    opacity: 0.7,
+  },
 });
 
 const layerData = ref({
@@ -318,26 +315,28 @@ const layerData = ref({
       type: 'Feature',
       geometry: {
         type: 'Polygon',
-        coordinates: [[
-          [-74.0059, 40.7128],
-          [-74.0059, 40.7589],
-          [-73.9352, 40.7589],
-          [-73.9352, 40.7128],
-          [-74.0059, 40.7128]
-        ]]
+        coordinates: [
+          [
+            [-74.0059, 40.7128],
+            [-74.0059, 40.7589],
+            [-73.9352, 40.7589],
+            [-73.9352, 40.7128],
+            [-74.0059, 40.7128],
+          ],
+        ],
       },
-      properties: { type: 'area' }
+      properties: { type: 'area' },
     },
     // Points
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-74.006, 40.7128] },
-      properties: { type: 'point' }
+      properties: { type: 'point' },
     },
     {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [-73.9857, 40.7589] },
-      properties: { type: 'point' }
+      properties: { type: 'point' },
     },
     // Line
     {
@@ -347,17 +346,17 @@ const layerData = ref({
         coordinates: [
           [-74.006, 40.7128],
           [-73.9857, 40.7589],
-          [-73.9665, 40.7812]
-        ]
+          [-73.9665, 40.7812],
+        ],
       },
-      properties: { type: 'route' }
-    }
-  ]
+      properties: { type: 'route' },
+    },
+  ],
 });
 
 const fillStyle = computed(() => ({
   'fill-color': '#088',
-  'fill-opacity': layers.value.fill.opacity
+  'fill-opacity': layers.value.fill.opacity,
 }));
 
 const circleStyle = computed(() => ({
@@ -365,13 +364,13 @@ const circleStyle = computed(() => ({
   'circle-color': '#ff6b6b',
   'circle-opacity': layers.value.circles.opacity,
   'circle-stroke-width': 2,
-  'circle-stroke-color': '#ffffff'
+  'circle-stroke-color': '#ffffff',
 }));
 
 const lineStyle = computed(() => ({
   'line-color': '#007cbf',
   'line-width': 4,
-  'line-opacity': layers.value.lines.opacity
+  'line-opacity': layers.value.lines.opacity,
 }));
 </script>
 
@@ -383,7 +382,7 @@ const lineStyle = computed(() => ({
   background: white;
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   min-width: 200px;
   z-index: 1000;
 }
@@ -409,7 +408,7 @@ const lineStyle = computed(() => ({
   font-size: 13px;
 }
 
-.layer-item input[type="range"] {
+.layer-item input[type='range'] {
   width: 100%;
 }
 
@@ -427,36 +426,34 @@ Add custom attribution:
 
 ```vue
 <template>
-  <Mapbox :options="mapOptions" style="height: 400px;">
-    <AttributionControl 
-      position="bottom-right"
-      :compact="false"
-    />
-  </Mapbox>
+  <Maplibre :options="mapOptions" style="height: 400px;">
+    <AttributionControl position="bottom-right" :compact="false" />
+  </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Mapbox, AttributionControl } from 'vue3-maplibre-gl';
+import { Maplibre, AttributionControl } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: {
     version: 8,
     sources: {
-      'osm': {
+      osm: {
         type: 'raster',
         tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
         tileSize: 256,
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }
+        attribution:
+          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      },
     },
     layers: [
       {
         id: 'osm-layer',
         type: 'raster',
-        source: 'osm'
-      }
-    ]
+        source: 'osm',
+      },
+    ],
   },
   center: [0, 0],
   zoom: 2,

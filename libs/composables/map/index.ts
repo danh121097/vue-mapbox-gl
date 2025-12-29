@@ -1,5 +1,5 @@
-export * from './useCreateMapbox';
-export * from './useMapbox';
+export * from './useCreateMaplibre';
+export * from './useMaplibre';
 export * from './useLayer';
 export * from './useCreateImage';
 export * from './useGeoJsonSource';

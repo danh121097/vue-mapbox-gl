@@ -1,5 +1,4 @@
-// Vue Components
-export { default as Mapbox } from './Mapbox.vue';
+export { default as Maplibre } from './Maplibre.vue';
 export { default as GeolocateControls } from './GeolocateControls.vue';
 export { default as GeoJsonSource } from './GeoJsonSource.vue';
 export { default as FillLayer } from './FillLayer.vue';

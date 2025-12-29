@@ -7,9 +7,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/danh121097/vue-mapbox-gl.git"
+    "url": "https://github.com/danh121097/vue-maplibre-gl.git"
   },
-  "homepage": "https://github.com/danh121097/vue-mapbox-gl#readme",
+  "homepage": "https://github.com/danh121097/vue-maplibre-gl#readme",
   "type": "module",
   "keywords": [
     "vue",

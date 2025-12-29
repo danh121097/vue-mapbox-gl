@@ -9,7 +9,7 @@ export enum MapCreationStatus {
   Destroyed = 'destroyed',
 }
 
-export const MapboxEvents: (keyof MapEventTypes)[] = [
+export const MaplibreEvents: (keyof MapEventTypes)[] = [
   'error',
   'load',
   'idle',

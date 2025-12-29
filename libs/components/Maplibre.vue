@@ -11,9 +11,9 @@ import {
   watchEffect,
   shallowRef,
 } from 'vue';
-import { MapProvideKey, MapboxEvents, MapCreationStatus } from '@libs/enums';
+import { MapProvideKey, MaplibreEvents, MapCreationStatus } from '@libs/enums';
 import {
-  useCreateMapbox,
+  useCreateMaplibre,
   useMapEventListener,
   useLogger,
   useOptimizedComputed,
@@ -33,9 +33,9 @@ import type {
 } from 'maplibre-gl';
 
 /**
- * Enhanced Mapbox component props with comprehensive configuration options
+ * Enhanced Maplibre component props with comprehensive configuration options
  */
-interface MapboxProps {
+interface MaplibreProps {
   /** Map configuration options */
   options?: Partial<MapOptions>;
   /** Callback for registering map actions */
@@ -115,7 +115,7 @@ interface Emits {
   (e: 'terrain', ev: Event): void;
 }
 
-const props = withDefaults(defineProps<MapboxProps>(), {
+const props = withDefaults(defineProps<MaplibreProps>(), {
   options: () => ({
     // Provide sensible defaults for better performance
     style: 'https://demotiles.maplibre.org/style.json',
@@ -207,7 +207,7 @@ const {
   setMinPitch,
   setMinZoom,
   setRenderWorldCopies,
-} = useCreateMapbox(mapContainerRef, styleRef, {
+} = useCreateMaplibre(mapContainerRef, styleRef, {
   ...unref(mapOptions),
   register: (actions: CreateMaplibreActions) => {
     try {
@@ -252,7 +252,7 @@ const {
 provide(MapProvideKey, mapInstance);
 
 // Enhanced event listeners with error handling and performance monitoring
-MapboxEvents.map((evt) => {
+MaplibreEvents.map((evt) => {
   return useMapEventListener({
     map: mapInstance,
     event: evt,
