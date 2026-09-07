@@ -38,6 +38,10 @@ export function useLayerEventListener<T extends keyof MapLayerEventType>(
     return layer ? (typeof layer === 'string' ? layer : layer.id) : null;
   });
 
+  // The id the handler was bound with. Detach happens after the layer ref has
+  // already moved on (or gone null), so the current id is the wrong key.
+  let attachedLayerId: string | null = null;
+
   const result = createEventListenerComposable<Map>({
     target: props.map,
     event: props.event as string,
@@ -49,10 +53,13 @@ export function useLayerEventListener<T extends keyof MapLayerEventType>(
     adapter: {
       attach: (map, event, handler) => {
         const id = layerId.value;
-        if (id) map.on(event as T, id, handler as any);
+        if (!id) return;
+        map.on(event as T, id, handler as any);
+        attachedLayerId = id;
       },
       detach: (map, event, handler) => {
-        const id = layerId.value;
+        const id = attachedLayerId;
+        attachedLayerId = null;
         if (id) map.off(event as T, id, handler as any);
       },
       validate: (map) => {

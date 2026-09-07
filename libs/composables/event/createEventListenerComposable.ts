@@ -1,4 +1,4 @@
-import { onUnmounted, unref, watchEffect, computed, ref } from 'vue';
+import { onUnmounted, unref, watch, computed, ref } from 'vue';
 import { useLogger } from '@libs/composables';
 import type { ComputedRef, MaybeRef } from 'vue';
 import type { Nullable } from '@libs/types';
@@ -67,6 +67,10 @@ export function createEventListenerComposable<TTarget>(
   const isListenerAttached = computed(
     () => listenerStatus.value === EventListenerStatus.Attached,
   );
+  // The target the handler is currently on. Detach reads this rather than the
+  // ref: by the time a swap's cleanup runs, the ref already points at the
+  // incoming target, and detaching there would strand the outgoing one.
+  let attachedTarget: Nullable<TTarget> = null;
 
   // Event handler with error handling and once support
   const eventHandler = (...args: any[]): void => {
@@ -92,6 +96,7 @@ export function createEventListenerComposable<TTarget>(
 
     try {
       config.adapter.attach(target, config.event, eventHandler);
+      attachedTarget = target;
       listenerStatus.value = EventListenerStatus.Attached;
     } catch (error) {
       listenerStatus.value = EventListenerStatus.Error;
@@ -105,38 +110,36 @@ export function createEventListenerComposable<TTarget>(
    * Removes the event listener from the target (idempotent - safe to call multiple times)
    */
   function removeListener(): void {
-    const target = targetInstance.value;
-    if (!target) return;
-    if (listenerStatus.value === EventListenerStatus.NotAttached) return;
+    const target = attachedTarget;
+    attachedTarget = null;
 
-    try {
-      config.adapter.detach(target, config.event, eventHandler);
-    } catch {
-      // Swallow errors on detach (target may be destroyed) — RT-7 idempotent cleanup
+    if (target) {
+      try {
+        config.adapter.detach(target, config.event, eventHandler);
+      } catch {
+        // The target may already be destroyed; cleanup must stay idempotent.
+      }
     }
     listenerStatus.value = EventListenerStatus.NotAttached;
   }
 
-  // Watch target changes and manage listener lifecycle
-  let lastTarget: any = null;
-  const stopEffect = watchEffect((onCleanUp) => {
-    const target = targetInstance.value;
-    // Also read extra deps to trigger re-evaluation
-    config.extraDeps?.();
-
-    if (target === lastTarget) return;
-    lastTarget = target;
-
-    if (target && listenerStatus.value === EventListenerStatus.NotAttached) {
+  // Re-run whenever the target or an extra dependency changes: detach from
+  // wherever the handler is, then attach if the target now validates. The
+  // target alone is not enough to key on — a layer listener's target is the
+  // map, which stays the same while the layer is created, removed on a style
+  // reload, and created again.
+  //
+  // A `watch` with a getter, not a `watchEffect`: attaching writes the status
+  // the effect would otherwise read, so an effect would re-run on its own
+  // write and re-attach a `once` listener right after it removed itself.
+  const stopEffect = watch(
+    () => [targetInstance.value, ...(config.extraDeps?.() ?? [])],
+    (_, __, onCleanUp) => {
       attachListener();
-    } else if (
-      !target &&
-      listenerStatus.value === EventListenerStatus.Attached
-    ) {
-      removeListener();
-    }
-    onCleanUp(removeListener);
-  });
+      onCleanUp(removeListener);
+    },
+    { immediate: true },
+  );
 
   function cleanup(): void {
     stopEffect();

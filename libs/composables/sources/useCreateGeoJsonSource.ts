@@ -75,6 +75,13 @@ export function useCreateGeoJsonSource({
   const sourceId = getNanoid(id);
   const source = shallowRef<Nullable<GeoJSONSource>>(null);
   const sourceStatus = ref<SourceStatus>(SourceStatus.NotCreated);
+  // The data the source should currently hold. Creation is deferred and a
+  // style reload rebuilds the source, so `setData` records here and
+  // `initSource` builds from it rather than from the setup-time value.
+  let currentData = data;
+  // Set on unmount so the deferred mount-time creation cannot add a source
+  // after the teardown that would have removed it has already run.
+  let isDisposed = false;
 
   // Computed properties for better reactivity and performance
   const getSource = computed(() => source.value);
@@ -91,7 +98,7 @@ export function useCreateGeoJsonSource({
   useMapReloadEvent({
     map: mapRef,
     callbacks: {
-      onUnload: removeSource,
+      onUnload: removeSourceFrom,
       onLoad: initSource,
     },
     debug,
@@ -141,7 +148,7 @@ export function useCreateGeoJsonSource({
 
     if (source.value || hasSource(map, sourceId)) return;
 
-    if (!data) return;
+    if (!currentData) return;
 
     sourceStatus.value = SourceStatus.Creating;
 
@@ -149,7 +156,7 @@ export function useCreateGeoJsonSource({
       const sourceSpec: GeoJSONSourceSpecification = {
         ...options,
         type: 'geojson',
-        data,
+        data: currentData,
       };
 
       map.addSource(sourceId, sourceSpec);
@@ -165,13 +172,15 @@ export function useCreateGeoJsonSource({
    * @param newData - New GeoJSON data to set
    */
   function setData(newData: GeoJSONSourceSpecification['data']): void {
+    if (!newData) return;
+
+    currentData = newData;
+
     const map = mapInstance.value;
 
     if (!map) return;
 
     if (!source.value || !hasSource(map, sourceId)) return;
-
-    if (!newData) return;
 
     try {
       source.value.setData(newData);
@@ -181,11 +190,10 @@ export function useCreateGeoJsonSource({
   }
 
   /**
-   * Removes the GeoJSON source with enhanced cleanup and error handling
+   * Removes the source from a specific map. When the map ref is swapped the
+   * source is still on the outgoing map, which the ref no longer points at.
    */
-  function removeSource(): void {
-    const map = mapInstance.value;
-
+  function removeSourceFrom(map: Nullable<Map>): void {
     if (!map) return;
 
     try {
@@ -202,6 +210,13 @@ export function useCreateGeoJsonSource({
   }
 
   /**
+   * Removes the GeoJSON source with enhanced cleanup and error handling
+   */
+  function removeSource(): void {
+    removeSourceFrom(mapInstance.value);
+  }
+
+  /**
    * Refreshes the source by removing and recreating it
    */
   function refreshSource(): void {
@@ -211,10 +226,11 @@ export function useCreateGeoJsonSource({
 
   onMounted(async () => {
     await nextTick();
-    initSource();
+    if (!isDisposed) initSource();
   });
 
   onUnmounted(() => {
+    isDisposed = true;
     removeSource();
   });
 

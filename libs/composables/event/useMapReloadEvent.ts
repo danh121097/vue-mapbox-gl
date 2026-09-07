@@ -90,20 +90,26 @@ export function useMapReloadEvent(
 
   // Initialize load status based on map state
   const initialMap = mapInstance.value;
+  // Pending initial-load timer, so an unmount within the same tick can cancel
+  // it instead of letting `onLoad` build objects nothing will ever remove.
+  let initialLoadTimer: Nullable<ReturnType<typeof setTimeout>> = null;
   if (initialMap?.isStyleLoaded()) {
     loadStatus.value = MapReloadEventStatus.Loaded;
     if (props.autoTriggerOnMount !== false) {
       // Trigger initial load callback if map is already loaded
-      setTimeout(() => forceLoad(), 0);
+      initialLoadTimer = setTimeout(() => {
+        initialLoadTimer = null;
+        forceLoad();
+      }, 0);
     }
   }
 
   /**
-   * Enhanced unload event handler with error handling and debugging
+   * Applies an unload for a specific map. Takes the map as an argument because
+   * a replaced map must be unloaded after the ref already points at its
+   * successor.
    */
-  function handleUnloadEvent(): void {
-    const map = mapInstance.value;
-
+  function applyUnload(map: Nullable<Map>): void {
     if (loadStatus.value === MapReloadEventStatus.NotLoaded) return;
 
     try {
@@ -118,6 +124,13 @@ export function useMapReloadEvent(
         props.callbacks.onError(error);
       }
     }
+  }
+
+  /**
+   * MapLibre listener for `styledataloading`. Ignores the event argument.
+   */
+  function handleUnloadEvent(): void {
+    applyUnload(mapInstance.value);
   }
 
   /**
@@ -203,10 +216,14 @@ export function useMapReloadEvent(
   const stopEffect = watch(
     mapInstance,
     (map, previousMap, onCleanUp) => {
-      // A replacement map carries none of the previous map's load state. Without
-      // this reset both branches below fall through on a map that arrives
-      // already style-loaded, and `onLoad` never fires for it.
+      // A replacement map carries none of the previous map's load state.
+      // Unload the outgoing map first so consumers release the objects they
+      // built on it — otherwise they still hold them and skip building on the
+      // new map — then reset so the branches below treat the newcomer as
+      // fresh; without that a map arriving already style-loaded never gets
+      // its `onLoad`.
       if (previousMap && previousMap !== map) {
+        applyUnload(previousMap);
         loadStatus.value = MapReloadEventStatus.NotLoaded;
       }
 
@@ -245,6 +262,10 @@ export function useMapReloadEvent(
 
   // Cleanup function for removing listeners and stopping watchers
   function cleanup(): void {
+    if (initialLoadTimer) {
+      clearTimeout(initialLoadTimer);
+      initialLoadTimer = null;
+    }
     handleUnloadEvent();
     stopEffect();
     clear();

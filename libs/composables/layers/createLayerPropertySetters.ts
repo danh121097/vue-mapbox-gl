@@ -57,7 +57,8 @@ export function createSetVisibility(
 
 /**
  * Creates a typed property setter with try-catch error handling.
- * Preserves original type signature via generics (RT-10).
+ * The generic keeps the caller's value type, so a setter built here has the
+ * same signature as a hand-written one.
  *
  * @param setFn - setPaintProperty or setLayoutProperty from useCreateLayer
  * @param propertyName - CSS property name (e.g., 'circle-color')

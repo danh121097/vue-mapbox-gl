@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { withSetup } from '../../../test-utils';
 import {
   createEventListenerComposable,
@@ -84,7 +84,7 @@ describe('createEventListenerComposable', () => {
     expect(handler).toHaveBeenCalledTimes(1);
   });
 
-  it('removeListener is idempotent (RT-7)', () => {
+  it('removeListener is idempotent', () => {
     const target = createMockTarget();
     const handler = vi.fn();
 
@@ -170,5 +170,62 @@ describe('createEventListenerComposable', () => {
     // Should not throw
     target.fire('click', {});
     expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('moves the listener to a replacement target, leaving the outgoing one clean', async () => {
+    const first = createMockTarget();
+    const second = createMockTarget();
+    const target = ref(first);
+    const handler = vi.fn();
+
+    withSetup(() =>
+      createEventListenerComposable({
+        target,
+        event: 'click',
+        on: handler,
+        adapter: {
+          attach: (t, e, h) => t.on(e, h),
+          detach: (t, e, h) => t.off(e, h),
+        },
+      }),
+    );
+
+    expect(first.getHandlerCount('click')).toBe(1);
+
+    target.value = second;
+    await nextTick();
+
+    // The detach must hit the target the handler was attached to. By the time
+    // the swap's cleanup runs the ref already points at the incoming target,
+    // so reading it there strands the handler on the outgoing one.
+    expect(first.getHandlerCount('click')).toBe(0);
+    expect(second.getHandlerCount('click')).toBe(1);
+  });
+
+  it('attaches once validation starts passing for an unchanged target', async () => {
+    const target = createMockTarget();
+    const handler = vi.fn();
+    const ready = ref(false);
+
+    withSetup(() =>
+      createEventListenerComposable({
+        target: ref(target),
+        event: 'click',
+        on: handler,
+        extraDeps: () => [ready.value],
+        adapter: {
+          attach: (t, e, h) => t.on(e, h),
+          detach: (t, e, h) => t.off(e, h),
+          validate: () => ready.value,
+        },
+      }),
+    );
+
+    expect(target.getHandlerCount('click')).toBe(0);
+
+    ready.value = true;
+    await nextTick();
+
+    expect(target.getHandlerCount('click')).toBe(1);
   });
 });

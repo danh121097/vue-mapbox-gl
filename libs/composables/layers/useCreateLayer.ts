@@ -84,6 +84,19 @@ export function useCreateLayer<Layer extends LayerSpecification>(
   const layer = shallowRef<Nullable<Layer>>(null);
   const layerStatus = ref<LayerStatus>(LayerStatus.NotCreated);
 
+  // The configuration the layer should currently have. Creation is deferred
+  // and a style reload rebuilds the layer from scratch, so every setter
+  // records here first and `createLayer` builds from it — a change made while
+  // the layer is not on the map is applied once it is, not dropped.
+  const current = {
+    beforeId,
+    filter,
+    layout: { ...(layout || {}) } as Record<string, any>,
+    paint: { ...(paint || {}) } as Record<string, any>,
+    minzoom,
+    maxzoom,
+  };
+
   // Computed properties for better reactivity and performance
   const getLayer = computed(() => layer.value);
   const mapInstance = computed(() => unref(mapRef));
@@ -110,7 +123,7 @@ export function useCreateLayer<Layer extends LayerSpecification>(
   useMapReloadEvent({
     map: mapRef,
     callbacks: {
-      onUnload: removeLayer,
+      onUnload: removeLayerFrom,
       onLoad: createLayer,
     },
     debug,
@@ -131,6 +144,7 @@ export function useCreateLayer<Layer extends LayerSpecification>(
    * @param beforeIdVal - ID of the layer to insert this layer before
    */
   function setBeforeId(beforeIdVal?: string): void {
+    current.beforeId = beforeIdVal;
     if (!validateLayerOperation()) return;
 
     try {
@@ -146,6 +160,7 @@ export function useCreateLayer<Layer extends LayerSpecification>(
    * @param filterVal - Filter specification for the layer
    */
   function setFilter(filterVal: FilterSpecification = ['all']): void {
+    current.filter = filterVal;
     if (!validateLayerOperation()) return;
 
     try {
@@ -162,10 +177,13 @@ export function useCreateLayer<Layer extends LayerSpecification>(
    * @param maxzoomVal - Maximum zoom level (default: 24)
    */
   function setZoomRange(minzoomVal = 0, maxzoomVal = 24): void {
-    if (!validateLayerOperation()) return;
-
     // Validate zoom range
     if (minzoomVal < 0 || maxzoomVal > 24 || minzoomVal >= maxzoomVal) return;
+
+    current.minzoom = minzoomVal;
+    current.maxzoom = maxzoomVal;
+    if (!validateLayerOperation()) return;
+
     try {
       const map = mapInstance.value!;
       map.setLayerZoomRange(layerId, minzoomVal, maxzoomVal);
@@ -185,6 +203,7 @@ export function useCreateLayer<Layer extends LayerSpecification>(
     value: any,
     options: StyleSetterOptions = { validate: true },
   ): void {
+    current.paint[name] = value;
     if (!validateLayerOperation()) return;
 
     try {
@@ -209,6 +228,7 @@ export function useCreateLayer<Layer extends LayerSpecification>(
     value: any,
     options: StyleSetterOptions = { validate: true },
   ): void {
+    current.layout[name] = value;
     if (!validateLayerOperation()) return;
 
     try {
@@ -286,16 +306,16 @@ export function useCreateLayer<Layer extends LayerSpecification>(
         id: layerId,
         type,
         source: sourceData,
-        layout: layout || {},
-        paint: paint || {},
+        layout: { ...current.layout },
+        paint: { ...current.paint },
         'source-layer': sourceLayer,
-        minzoom,
-        maxzoom,
+        minzoom: current.minzoom,
+        maxzoom: current.maxzoom,
         metadata,
-        filter,
+        filter: current.filter,
       } as LayerSpecification;
 
-      map.addLayer(layerSpec, beforeId);
+      map.addLayer(layerSpec, current.beforeId);
       // Use markRaw to prevent Vue reactivity overhead on MapLibre layer objects
       layer.value = markRaw(map.getLayer(layerId) as unknown as Layer);
       layerStatus.value = LayerStatus.Created;
@@ -331,11 +351,10 @@ export function useCreateLayer<Layer extends LayerSpecification>(
   }
 
   /**
-   * Removes the layer with error handling and cleanup
+   * Removes the layer from a specific map. When the map ref is swapped the
+   * layer is still on the outgoing map, which the ref no longer points at.
    */
-  function removeLayer(): void {
-    const map = mapInstance.value;
-
+  function removeLayerFrom(map: Nullable<Map>): void {
     if (!map) return;
 
     try {
@@ -348,6 +367,13 @@ export function useCreateLayer<Layer extends LayerSpecification>(
       layer.value = null;
       layerStatus.value = LayerStatus.NotCreated;
     }
+  }
+
+  /**
+   * Removes the layer with error handling and cleanup
+   */
+  function removeLayer(): void {
+    removeLayerFrom(mapInstance.value);
   }
 
   /**
@@ -369,8 +395,6 @@ export function useCreateLayer<Layer extends LayerSpecification>(
     paint?: Record<string, any>;
     layout?: Record<string, any>;
   }): void {
-    if (!validateLayerOperation()) return;
-
     try {
       // Update filter if provided
       if (updates.filter !== undefined) {
