@@ -196,7 +196,7 @@ If you prefer not to use the module, follow these steps:
 ### 1. Install Package
 
 ```bash
-bun add vue3-maplibre-gl maplibre-gl
+bun add vue3-maplibre-gl
 ```
 
 ### 2. Configure Nuxt

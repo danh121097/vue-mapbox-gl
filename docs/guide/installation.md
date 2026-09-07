@@ -2,13 +2,21 @@
 
 ## Package Manager Installation
 
-Vue3 MapLibre GL is available on npm and can be installed using your preferred package manager. Install `maplibre-gl` alongside it — since v6 it is a peer dependency, so your app owns the version.
+Vue3 MapLibre GL is available on npm and can be installed using your preferred package manager.
+
+`maplibre-gl` is a peer dependency. **npm and Bun install it for you**, so the one package is all you need there. **Yarn and pnpm do not**, so add it explicitly — the commands below already do.
 
 ::: tip Why a peer dependency
 This package re-exports MapLibre's own classes and types, and your app imports MapLibre's stylesheet directly. If both your app and this package resolved their own copy of `maplibre-gl`, a `Map` produced by one would fail an `instanceof` check in the other and two copies of the runtime would ship. Declaring it as a peer means there is exactly one, on a version you choose.
+
+Adding `maplibre-gl` explicitly is never wrong, whichever package manager you use — it pins the version your app runs against.
 :::
 
 Since v6 the two stylesheets are separate: this package ships only its own rules, and you import MapLibre's own stylesheet the way MapLibre documents it. See [Setup in Vue 3](#setup-in-vue-3).
+
+::: warning pnpm
+pnpm's isolated `node_modules` does not expose a dependency your app did not install itself, so `import 'maplibre-gl/dist/maplibre-gl.css'` fails unless `maplibre-gl` is in your own `package.json`. This has been true since v6 split the stylesheets, independently of the peer dependency.
+:::
 
 ### Using Yarn (Recommended)
 
@@ -19,7 +27,7 @@ yarn add vue3-maplibre-gl maplibre-gl
 ### Using npm
 
 ```bash
-npm install vue3-maplibre-gl maplibre-gl
+npm install vue3-maplibre-gl
 ```
 
 ### Using pnpm
