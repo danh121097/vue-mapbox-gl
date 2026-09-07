@@ -1,5 +1,12 @@
 # Changelog
 
+## v6.0.1
+
+Republish of v6.0.0. The v6.0.0 tarball on npm was built before `maplibre-gl`
+moved to `peerDependencies` and still lists it under `dependencies`. npm does
+not allow republishing a version, so the corrected build ships as v6.0.1 and
+v6.0.0 is deprecated. No source change beyond that.
+
 ## v6.0.0
 
 ### ⚙️ CI
