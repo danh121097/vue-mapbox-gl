@@ -36,7 +36,7 @@ yarn add vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [npm]
-npm install vue3-maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [pnpm]

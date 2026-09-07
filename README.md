@@ -6,7 +6,7 @@
 
 A powerful, feature-rich Vue 3 component library that provides an intuitive, reactive way to build interactive maps in your Vue applications using MapLibre GL JS.
 
-`maplibre-gl` is a peer dependency, re-exported from this package so your app and this one always share a single copy of the MapLibre runtime. npm and Bun install it for you; Yarn and pnpm need it listed explicitly.
+`maplibre-gl` is a peer dependency, re-exported from this package so your app and this one always share a single copy of the MapLibre runtime. npm and Bun would install it on their own; Yarn and pnpm would not, so the commands below name it explicitly.
 
 ## ✨ Features
 
@@ -24,13 +24,13 @@ A powerful, feature-rich Vue 3 component library that provides an intuitive, rea
 ### Using Bun (Recommended)
 
 ```bash
-bun add vue3-maplibre-gl
+bun add vue3-maplibre-gl maplibre-gl
 ```
 
 ### Using npm
 
 ```bash
-npm install vue3-maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ### Using Yarn

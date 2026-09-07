@@ -39,11 +39,11 @@ features:
 ::: code-group
 
 ```bash [bun]
-bun add vue3-maplibre-gl
+bun add vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [npm]
-npm install vue3-maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [yarn]

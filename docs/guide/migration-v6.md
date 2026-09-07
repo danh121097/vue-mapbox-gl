@@ -129,16 +129,13 @@ A deprecated "snapshot" getter alongside the ref cannot work: the whole defect i
 
 v5 listed `maplibre-gl` under `dependencies`, so a package manager installed it for you. v6 lists it under `peerDependencies` instead.
 
-Whether you have to do anything depends on your package manager:
+Add it to your own manifest:
 
-|        | Installs the peer for you | What to run                             |
-| ------ | ------------------------- | --------------------------------------- |
-| npm 7+ | yes                       | `npm install vue3-maplibre-gl`          |
-| Bun    | yes                       | `bun add vue3-maplibre-gl`              |
-| Yarn   | no                        | `yarn add vue3-maplibre-gl maplibre-gl` |
-| pnpm   | no                        | `pnpm add vue3-maplibre-gl maplibre-gl` |
+```bash
+npm install vue3-maplibre-gl maplibre-gl
+```
 
-pnpm projects most likely already list `maplibre-gl` themselves — its isolated `node_modules` has required that since v6 split the stylesheets — in which case nothing changes for you at all.
+Whether you strictly have to depends on the package manager — npm 7+ and Bun install a missing peer on their own, Yarn and pnpm do not — but naming it is correct on all four and pins the version your app runs against. pnpm projects most likely list it already, since its isolated `node_modules` has required that ever since v6 split the stylesheets.
 
 The reason is identity. This package re-exports MapLibre's classes and your app imports MapLibre's stylesheet, so both sides touch the runtime directly. As a regular dependency a package manager is free to resolve a second copy: a `Map` created by one would then fail `instanceof Map` in the other, and both copies would ship. A peer dependency makes a single shared copy the only possible outcome, and lets you pick its version — including a patch release this package has not yet seen.
 
