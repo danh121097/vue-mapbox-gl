@@ -93,9 +93,11 @@ All 38 composables from vue3-maplibre-gl are auto-imported:
 This module depends on `vue3-maplibre-gl` by version range, and both are published from the same repository. Release them in this order, from the repository root:
 
 1. `bun run publish:vue` — publishes the root package.
-2. `bun run publish:nuxt` — refuses to run until the `vue3-maplibre-gl` range in `nuxt/package.json` resolves on npm, then bumps the minor version, refreshes `nuxt/bun.lock`, builds, and publishes.
+2. `bun run publish:nuxt` — refuses to run until the `vue3-maplibre-gl` range in `nuxt/package.json` resolves on npm, then refreshes `nuxt/bun.lock`, builds, and publishes.
 
-Commit the updated `nuxt/package.json` and `nuxt/bun.lock` afterwards.
+Neither script picks a version. Set `version` in the manifest yourself before releasing, so the bump reflects what actually changed — this module tracks `vue3-maplibre-gl` by major, so a new major there is a new major here.
+
+Commit the refreshed `nuxt/bun.lock` afterwards.
 
 ## License
 

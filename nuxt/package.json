@@ -1,6 +1,6 @@
 {
   "name": "nuxt-maplibre-gl",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Nuxt module for vue3-maplibre-gl — auto-import components, composables, CSS, and SSR configuration",
   "type": "module",
   "license": "MIT",
