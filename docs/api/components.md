@@ -122,17 +122,18 @@ A component for adding GeoJSON data sources to the map. This component provides 
 
 ### Props
 
-| Prop           | Type                                                 | Default                                       | Description                                |
-| -------------- | ---------------------------------------------------- | --------------------------------------------- | ------------------------------------------ |
-| `id`           | `string`                                             | `undefined`                                   | Unique identifier for the source           |
-| `data`         | `GeoJSONSourceSpecification['data']`                 | `{ type: 'FeatureCollection', features: [] }` | GeoJSON data or URL to GeoJSON             |
-| `options`      | `Partial<GeoJSONSourceSpecification>`                | `{}`                                          | Additional GeoJSON source options          |
-| `debug`        | `boolean`                                            | `false`                                       | Enable debug logging                       |
-| `autoCleanup`  | `boolean`                                            | `true`                                        | Automatically cleanup resources on unmount |
-| `register`     | `(actions: CreateGeoJsonSourceActions) => void`      | `undefined`                                   | Callback for registering source actions    |
-| `onLoad`       | `(source: any) => void`                              | `undefined`                                   | Load success callback                      |
-| `onError`      | `(error: any) => void`                               | `undefined`                                   | Error handling callback                    |
-| `onDataUpdate` | `(data: GeoJSONSourceSpecification['data']) => void` | `undefined`                                   | Data update callback                       |
+| Prop            | Type                                                 | Default                                       | Description                                                |
+| --------------- | ---------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------- |
+| `id`            | `string`                                             | `undefined`                                   | Unique identifier for the source                           |
+| `data`          | `GeoJSONSourceSpecification['data']`                 | `{ type: 'FeatureCollection', features: [] }` | GeoJSON data or URL to GeoJSON                             |
+| `options`       | `Partial<GeoJSONSourceSpecification>`                | `{}`                                          | Additional GeoJSON source options                          |
+| `debug`         | `boolean`                                            | `false`                                       | Enable debug logging                                       |
+| `autoCleanup`   | `boolean`                                            | `true`                                        | Automatically cleanup resources on unmount                 |
+| `register`      | `(actions: CreateGeoJsonSourceActions) => void`      | `undefined`                                   | Callback for registering source actions                    |
+| `onLoad`        | `(source: any) => void`                              | `undefined`                                   | Load success callback                                      |
+| `onError`       | `(error: any) => void`                               | `undefined`                                   | Error handling callback                                    |
+| `debounceDelay` | `number`                                             | `100`                                         | Delay in ms before a `data` change is pushed to the source |
+| `onDataUpdate`  | `(data: GeoJSONSourceSpecification['data']) => void` | `undefined`                                   | Data update callback                                       |
 
 ### Events
 
@@ -193,18 +194,19 @@ A component for rendering filled polygons from a data source. Supports all MapLi
 
 ### Props
 
-| Prop          | Type                  | Default     | Description                                   |
-| ------------- | --------------------- | ----------- | --------------------------------------------- |
-| `id`          | `string`              | `undefined` | Unique identifier for the layer               |
-| `source`      | `string \| object`    | `undefined` | Data source for the layer                     |
-| `sourceLayer` | `string`              | `undefined` | Source layer name for vector sources          |
-| `filter`      | `FilterSpecification` | `['all']`   | Filter expression to apply to the layer       |
-| `style`       | `FillLayerStyle`      | `{}`        | Style configuration for the fill layer        |
-| `maxzoom`     | `number`              | `24`        | Maximum zoom level for layer visibility       |
-| `minzoom`     | `number`              | `0`         | Minimum zoom level for layer visibility       |
-| `metadata`    | `object`              | `undefined` | Arbitrary metadata for the layer              |
-| `beforeId`    | `string`              | `undefined` | ID of layer before which to insert this layer |
-| `visible`     | `boolean`             | `true`      | Whether the layer is visible                  |
+| Prop          | Type                                                                      | Default     | Description                                           |
+| ------------- | ------------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
+| `id`          | `string`                                                                  | `undefined` | Unique identifier for the layer                       |
+| `source`      | `string \| object`                                                        | `undefined` | Data source for the layer                             |
+| `sourceLayer` | `string`                                                                  | `undefined` | Source layer name for vector sources                  |
+| `filter`      | `FilterSpecification`                                                     | `['all']`   | Filter expression to apply to the layer               |
+| `style`       | `FillLayerStyle`                                                          | `{}`        | Style configuration for the fill layer                |
+| `maxzoom`     | `number`                                                                  | `24`        | Maximum zoom level for layer visibility               |
+| `minzoom`     | `number`                                                                  | `0`         | Minimum zoom level for layer visibility               |
+| `metadata`    | `object`                                                                  | `undefined` | Arbitrary metadata for the layer                      |
+| `beforeId`    | `string`                                                                  | `undefined` | ID of layer before which to insert this layer         |
+| `visible`     | `boolean`                                                                 | `true`      | Whether the layer is visible                          |
+| `register`    | `(actions: CreateLayerActions<FillLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists |
 
 ### Events
 
@@ -267,18 +269,20 @@ A component for rendering circles from point data sources. Perfect for displayin
 
 ### Props
 
-| Prop          | Type                  | Default     | Description                                   |
-| ------------- | --------------------- | ----------- | --------------------------------------------- |
-| `id`          | `string`              | `undefined` | Unique identifier for the layer               |
-| `source`      | `string \| object`    | `undefined` | Data source for the layer                     |
-| `sourceLayer` | `string`              | `undefined` | Source layer name for vector sources          |
-| `filter`      | `FilterSpecification` | `['all']`   | Filter expression to apply to the layer       |
-| `style`       | `CircleLayerStyle`    | `{}`        | Style configuration for the circle layer      |
-| `maxzoom`     | `number`              | `24`        | Maximum zoom level for layer visibility       |
-| `minzoom`     | `number`              | `0`         | Minimum zoom level for layer visibility       |
-| `metadata`    | `object`              | `undefined` | Arbitrary metadata for the layer              |
-| `beforeId`    | `string`              | `undefined` | ID of layer before which to insert this layer |
-| `visible`     | `boolean`             | `true`      | Whether the layer is visible                  |
+| Prop          | Type                                                                        | Default     | Description                                           |
+| ------------- | --------------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
+| `id`          | `string`                                                                    | `undefined` | Unique identifier for the layer                       |
+| `source`      | `string \| object`                                                          | `undefined` | Data source for the layer                             |
+| `sourceLayer` | `string`                                                                    | `undefined` | Source layer name for vector sources                  |
+| `filter`      | `FilterSpecification`                                                       | `['all']`   | Filter expression to apply to the layer               |
+| `style`       | `CircleLayerStyle`                                                          | `{}`        | Style configuration for the circle layer              |
+| `maxzoom`     | `number`                                                                    | `24`        | Maximum zoom level for layer visibility               |
+| `minzoom`     | `number`                                                                    | `0`         | Minimum zoom level for layer visibility               |
+| `metadata`    | `object`                                                                    | `undefined` | Arbitrary metadata for the layer                      |
+| `beforeId`    | `string`                                                                    | `undefined` | ID of layer before which to insert this layer         |
+| `visible`     | `boolean`                                                                   | `true`      | Whether the layer is visible                          |
+| `register`    | `(actions: CreateLayerActions<CircleLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists |
+| `debug`       | `boolean`                                                                   | `false`     | Enable debug logging                                  |
 
 ### Events
 
@@ -328,18 +332,19 @@ A component for rendering lines from line data sources. Ideal for displaying rou
 
 ### Props
 
-| Prop          | Type                  | Default     | Description                                   |
-| ------------- | --------------------- | ----------- | --------------------------------------------- |
-| `id`          | `string`              | `undefined` | Unique identifier for the layer               |
-| `source`      | `string \| object`    | `undefined` | Data source for the layer                     |
-| `sourceLayer` | `string`              | `undefined` | Source layer name for vector sources          |
-| `filter`      | `FilterSpecification` | `['all']`   | Filter expression to apply to the layer       |
-| `style`       | `LineLayerStyle`      | `{}`        | Style configuration for the line layer        |
-| `maxzoom`     | `number`              | `24`        | Maximum zoom level for layer visibility       |
-| `minzoom`     | `number`              | `0`         | Minimum zoom level for layer visibility       |
-| `metadata`    | `object`              | `undefined` | Arbitrary metadata for the layer              |
-| `beforeId`    | `string`              | `undefined` | ID of layer before which to insert this layer |
-| `visible`     | `boolean`             | `true`      | Whether the layer is visible                  |
+| Prop          | Type                                                                      | Default     | Description                                           |
+| ------------- | ------------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
+| `id`          | `string`                                                                  | `undefined` | Unique identifier for the layer                       |
+| `source`      | `string \| object`                                                        | `undefined` | Data source for the layer                             |
+| `sourceLayer` | `string`                                                                  | `undefined` | Source layer name for vector sources                  |
+| `filter`      | `FilterSpecification`                                                     | `['all']`   | Filter expression to apply to the layer               |
+| `style`       | `LineLayerStyle`                                                          | `{}`        | Style configuration for the line layer                |
+| `maxzoom`     | `number`                                                                  | `24`        | Maximum zoom level for layer visibility               |
+| `minzoom`     | `number`                                                                  | `0`         | Minimum zoom level for layer visibility               |
+| `metadata`    | `object`                                                                  | `undefined` | Arbitrary metadata for the layer                      |
+| `beforeId`    | `string`                                                                  | `undefined` | ID of layer before which to insert this layer         |
+| `visible`     | `boolean`                                                                 | `true`      | Whether the layer is visible                          |
+| `register`    | `(actions: CreateLayerActions<LineLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists |
 
 ### Events
 
@@ -378,18 +383,19 @@ A component for rendering symbols (icons and text) from point data sources. Perf
 
 ### Props
 
-| Prop          | Type                  | Default     | Description                                   |
-| ------------- | --------------------- | ----------- | --------------------------------------------- |
-| `id`          | `string`              | `undefined` | Unique identifier for the layer               |
-| `source`      | `string \| object`    | `undefined` | Data source for the layer                     |
-| `sourceLayer` | `string`              | `undefined` | Source layer name for vector sources          |
-| `filter`      | `FilterSpecification` | `['all']`   | Filter expression to apply to the layer       |
-| `style`       | `SymbolLayerStyle`    | `{}`        | Style configuration for the symbol layer      |
-| `maxzoom`     | `number`              | `24`        | Maximum zoom level for layer visibility       |
-| `minzoom`     | `number`              | `0`         | Minimum zoom level for layer visibility       |
-| `metadata`    | `object`              | `undefined` | Arbitrary metadata for the layer              |
-| `beforeId`    | `string`              | `undefined` | ID of layer before which to insert this layer |
-| `visible`     | `boolean`             | `true`      | Whether the layer is visible                  |
+| Prop          | Type                                                                        | Default     | Description                                           |
+| ------------- | --------------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
+| `id`          | `string`                                                                    | `undefined` | Unique identifier for the layer                       |
+| `source`      | `string \| object`                                                          | `undefined` | Data source for the layer                             |
+| `sourceLayer` | `string`                                                                    | `undefined` | Source layer name for vector sources                  |
+| `filter`      | `FilterSpecification`                                                       | `['all']`   | Filter expression to apply to the layer               |
+| `style`       | `SymbolLayerStyle`                                                          | `{}`        | Style configuration for the symbol layer              |
+| `maxzoom`     | `number`                                                                    | `24`        | Maximum zoom level for layer visibility               |
+| `minzoom`     | `number`                                                                    | `0`         | Minimum zoom level for layer visibility               |
+| `metadata`    | `object`                                                                    | `undefined` | Arbitrary metadata for the layer                      |
+| `beforeId`    | `string`                                                                    | `undefined` | ID of layer before which to insert this layer         |
+| `visible`     | `boolean`                                                                   | `true`      | Whether the layer is visible                          |
+| `register`    | `(actions: CreateLayerActions<SymbolLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists |
 
 ### Events
 
@@ -559,12 +565,13 @@ A component for managing and loading images for use in MapLibre GL styles. Suppo
 
 ### Props
 
-| Prop          | Type                          | Default | Description                           |
-| ------------- | ----------------------------- | ------- | ------------------------------------- |
-| `images`      | `ImageItem[]`                 | `[]`    | Array of images to load               |
-| `options`     | `Partial<StyleImageMetadata>` | `{}`    | Default options applied to all images |
-| `showLoading` | `boolean`                     | `true`  | Whether to show loading state         |
-| `debug`       | `boolean`                     | `false` | Whether to enable debug logging       |
+| Prop                             | Type                          | Default | Description                                                                                                                                |
+| -------------------------------- | ----------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `images`                         | `ImageItem[]`                 | `[]`    | Array of images to load                                                                                                                    |
+| `options`                        | `Partial<StyleImageMetadata>` | `{}`    | Default options applied to all images                                                                                                      |
+| `showLoading`                    | `boolean`                     | `true`  | Whether to show loading state                                                                                                              |
+| `forceRecreateOnDimensionChange` | `boolean`                     | `true`  | Remove and re-add an image whose dimensions changed, avoiding MapLibre's "width and height must be the same as the previous version" error |
+| `debug`                          | `boolean`                     | `false` | Whether to enable debug logging                                                                                                            |
 
 ### ImageItem Interface
 

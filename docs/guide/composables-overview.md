@@ -15,10 +15,13 @@ in templates. See [Migration from v5 to v6](/guide/migration-v6) for the list.
 All composables follow the **factory pattern** for code reuse and maintainability:
 
 - **Event Listeners** (3 composables) → 1 factory (`createEventListenerComposable`)
-- **Camera Animations** (7+ composables) → 1 factory (`createCameraAnimation`)
-- **Layer Property Setters** (4 composables) → 1 factory (`createPropertySetter`)
+- **Camera Animations** (13 composables) → 1 factory (`createCameraAnimation`)
+- **Layer composables** (4 create + `useLayer`) → `createPropertySetter`,
+  `createSetStyle` and `createSetVisibility`
 
-**Result**: 59% code reduction with identical API surface.
+Each factory holds the lifecycle and cleanup logic once, so a fix lands in
+every composable built on it — which is how the v6 camera and listener bugs
+were fixed in one place each.
 
 ## Map Management (3)
 
@@ -137,7 +140,7 @@ const { clearPrewarmedResources } = useMaplibreConfig({
 onUnmounted(clearPrewarmedResources);
 ```
 
-## Layer Management (4)
+## Layer Management (5)
 
 All layer composables use the **factory pattern** for type-safe property setters.
 
@@ -368,7 +371,7 @@ Listen to geolocation control events.
 
 **Returns**: Same as `useMapEventListener`
 
-## Camera Animations (7+)
+## Camera Animations (13)
 
 All camera animations use the **factory pattern** with promise-wrapping for `async/await` support.
 
@@ -552,17 +555,24 @@ Add images to map for image layers.
 
 ## Utilities
 
-| Composable    | Description                                            |
-| ------------- | ------------------------------------------------------ |
-| `useLogger`   | Consistent debug logging (controlled via `debug` prop) |
-| `useDebounce` | Debounced function execution                           |
+| Composable                | Description                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------- |
+| `useLogger`               | Consistent debug logging (controlled via `debug` prop)                          |
+| `useDebounce`             | Debounced function execution                                                    |
+| `useDebouncedRef`         | A ref whose writes settle after a delay                                         |
+| `useDebouncedWatch`       | `watch` with a debounced callback                                               |
+| `useFitScreenCoordinates` | Fit the camera to a pair of screen points                                       |
+| `useMapReloadEvent`       | Re-run setup after a style reload, which discards sources and layers            |
+| `useCreateLayer`          | The generic layer composable the four typed `useCreate*Layer` wrappers build on |
 
-## Factory Functions (Internal)
+## Factory Functions
 
 `createEventListenerComposable`, `createCameraAnimation`,
-`createPropertySetter`, `createSetStyle` and `LAYER_STYLE_CONFIG` back the
-composables above, but they are **not** part of the public API — the package
-root does not export them, so importing one fails.
+`createPropertySetter`, `createSetStyle`, `createSetVisibility` and
+`LAYER_STYLE_CONFIG` back the composables above, and the package root does
+export them — `import { createCameraAnimation } from 'vue3-maplibre-gl'` works.
 
-To build a custom listener or animation, compose the public composables, or
-copy the factory into your own project.
+They are not documented API, though: they exist to be shared between the
+composables on this page, and their signatures can change in a minor release
+without a migration note. Prefer composing the public composables. If you build
+on a factory anyway, pin the version.

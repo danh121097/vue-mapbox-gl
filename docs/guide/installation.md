@@ -130,8 +130,11 @@ import {
   useFlyTo,
   useEaseTo,
   useJumpTo,
-  useBounds,
-  useZoom,
+  useFitBounds,
+  useCameraForBounds,
+  useZoomTo,
+  useZoomIn,
+  useZoomOut,
   useLogger,
 } from 'vue3-maplibre-gl';
 ```
@@ -183,19 +186,14 @@ const fillStyle = ref<FillLayerStyle>({
 
 Vue3 MapLibre GL exports comprehensive TypeScript definitions:
 
-```typescript
-// Component Props Types
-import type {
-  MaplibreProps,
-  GeoJsonSourceProps,
-  FillLayerProps,
-  CircleLayerProps,
-  LineLayerProps,
-  SymbolLayerProps,
-  MarkerProps,
-  PopUpProps,
-} from 'vue3-maplibre-gl';
+Component prop types are **not** exported. Each component declares its props
+interface locally, so `MaplibreProps`, `FillLayerProps` and the rest cannot be
+imported — use `defineProps` inference in your own wrapper, or read the shapes
+in the [components API reference](/api/components).
 
+What is exported:
+
+```typescript
 // Style Types
 import type {
   FillLayerStyle,

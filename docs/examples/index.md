@@ -150,7 +150,7 @@ Work with all layer types: Fill, Circle, Line, and Symbol layers.
 
 ### 🎮 [Controls](/examples/controls)
 
-Integrate navigation controls and geolocation features.
+Use `<GeolocateControls>`, add MapLibre's own controls to the map, and write a custom one.
 
 **Topics Covered**:
 

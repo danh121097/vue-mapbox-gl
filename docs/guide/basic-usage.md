@@ -161,12 +161,11 @@ For more advanced functionality, use the provided composables:
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, shallowRef } from 'vue';
 import {
   Maplibre,
-  useCreateMaplibre,
   useFlyTo,
-  useZoom,
+  useMapEventListener,
   useCreateGeoJsonSource,
 } from 'vue3-maplibre-gl';
 
@@ -176,15 +175,28 @@ const mapOptions = ref({
   zoom: 2,
 });
 
-const mapInstance = ref(null);
+const mapInstance = shallowRef(null);
 
 // Use composables for enhanced functionality
 const { flyTo } = useFlyTo({ map: mapInstance });
-const { zoom: currentZoom } = useZoom({ map: mapInstance });
-const { updateData } = useCreateGeoJsonSource({
+
+// The camera composables expose actions, not a live zoom value. Track it from
+// the map's own `zoom` event when you want to display it.
+const currentZoom = ref(2);
+useMapEventListener({
   map: mapInstance,
-  sourceId: 'random-points',
-  data: ref({ type: 'FeatureCollection', features: [] }),
+  event: 'zoom',
+  on: () => {
+    currentZoom.value = mapInstance.value?.getZoom() ?? currentZoom.value;
+  },
+});
+
+// `data` is the source's initial payload; later changes go through setData.
+const points = ref({ type: 'FeatureCollection', features: [] });
+const { setData } = useCreateGeoJsonSource({
+  map: mapInstance,
+  id: 'random-points',
+  data: points.value,
 });
 
 function onMapLoad(map) {
@@ -214,11 +226,12 @@ function addRandomPoint() {
     },
   };
 
-  // Update the data source
-  updateData((currentData) => ({
-    ...currentData,
-    features: [...currentData.features, newFeature],
-  }));
+  // Update the data source. setData takes the new collection, not an updater.
+  points.value = {
+    ...points.value,
+    features: [...points.value.features, newFeature],
+  };
+  setData(points.value);
 }
 </script>
 
