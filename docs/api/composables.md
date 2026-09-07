@@ -1722,11 +1722,11 @@ function useDebounce<T extends (...args: any[]) => any>(
 
 A `DebouncedFunction<T>` — call it like the original function; it also exposes:
 
-| Property  | Type                               | Description                          |
-| --------- | ---------------------------------- | ------------------------------------ |
-| `cancel`  | `() => void`                       | Cancel any pending invocation        |
-| `flush`   | `() => ReturnType<T> \| undefined` | Invoke immediately if one is pending |
-| `pending` | `() => boolean`                    | Whether an invocation is pending     |
+| Property  | Type            | Description                          |
+| --------- | --------------- | ------------------------------------ |
+| `cancel`  | `() => void`    | Cancel any pending invocation        |
+| `flush`   | `() => void`    | Invoke immediately if one is pending |
+| `pending` | `() => boolean` | Whether an invocation is pending     |
 
 #### Example
 

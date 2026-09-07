@@ -619,10 +619,14 @@ drowned in diagnostics about their own placeholders — but with it off,
 `Returns` table is likeliest to make. Generated assertions have no placeholders
 to protect, so they get the stricter pass; hand-written blocks do not.
 
-One thing the `Type` column still cannot check is the inside of a generic. A
-row's `T` compiles as `any`, because no single default fits both a constrained
-generic and an unconstrained one, so `Ref<T>` proves the wrapper and not the
-element type.
+A generic row is checked inside a function that repeats the composable's own
+type parameter list and instantiates it with those parameters, so a documented
+`T` is abstract rather than `any` — and the documented letter is aliased to the
+signature's, which is free to call it `Layer`. That is what caught
+`useDebounce`'s `flush`, documented as `() => ReturnType<T> | undefined` when it
+returns `void`; with `T` as `any` the two were mutually assignable and the row
+passed. A generic letter in a row for a composable that takes no type
+parameters still falls back to `any`, since there is nothing to instantiate.
 
 The types reference is checked the same way. `docs/api/types.md` transcribes
 `libs/types` by hand, and its fences used to compile only in the weakest sense:

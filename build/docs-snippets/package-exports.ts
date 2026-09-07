@@ -13,6 +13,7 @@ import ts from 'typescript';
 
 let cached: Set<string> | null = null;
 let cachedComponents: Set<string> | null = null;
+let cachedParameters: Map<string, string> | null = null;
 
 export function packageExports(rootDir: string): Set<string> {
   if (cached) return cached;
@@ -58,4 +59,51 @@ export function componentExports(rootDir: string): Set<string> {
     ].map((match) => match[1]!),
   );
   return cachedComponents;
+}
+
+/**
+ * Each exported generic function's type parameter list, verbatim, so a check
+ * can repeat it: `useDebounce` is
+ * `<T extends (...args: any[]) => any>`.
+ *
+ * Without the constraint there is nothing to instantiate the composable with,
+ * and a documented `T` has to fall back to `any` -- which makes every generic
+ * row pass by definition.
+ */
+export function typeParameters(rootDir: string): Map<string, string> {
+  if (cachedParameters) return cachedParameters;
+
+  const entry = resolve(rootDir, 'dist/index.d.ts');
+  const program = ts.createProgram([entry], {
+    target: ts.ScriptTarget.ESNext,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    skipLibCheck: true,
+    noEmit: true,
+    baseUrl: dirname(entry),
+  });
+
+  const source = program.getSourceFile(entry);
+  const checker = program.getTypeChecker();
+  const symbol = source && checker.getSymbolAtLocation(source);
+  cachedParameters = new Map();
+  if (!symbol) return cachedParameters;
+
+  for (const exported of checker.getExportsOfModule(symbol)) {
+    const resolved =
+      exported.flags & ts.SymbolFlags.Alias
+        ? checker.getAliasedSymbol(exported)
+        : exported;
+    for (const declaration of resolved.declarations ?? []) {
+      if (!ts.isFunctionDeclaration(declaration)) continue;
+      const parameters = declaration.typeParameters;
+      if (!parameters?.length) continue;
+      cachedParameters.set(
+        exported.name,
+        `<${parameters.map((parameter) => parameter.getText()).join(', ')}>`,
+      );
+      break;
+    }
+  }
+  return cachedParameters;
 }

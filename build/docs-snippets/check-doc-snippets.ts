@@ -31,7 +31,11 @@ import {
   listComposablesFromFile,
 } from './extract-doc-tables';
 import { extractDocumentedTypesFromFile } from './extract-doc-types';
-import { componentExports, packageExports } from './package-exports';
+import {
+  componentExports,
+  packageExports,
+  typeParameters,
+} from './package-exports';
 import { checkLinks } from './check-doc-links';
 import { checkNames } from './check-doc-names';
 import { checkReferences } from './check-doc-references';
@@ -103,10 +107,17 @@ for (const path of TABLE_PAGES) {
   // one and a labelled one -- and they share a `Returns` heading line, so the
   // filename needs the ordinal to stay unique.
   const seen = new Map<string, number>();
+  const generics = typeParameters(rootDir);
   for (const table of tables) {
     const nth = (seen.get(table.composable) ?? 0) + 1;
     seen.set(table.composable, nth);
-    snippets.push(tableSnippet({ ...table, file: page }, nth));
+    snippets.push(
+      tableSnippet(
+        { ...table, file: page },
+        nth,
+        generics.get(table.composable),
+      ),
+    );
     tableCount++;
   }
 

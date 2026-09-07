@@ -189,11 +189,32 @@ function referencedTypes(expression: string): string[] {
  * documenting two composables at once has a shared table and a labelled one
  * each, and neither alone is the full list for either composable.
  */
-export function tableSnippet(table: ReturnTable, nth = 1): Snippet {
+export function tableSnippet(
+  table: ReturnTable,
+  nth = 1,
+  /**
+   * The composable's own type parameter list, verbatim, when it has one. With
+   * it a documented `T` is a real type parameter; without it `T` can only be
+   * `any`, and a generic row passes by definition.
+   */
+  realParams?: string,
+): Snippet {
+  // The parameter list contributes the types its constraints name
+  // (`LayerSpecification`), but not the parameter names themselves (`Layer`).
+  const parameterNames = new Set(
+    (realParams ?? '')
+      .slice(1, -1)
+      .split(/,(?![^<]*>)/)
+      .map((parameter) => parameter.trim().split(/[\s=]/)[0]!)
+      .filter(Boolean),
+  );
   const names = new Set(
-    table.fields.flatMap((field) =>
-      field.type ? referencedTypes(field.type) : [],
-    ),
+    [
+      ...table.fields.flatMap((field) =>
+        field.type ? referencedTypes(field.type) : [],
+      ),
+      ...referencedTypes(realParams ?? ''),
+    ].filter((name) => !parameterNames.has(name)),
   );
   const from = (source: Set<string> | null, module: string): string[] => {
     const wanted = [...names]
@@ -218,13 +239,34 @@ export function tableSnippet(table: ReturnTable, nth = 1): Snippet {
     ),
   ].sort();
 
+  // A generic row is checked inside a function that repeats the composable's
+  // own parameter list and instantiates it with those parameters, so `T` is
+  // abstract rather than `any`. The documented letters are aliased to the real
+  // ones positionally, because the reference is free to call it `T` where the
+  // signature calls it `Layer`.
+  const generic = Boolean(generics.length && realParams);
+  const realNames = [...parameterNames];
+
   const head = [
-    ...generics.map((name) => `type ${name} = any;`),
+    ...(generic ? [] : generics.map((name) => `type ${name} = any;`)),
     ...from(FROM_VUE, 'vue'),
     ...from(FROM_MAPLIBRE, 'maplibre-gl'),
     ...from(null, 'vue3-maplibre-gl'),
     `import { ${table.composable} } from 'vue3-maplibre-gl';`,
-    `type Returned = DocumentedReturn<typeof ${table.composable}>;`,
+    ...(generic
+      ? [
+          `function _rows${realParams}(): void {`,
+          ...generics
+            .map((name, index) =>
+              realNames[index] && realNames[index] !== name
+                ? `type ${name} = ${realNames[index]};`
+                : `type ${name} = ${realNames[index] ?? 'any'};`,
+            )
+            .filter((line) => !/^type (\w+) = \1;$/.test(line)),
+          `type Returned = DocumentedReturn<` +
+            `typeof ${table.composable}<${realNames.join(', ')}>>;`,
+        ]
+      : [`type Returned = DocumentedReturn<typeof ${table.composable}>;`]),
   ];
 
   const rows: string[] = [];
@@ -243,14 +285,20 @@ export function tableSnippet(table: ReturnTable, nth = 1): Snippet {
     rowLines.push(...lines.map(() => field.line));
   });
 
+  const tail = generic ? ['}', 'export { _rows };'] : [];
+
   return {
     file: table.file,
     fenceLine: table.headingLine,
     lang: 'ts',
     ext: '.ts',
     label: `table-${table.composable}-${nth}`,
-    code: [...head, ...rows].join('\n'),
-    lineMap: [...head.map(() => table.headingLine), ...rowLines],
+    code: [...head, ...rows, ...tail].join('\n'),
+    lineMap: [
+      ...head.map(() => table.headingLine),
+      ...rowLines,
+      ...tail.map(() => table.headingLine),
+    ],
   };
 }
 

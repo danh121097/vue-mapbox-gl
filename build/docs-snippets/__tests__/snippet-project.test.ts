@@ -115,6 +115,57 @@ describe('tableSnippet', () => {
     expect(snippet.lineMap!.slice(-4)).toEqual([7, 7, 7, 7]);
   });
 
+  it('checks a generic row against a real type parameter, not `any`', () => {
+    const { code } = tableSnippet(
+      {
+        file: FILE,
+        composable: 'useDebounce',
+        headingLine: 3,
+        spreads: [],
+        fields: [{ name: 'flush', type: '() => ReturnType<T>', line: 7 }],
+      },
+      1,
+      '<T extends (...args: any[]) => any>',
+    );
+
+    // The composable is instantiated with its own parameter, so `T` stays
+    // abstract; `type T = any` would make every generic row pass.
+    expect(code).toContain('function _rows<T extends (...args: any[]) => any>');
+    expect(code).toContain('typeof useDebounce<T>');
+    expect(code).not.toContain('type T = any;');
+  });
+
+  it('aliases the documented letter when the signature names it differently', () => {
+    const { code } = tableSnippet(
+      {
+        file: FILE,
+        composable: 'useCreateLayer',
+        headingLine: 3,
+        spreads: [],
+        fields: [{ name: 'getLayer', type: 'ComputedRef<T>', line: 7 }],
+      },
+      1,
+      '<Layer extends LayerSpecification>',
+    );
+
+    expect(code).toContain('type T = Layer;');
+    // The constraint's type is imported; the parameter's own name is not.
+    expect(code).toContain('LayerSpecification');
+    expect(code).not.toMatch(/import[^\n]*\bLayer\b[^S]/);
+  });
+
+  it('falls back to `any` when the composable takes no type parameters', () => {
+    const { code } = tableSnippet({
+      file: FILE,
+      composable: 'useFlyTo',
+      headingLine: 3,
+      spreads: [],
+      fields: [{ name: 'flyTo', type: 'Ref<T>', line: 7 }],
+    });
+
+    expect(code).toContain('type T = any;');
+  });
+
   it('takes an ordinal, so two tables for one composable do not collide', () => {
     const table = {
       file: FILE,
