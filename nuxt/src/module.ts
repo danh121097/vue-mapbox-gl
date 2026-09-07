@@ -62,23 +62,41 @@ export default defineNuxtModule<ModuleOptions>({
       mode: 'client',
     });
 
-    // Auto-import composables
+    // Auto-import composables. This list is every `use*` the package exports
+    // from its root; a name missing here is silently not auto-imported, which
+    // looks to a consumer like the composable does not exist.
     const composables = [
+      // Map instance
       'useCreateMaplibre',
       'useMaplibre',
+      'useMaplibreConfig',
+      // Layers
+      'useCreateLayer',
       'useCreateFillLayer',
       'useCreateCircleLayer',
       'useCreateLineLayer',
       'useCreateSymbolLayer',
+      'useLayer',
+      // Sources
       'useCreateGeoJsonSource',
       'useGeoJsonSource',
+      // Map objects
+      'useCreateMarker',
+      'useCreatePopup',
+      'useCreateImage',
+      // Controls
+      'useGeolocateControl',
+      // Events
       'useMapEventListener',
       'useLayerEventListener',
       'useGeolocateEventListener',
+      'useMapReloadEvent',
+      // Camera
       'useFlyTo',
       'useEaseTo',
       'useJumpTo',
       'useFitBounds',
+      'useFitScreenCoordinates',
       'useCameraForBounds',
       'useZoomTo',
       'useZoomIn',
@@ -89,6 +107,11 @@ export default defineNuxtModule<ModuleOptions>({
       'useResetNorth',
       'useResetNorthPitch',
       'useSnapToNorth',
+      // Utilities
+      'useDebounce',
+      'useDebouncedRef',
+      'useDebouncedWatch',
+      'useLogger',
     ];
 
     addImports(

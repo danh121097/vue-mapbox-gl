@@ -85,7 +85,7 @@ const circleStyle = ref({ 'circle-radius': 6, 'circle-color': '#007cbf' });
 
 ## Auto-imported Composables
 
-All 15+ composables from vue3-maplibre-gl are auto-imported:
+All 38 composables from vue3-maplibre-gl are auto-imported:
 `useCreateMaplibre`, `useFlyTo`, `useEaseTo`, `useJumpTo`, `useMapEventListener`, etc.
 
 ## Releasing
