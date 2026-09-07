@@ -32,15 +32,15 @@ Choose your preferred package manager:
 ::: code-group
 
 ```bash [yarn]
-yarn add vue3-maplibre-gl
+yarn add vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [npm]
-npm install vue3-maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [pnpm]
-pnpm add vue3-maplibre-gl
+pnpm add vue3-maplibre-gl maplibre-gl
 ```
 
 :::

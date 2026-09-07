@@ -2,42 +2,37 @@
 
 ## Package Manager Installation
 
-Vue3 MapLibre GL is available on npm and can be installed using your preferred package manager. It depends on `maplibre-gl` directly and re-exports its public types, so npm, Yarn and Bun give you a working install from the one package.
+Vue3 MapLibre GL is available on npm and can be installed using your preferred package manager. Install `maplibre-gl` alongside it — since v6 it is a peer dependency, so your app owns the version.
+
+::: tip Why a peer dependency
+This package re-exports MapLibre's own classes and types, and your app imports MapLibre's stylesheet directly. If both your app and this package resolved their own copy of `maplibre-gl`, a `Map` produced by one would fail an `instanceof` check in the other and two copies of the runtime would ship. Declaring it as a peer means there is exactly one, on a version you choose.
+:::
 
 Since v6 the two stylesheets are separate: this package ships only its own rules, and you import MapLibre's own stylesheet the way MapLibre documents it. See [Setup in Vue 3](#setup-in-vue-3).
-
-::: warning pnpm
-pnpm's default isolated `node_modules` does not expose transitive dependencies to your app, so `import 'maplibre-gl/dist/maplibre-gl.css'` will not resolve. Install it explicitly:
-
-```bash
-pnpm add vue3-maplibre-gl maplibre-gl
-```
-
-:::
 
 ### Using Yarn (Recommended)
 
 ```bash
-yarn add vue3-maplibre-gl
+yarn add vue3-maplibre-gl maplibre-gl
 ```
 
 ### Using npm
 
 ```bash
-npm install vue3-maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ### Using pnpm
 
 ```bash
-pnpm add vue3-maplibre-gl
+pnpm add vue3-maplibre-gl maplibre-gl
 ```
 
 ## CDN Installation
 
 You can also use Vue MapLibre GL directly from a CDN.
 
-For the current UMD build, load the global `maplibregl` script first because `maplibre-gl` is still externalized there. The one-package installation guarantee applies to npm/package-manager usage.
+For the UMD build, load the global `maplibregl` script first: `maplibre-gl` is externalized there, exactly as it is for a package-manager install.
 
 ```html
 <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>

@@ -7,9 +7,9 @@ Explore practical, production-ready examples of vue3-maplibre-gl v5 components a
 ### Installation
 
 ```bash
-bun add vue3-maplibre-gl
+bun add vue3-maplibre-gl maplibre-gl
 # or
-npm install vue3-maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ### Import CSS

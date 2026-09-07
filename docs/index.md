@@ -39,19 +39,19 @@ features:
 ::: code-group
 
 ```bash [bun]
-bun add vue3-maplibre-gl
+bun add vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [npm]
-npm install vue3-maplibre-gl
+npm install vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [yarn]
-yarn add vue3-maplibre-gl
+yarn add vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [pnpm]
-pnpm add vue3-maplibre-gl
+pnpm add vue3-maplibre-gl maplibre-gl
 ```
 
 :::
@@ -106,7 +106,7 @@ const circleStyle = ref({ 'circle-radius': 6, 'circle-color': '#007cbf' });
 |                    | Feature                                                      |
 | ------------------ | ------------------------------------------------------------ |
 | **Vue 3 Native**   | Built for Composition API with full reactivity               |
-| **Self-Contained** | `maplibre-gl` bundled — one install, zero peer deps          |
+| **Single Runtime** | `maplibre-gl` is a peer — one copy, on a version you pick    |
 | **SSR Safe**       | Works with Nuxt SSR/SSG without configuration                |
 | **Type Safe**      | Comprehensive TypeScript definitions and event handler types |
 | **Zero Leaks**     | Factory-based cleanup with defense-in-depth patterns         |

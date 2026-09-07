@@ -125,6 +125,20 @@ So: `.value` for `register` / `@register` payloads and for composables called di
 
 A deprecated "snapshot" getter alongside the ref cannot work: the whole defect is that a snapshot never updates. Keeping one would preserve the bug under a different name, so v6 is a clean break.
 
+## `maplibre-gl` is now a peer dependency
+
+v5 listed `maplibre-gl` under `dependencies`, so a package manager installed it for you. v6 lists it under `peerDependencies` instead. Install it explicitly:
+
+```bash
+npm install vue3-maplibre-gl maplibre-gl
+```
+
+npm 7+, Yarn and Bun auto-install missing peers, so many projects will not notice. pnpm does not, and yours may already be pinning `maplibre-gl` for the stylesheet import — in which case nothing changes for you at all.
+
+The reason is identity. This package re-exports MapLibre's classes and your app imports MapLibre's stylesheet, so both sides touch the runtime directly. As a regular dependency a package manager is free to resolve a second copy: a `Map` created by one would then fail `instanceof Map` in the other, and both copies would ship. A peer dependency makes a single shared copy the only possible outcome, and lets you pick its version — including a patch release this package has not yet seen.
+
+The Nuxt module keeps `maplibre-gl` in its own `dependencies`, so nothing changes for `nuxt-maplibre-gl` users.
+
 ## Stylesheets are no longer bundled together
 
 `vue3-maplibre-gl/dist/style.css` used to `@import` MapLibre's own stylesheet, so a single import covered both. That shipped a 69 kB copy of upstream CSS inside this package — duplicated for the many apps that already follow MapLibre's documented setup and import it themselves.
