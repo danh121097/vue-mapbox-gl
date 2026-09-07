@@ -56,8 +56,10 @@ function onGeolocateError(error) {
 | `debug`       | `boolean`                 | `false`          | Enable debug logging            |
 | `autoCleanup` | `boolean`                 | `true`           | Remove the control on unmount   |
 
-Callback props mirror the events: `onGeolocate`, `onError`, `onTrackingStart`,
-`onTrackingEnd`, `onOutOfMaxBounds`.
+Callback props mirror the events: `onGeolocateSuccess`, `onGeolocateError`,
+`onTrackingStart`, `onTrackingEnd`, `onOutOfMaxBounds`. The first two are not
+`onGeolocate` and `onError`, because Vue already keys the `geolocate` and
+`error` emits' listeners there.
 
 ### Events
 
