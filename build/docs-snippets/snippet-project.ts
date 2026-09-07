@@ -124,6 +124,38 @@ export function tableSnippet(table: ReturnTable): Snippet {
 }
 
 /**
+ * Asserts a composable with no Returns table has no return fields to document.
+ *
+ * Without this, a section that describes its return in a sentence is simply
+ * unchecked, and the only signal is a note nobody has to read. Indexing a
+ * one-property object with the return's keys turns "this composable has fields
+ * the reference never lists" into a failure that names each of them. A return
+ * that is a function or void has no keys, so the index resolves and it passes.
+ */
+export function noFieldsSnippet(
+  file: string,
+  composable: string,
+  headingLine: number,
+): Snippet {
+  const keys = `keyof DocumentedReturn<typeof ${composable}>`;
+  return {
+    file,
+    fenceLine: headingLine,
+    lang: 'ts',
+    ext: '.ts',
+    label: `undocumented-${composable}`,
+    code: [
+      `import { ${composable} } from 'vue3-maplibre-gl';`,
+      `type Undocumented = { __none: true }[${keys} extends never`,
+      `  ? '__none'`,
+      `  : ${keys}];`,
+      'export type { Undocumented };',
+    ].join('\n'),
+    lineMap: [headingLine, headingLine, headingLine, headingLine, headingLine],
+  };
+}
+
+/**
  * Gives a Vue block a TypeScript script tag when it does not declare one.
  *
  * Most examples in these docs are written with a plain `<script setup>`, which

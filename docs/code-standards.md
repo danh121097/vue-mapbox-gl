@@ -564,11 +564,17 @@ exist, and rows like that have reached `master`. So every `Returns` table in
 row, against the composable its section names. A row that names nothing real
 fails on the row's own line.
 
-The table check is one-directional. It proves every documented field exists, not
-that every existing field is documented, because several composables spread a
-shared actions object and their tables abridge it on purpose. It also cannot
-reach a section that describes its return in a sentence instead of a table; the
-check names those on every run so the gap stays visible.
+A section is allowed to describe its return in a sentence instead — but only if
+there is nothing to tabulate. Those sections get the opposite check: the return
+must have no named fields at all, so `useDebouncedWatch` (which returns a stop
+function) passes, and a composable returning an object of ten fields fails with
+a line naming each one. Prose is for returns with no shape, not for returns
+whose shape is inconvenient to type out.
+
+What the table check does not do is prove the _types_ in the middle column are
+right, or that a field the composable returns is one the table lists — that
+second direction is the prose check above, and it only runs where there is no
+table.
 
 Three things it cannot see: an extra attribute on a component is legal Vue
 (it falls through to the root element), so a misspelled prop compiles; a block

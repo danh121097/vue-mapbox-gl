@@ -86,6 +86,16 @@ export function diagnosticCode(message: string): number | null {
  * thousand characters of `__VLS_` internals wrapped around one useful word.
  */
 export function summarize(message: string): string {
+  // The undocumented-field probe indexes a one-property object, so its failure
+  // reads as a missing property on `{ __none: true }`. Say what it means.
+  const undocumented =
+    /Property '([^']+)' does not exist on type '\{ __none: true; \}'/.exec(
+      message,
+    );
+  if (undocumented) {
+    return `error: '${undocumented[1]}' is returned, but this composable's Returns is prose - give it a table row`;
+  }
+
   const excessProp =
     /Property '([^']+)' does not exist on type '(?:IntrinsicAttributes|Partial<)/.exec(
       message,

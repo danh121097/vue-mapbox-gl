@@ -29,8 +29,12 @@ const COMPOSABLE_NAME_RE = /\buse[A-Z][A-Za-z0-9_]*/g;
 /** `#### Returns`, `### Returns` — the heading a return table follows. */
 const RETURNS_HEADING_RE = /^#{2,5}\s+Returns\s*$/;
 
-/** A table row's first cell, which holds the field name in backticks. */
-const FIELD_CELL_RE = /^\|\s*`([A-Za-z_$][\w$]*)`\s*\|/;
+/**
+ * A table row's first cell, which holds the field name in backticks. A plain
+ * number is a tuple index: `useDebouncedRef` returns `[ref, ref, flush, cancel]`
+ * and documents it by position, and `Returned['0']` checks that just as well.
+ */
+const FIELD_CELL_RE = /^\|\s*`([A-Za-z_$][\w$]*|\d+)`\s*\|/;
 
 /** The `| --- | --- |` rule that separates a table's head from its body. */
 const TABLE_RULE_RE = /^\|[\s:|-]+\|$/;
@@ -130,22 +134,28 @@ export function extractReturnTables(
   return tables;
 }
 
+export interface DocumentedComposable {
+  name: string;
+  /** 1-based line of the heading that introduces it. */
+  line: number;
+}
+
 /** Every composable named by a `##`/`###` heading in the page. */
-export function listComposables(source: string): string[] {
-  const names = new Set<string>();
-  for (const line of source.split('\n')) {
+export function listComposables(source: string): DocumentedComposable[] {
+  const found = new Map<string, number>();
+  source.split('\n').forEach((line, index) => {
     const heading = SECTION_HEADING_RE.exec(line);
     for (const name of heading?.[2]!.match(COMPOSABLE_NAME_RE) ?? []) {
-      names.add(name);
+      if (!found.has(name)) found.set(name, index + 1);
     }
-  }
-  return [...names];
+  });
+  return [...found].map(([name, line]) => ({ name, line }));
 }
 
 export function extractTablesFromFile(file: string): ReturnTable[] {
   return extractReturnTables(file, readFileSync(file, 'utf8'));
 }
 
-export function listComposablesFromFile(file: string): string[] {
+export function listComposablesFromFile(file: string): DocumentedComposable[] {
   return listComposables(readFileSync(file, 'utf8'));
 }

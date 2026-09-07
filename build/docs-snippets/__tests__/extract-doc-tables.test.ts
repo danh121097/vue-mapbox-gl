@@ -131,6 +131,22 @@ describe('extractReturnTables', () => {
     expect(found[0]!.fields.map((f) => f.name)).toEqual(['flyTo']);
   });
 
+  it('reads a tuple return documented by index', () => {
+    const found = tables(`### useDebouncedRef
+
+#### Returns
+
+A tuple \`[debouncedRef, immediateRef, flush, cancel]\`:
+
+| Index | Name | Type |
+| ----- | ---- | ---- |
+| \`0\` | \`debouncedRef\` | \`Ref<T>\` |
+| \`1\` | \`immediateRef\` | \`Ref<T>\` |
+`);
+
+    expect(found[0]!.fields.map((f) => f.name)).toEqual(['0', '1']);
+  });
+
   it('reads only Returns tables, not Parameters ones', () => {
     const found = tables(`### useFlyTo
 
@@ -153,7 +169,7 @@ describe('extractReturnTables', () => {
 });
 
 describe('listComposables', () => {
-  it('names every composable a section heading introduces', () => {
+  it('names every composable a section heading introduces, with its line', () => {
     expect(
       listComposables(`## Camera Composables
 
@@ -163,6 +179,10 @@ describe('listComposables', () => {
 
 ### useFlyTo
 `),
-    ).toEqual(['usePanBy', 'usePanTo', 'useFlyTo']);
+    ).toEqual([
+      { name: 'usePanBy', line: 3 },
+      { name: 'usePanTo', line: 3 },
+      { name: 'useFlyTo', line: 7 },
+    ]);
   });
 });

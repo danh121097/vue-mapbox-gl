@@ -25,7 +25,11 @@ import {
   listComposablesFromFile,
 } from './extract-doc-tables';
 import { diagnosticCode, isReported, summarize } from './reported-diagnostics';
-import { tableSnippet, writeSnippetProject } from './snippet-project';
+import {
+  noFieldsSnippet,
+  tableSnippet,
+  writeSnippetProject,
+} from './snippet-project';
 
 const rootDir = resolve(import.meta.dirname, '../..');
 const workDir = resolve(rootDir, '.doc-snippets');
@@ -70,19 +74,23 @@ const pages = [
 const TABLE_PAGES = [resolve(rootDir, 'docs/api/composables.md')];
 
 let tableCount = 0;
-/** Composables the reference documents in prose, which no table check reaches. */
-const untabled: string[] = [];
+let untabledCount = 0;
 for (const path of TABLE_PAGES) {
+  const page = relative(rootDir, path);
   const tables = extractTablesFromFile(path);
   const checked = new Set(tables.map((table) => table.composable));
-  for (const name of listComposablesFromFile(path)) {
-    if (!checked.has(name)) untabled.push(name);
-  }
+
   for (const table of tables) {
-    snippets.push(
-      tableSnippet({ ...table, file: relative(rootDir, table.file) }),
-    );
+    snippets.push(tableSnippet({ ...table, file: page }));
     tableCount++;
+  }
+
+  // A section that describes its return in a sentence gets the weaker check:
+  // not that its fields are right, but that it has none to get wrong.
+  for (const { name, line } of listComposablesFromFile(path)) {
+    if (checked.has(name)) continue;
+    snippets.push(noFieldsSnippet(page, name, line));
+    untabledCount++;
   }
 }
 
@@ -105,9 +113,12 @@ mkdirSync(workDir, { recursive: true });
 const byGeneratedName = writeSnippetProject(workDir, snippets);
 
 console.log(
-  `Checking ${snippets.length - tableCount} code blocks from docs/ and the ` +
-    `READMEs (${skippedCount} skipped), plus ${tableCount} Returns tables ` +
-    `from the API reference.`,
+  `Checking ${snippets.length - tableCount - untabledCount} code blocks from ` +
+    `docs/ and the READMEs (${skippedCount} skipped), plus ${tableCount} ` +
+    `Returns tables from the API reference` +
+    (untabledCount
+      ? ` and ${untabledCount} composable(s) whose return is described in prose.`
+      : '.'),
 );
 
 let output = '';
@@ -188,22 +199,8 @@ for (let i = 0; i < lines.length; i++) {
 
 if (!keep) rmSync(workDir, { recursive: true, force: true });
 
-/**
- * A composable whose Returns is written as a sentence rather than a table is
- * not checked by anything. Printing them keeps that a known gap instead of an
- * assumed one — the counts above otherwise read as full coverage.
- */
-function reportCoverage(): void {
-  if (!untabled.length) return;
-  console.log(
-    `\n${untabled.length} composable(s) document their return in prose, so no ` +
-      `table check covers them:\n  ${untabled.join(', ')}`,
-  );
-}
-
 if (!reported.length) {
   console.log('Every checked block names only things that exist in dist/.');
-  reportCoverage();
   if (skipReasons.length) console.log(`\nSkipped:\n${skipReasons.join('\n')}`);
   process.exit(0);
 }
