@@ -11,6 +11,7 @@ import {
   shallowRef,
 } from 'vue';
 import { MapProvideKey, MaplibreEvents, MapCreationStatus } from '@libs/enums';
+import type { MaplibreEvent } from '@libs/enums';
 import {
   useCreateMaplibre,
   useMapEventListener,
@@ -18,14 +19,19 @@ import {
 } from '@libs/composables';
 import type { CreateMaplibreActions, MaplibreActions } from '@libs/types';
 import type {
+  ErrorEvent,
   Map,
   MapContextEvent,
   MapDataEvent,
   MapEventType,
+  MapLibreEvent,
   MapLibreZoomEvent,
   MapMouseEvent,
   MapOptions,
   MapSourceDataEvent,
+  MapStyleDataEvent,
+  MapStyleImageMissingEvent,
+  MapTerrainEvent,
   MapTouchEvent,
   MapWheelEvent,
 } from 'maplibre-gl';
@@ -46,30 +52,49 @@ interface MaplibreProps {
   containerId?: string;
   /** Custom container class names */
   containerClass?: string;
-  /** Error handling callback */
-  onError?: (error: any) => void;
-  /** Load success callback */
-  onLoad?: (map: Map) => void;
+  /**
+   * Error handling callback.
+   *
+   * Not `onError`: this component also emits `error`, and Vue puts an emit's
+   * handler on `$props` under that same `onError` key. Two declarations of one
+   * prop are intersected, so both the prop and the emit became impossible to
+   * satisfy -- no function is assignable to
+   * `((error: any) => void) & ((ev: ErrorEvent) => any)`.
+   */
+  onMapError?: (error: any) => void;
+  /** Load success callback. Named for the same reason as `onMapError`. */
+  onMapLoad?: (map: Map) => void;
 }
 
+/**
+ * What this component emits.
+ *
+ * One signature per group of forwarded events, covering exactly the names in
+ * `MaplibreEvents` -- the list the runtime attaches listeners for -- with
+ * maplibre's own payload type for each. The version this replaced was wrong in
+ * both directions: it declared `Event`, the DOM one, where maplibre delivers
+ * `MapLibreEvent`, so `@move="(e) => e.target"` did not type-check for anyone
+ * using it; and a catch-all `(e: keyof MapEventType, ev: any)` overload
+ * advertised three events the component never forwards.
+ *
+ * The events stay grouped by payload rather than listed one per line because
+ * `vue-tsc` gives up and emits `any` for both the emits and the props of a
+ * component with this many separate overloads -- which would leave the whole
+ * component unchecked.
+ */
 interface Emits {
-  (e: keyof MapEventType, ev: any): void;
-  (e: 'register', actions: MaplibreActions): void;
+  (e: 'error', ev: ErrorEvent): void;
   (
-    e: 'error' | 'load' | 'idle' | 'remove' | 'render' | 'resize',
-    ev: Event,
+    e: 'load' | 'idle' | 'remove' | 'render' | 'resize',
+    ev: MapLibreEvent,
   ): void;
   (e: 'webglcontextlost' | 'webglcontextrestored', ev: MapContextEvent): void;
-  (
-    e: 'dataloading' | 'data' | 'tiledataloading' | 'dataabort',
-    ev: MapDataEvent,
-  ): void;
-  (
-    e: 'sourcedataloading' | 'sourcedata' | 'sourcedataabort',
-    ev: MapSourceDataEvent,
-  ): void;
-  (e: 'styledata', ev: Event): void;
-  (e: 'styleimagemissing', ev: Event): void;
+  (e: 'dataloading' | 'data' | 'tiledataloading', ev: MapDataEvent): void;
+  (e: 'sourcedataloading' | 'sourcedata', ev: MapSourceDataEvent): void;
+  (e: 'styledata', ev: MapStyleDataEvent): void;
+  (e: 'styleimagemissing', ev: MapStyleImageMissingEvent): void;
+  (e: 'dataabort', ev: MapDataEvent): void;
+  (e: 'sourcedataabort', ev: MapSourceDataEvent): void;
   (
     e: 'boxzoomcancel' | 'boxzoomstart' | 'boxzoomend',
     ev: MapLibreZoomEvent,
@@ -91,13 +116,11 @@ interface Emits {
     ev: MapMouseEvent,
   ): void;
   (
+    e: 'movestart' | 'move' | 'moveend' | 'zoomstart' | 'zoom' | 'zoomend',
+    ev: MapLibreEvent<MouseEvent | TouchEvent | WheelEvent | undefined>,
+  ): void;
+  (
     e:
-      | 'movestart'
-      | 'move'
-      | 'moveend'
-      | 'zoomstart'
-      | 'zoom'
-      | 'zoomend'
       | 'rotatestart'
       | 'rotate'
       | 'rotateend'
@@ -107,10 +130,11 @@ interface Emits {
       | 'pitchstart'
       | 'pitch'
       | 'pitchend',
-    ev: Event,
+    ev: MapLibreEvent<MouseEvent | TouchEvent | undefined>,
   ): void;
   (e: 'wheel', ev: MapWheelEvent): void;
-  (e: 'terrain', ev: Event): void;
+  (e: 'terrain', ev: MapTerrainEvent): void;
+  (e: 'register', actions: MaplibreActions): void;
 }
 
 const props = withDefaults(defineProps<MaplibreProps>(), {
@@ -139,6 +163,20 @@ const props = withDefaults(defineProps<MaplibreProps>(), {
   containerClass: '',
 });
 const emits = defineEmits<Emits>();
+
+/**
+ * `emits` under one signature covering every forwarded event, so the loop below
+ * can call it with a name it only knows as the whole union.
+ *
+ * The assignment is also what keeps `Emits` honest. Its payload types have to
+ * be written out, and a transcript drifts; TypeScript checks parameters
+ * contravariantly here, so a signature declaring anything maplibre's own
+ * `MapEventType` does not deliver fails on this line.
+ */
+const forward: <K extends MaplibreEvent>(
+  event: K,
+  payload: MapEventType[K],
+) => void = emits;
 
 // Enhanced logging and error handling
 const { logError } = useLogger(props.debug);
@@ -244,16 +282,16 @@ const {
       emits('register', enhancedActions as MaplibreActions);
     } catch (error) {
       logError('Error during map registration:', error);
-      props.onError?.(error);
+      props.onMapError?.(error);
     }
   },
   onLoad: (map) => {
     try {
       mapCreationStatus.value = MapCreationStatus.Loaded;
-      props.onLoad?.(map);
+      props.onMapLoad?.(map);
     } catch (error) {
       logError('Error in map load handler:', error);
-      props.onError?.(error);
+      props.onMapError?.(error);
     }
   },
   onError: (error) => {
@@ -266,7 +304,7 @@ const {
         mapCreationStatus.value = MapCreationStatus.Error;
       }
       logError('Map error:', error);
-      props.onError?.(error);
+      props.onMapError?.(error);
     } catch (handlerError) {
       logError('Error in error handler:', handlerError);
     }
@@ -284,7 +322,7 @@ const eventCleanups = MaplibreEvents.map((evt) => {
     event: evt,
     on: (data) => {
       try {
-        emits(evt as keyof MapEventType, data);
+        forward(evt, data);
       } catch (error) {
         logError(`Error in ${evt} event handler:`, error, { data });
       }
@@ -370,7 +408,7 @@ watchEffect(async () => {
   } catch (error) {
     logError('Error in container creation watchEffect:', error);
     mapCreationStatus.value = MapCreationStatus.Error;
-    props.onError?.(error);
+    props.onMapError?.(error);
   }
 });
 

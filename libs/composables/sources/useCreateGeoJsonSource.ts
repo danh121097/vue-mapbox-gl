@@ -39,7 +39,7 @@ export interface CreateGeoJsonSourceActions {
   isSourceReady: ComputedRef<boolean>;
 }
 
-interface CreateGeoJsonSourceProps {
+export interface CreateGeoJsonSourceProps {
   map: MaybeRef<Nullable<Map>>;
   id?: string;
   data: GeoJSONSourceSpecification['data'];

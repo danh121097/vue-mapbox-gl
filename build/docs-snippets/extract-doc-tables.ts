@@ -29,12 +29,24 @@ const COMPOSABLE_NAME_RE = /\buse[A-Z][A-Za-z0-9_]*/g;
 /** `#### Returns`, `### Returns` — the heading a return table follows. */
 const RETURNS_HEADING_RE = /^#{2,5}\s+Returns\s*$/;
 
+/** The other tabulated sections, which document an input rather than a return. */
+const PARAMETERS_HEADING_RE = /^#{2,5}\s+Parameters\s*$/;
+const PROPS_HEADING_RE = /^#{2,5}\s+Props\s*$/;
+const EVENTS_HEADING_RE = /^#{2,5}\s+Events\s*$/;
+
+/**
+ * Column headers that hold a type. `Returns` and `Parameters` tables call it
+ * `Type`; an `Events` table calls it `Payload`, because the row documents what
+ * the handler is given rather than the handler itself.
+ */
+const TYPE_HEADERS = ['type', 'payload'];
+
 /**
  * A table row's first cell, which holds the field name in backticks. A plain
  * number is a tuple index: `useDebouncedRef` returns `[ref, ref, flush, cancel]`
  * and documents it by position, and `Returned['0']` checks that just as well.
  */
-const FIELD_CELL_RE = /^\|\s*`([A-Za-z_$][\w$]*|\d+)`\s*\|/;
+const FIELD_CELL_RE = /^\|\s*`([A-Za-z_$][\w$]*(?:[-:][\w$]+)*|\d+)`\s*\|/;
 
 /** A cell holding one backticked type expression and nothing else. */
 const TYPE_CELL_RE = /^`(.+)`$/;
@@ -52,6 +64,41 @@ const TYPE_CELL_RE = /^`(.+)`$/;
  * compiler holds to: a field outside the named source still fails.
  */
 const SPREAD_RE = /^<!--\s*returns-spread:\s*([A-Za-z_$][\w$]*)\s*-->$/;
+
+/**
+ * The same device for a component's events. Three layer components document
+ * theirs as "same events as FillLayer" rather than repeating fourteen rows, and
+ * without a marker that sentence is prose: the completeness check would demand
+ * a row per event, and nothing would notice the day the two sets diverge.
+ *
+ *     <!-- events-like: FillLayer -->
+ */
+const EVENTS_LIKE_RE = /^<!--\s*events-like:\s*([A-Za-z_$][\w$]*)\s*-->$/;
+
+/**
+ * Which component each `events-like` marker sits under. Read separately from
+ * the tables because the sections that need it have no table at all.
+ */
+export function extractEventsLike(
+  source: string,
+  nameRe: RegExp,
+): Map<string, string[]> {
+  const found = new Map<string, string[]>();
+  let components: string[] = [];
+  for (const line of source.split('\n')) {
+    const heading = /^(#{2})\s+(.*)$/.exec(line);
+    if (heading) {
+      components = heading[2]!.match(nameRe) ?? [];
+      continue;
+    }
+    const marker = EVENTS_LIKE_RE.exec(line.trim());
+    if (!marker) continue;
+    for (const component of components) {
+      found.set(component, [...(found.get(component) ?? []), marker[1]!]);
+    }
+  }
+  return found;
+}
 
 /**
  * Splits a table row into cells on unescaped pipes. A `\|` inside a cell is a
@@ -112,6 +159,52 @@ export function extractReturnTables(
   file: string,
   source: string,
 ): ReturnTable[] {
+  return extractSectionTables(file, source, RETURNS_HEADING_RE);
+}
+
+/** The `Parameters` tables of a page, keyed the same way as its return ones. */
+export function extractParameterTables(
+  file: string,
+  source: string,
+): ReturnTable[] {
+  return extractSectionTables(file, source, PARAMETERS_HEADING_RE);
+}
+
+/**
+ * The `Props` and `Events` tables of the components reference. Their sections
+ * are headed by a component name rather than a composable one, so the caller
+ * passes the pattern that recognises it.
+ */
+export function extractPropTables(
+  file: string,
+  source: string,
+  names: RegExp,
+): ReturnTable[] {
+  return extractSectionTables(file, source, PROPS_HEADING_RE, names, 2);
+}
+
+export function extractEventTables(
+  file: string,
+  source: string,
+  names: RegExp,
+): ReturnTable[] {
+  return extractSectionTables(file, source, EVENTS_HEADING_RE, names, 2);
+}
+
+function extractSectionTables(
+  file: string,
+  source: string,
+  sectionHeading: RegExp,
+  nameRe: RegExp = COMPOSABLE_NAME_RE,
+  /**
+   * The deepest heading level that opens a section. The composables reference
+   * names its subject at `###` and tabulates under `####`; the components one
+   * names its subject at `##` and tabulates under `###`, so `### Props` must
+   * not be read as a new section there.
+   */
+  sectionLevel = 3,
+): ReturnTable[] {
+  const sectionHeadingRe = new RegExp(`^(#{2,${sectionLevel}})\\s+(.*)$`);
   const lines = source.split('\n');
   const tables: ReturnTable[] = [];
   // Reset by every section heading, so a table can never bind to a composable
@@ -121,13 +214,13 @@ export function extractReturnTables(
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!;
 
-    const heading = SECTION_HEADING_RE.exec(line);
+    const heading = sectionHeadingRe.exec(line);
     if (heading) {
-      composables = heading[2]!.match(COMPOSABLE_NAME_RE) ?? [];
+      composables = heading[2]!.match(nameRe) ?? [];
       continue;
     }
 
-    if (!composables.length || !RETURNS_HEADING_RE.test(line)) continue;
+    if (!composables.length || !sectionHeading.test(line)) continue;
 
     const headingLine = i + 1;
     // Which composables the next table describes. A bold label overrides it for
@@ -169,7 +262,9 @@ export function extractReturnTables(
       // Which column holds the type. Most tables put it second, but a tuple
       // table is `| Index | Name | Type |`, so the header decides.
       const headers = splitRow(lines[j]!).map((h) => h.toLowerCase());
-      const typeColumn = headers.indexOf('type');
+      const typeColumn = headers.findIndex((header) =>
+        TYPE_HEADERS.includes(header),
+      );
 
       const fields: TableField[] = [];
       let k = j + 2;

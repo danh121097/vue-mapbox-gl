@@ -16,6 +16,7 @@ import type {
   QueryRenderedFeaturesOptions,
   QuerySourceFeatureOptions,
   StyleImageInterface,
+  StyleImageMetadata,
   StyleSetterOptions,
   StyleSpecification,
 } from 'maplibre-gl';
@@ -371,6 +372,22 @@ export type ImageDatas =
       data: Uint8Array | Uint8ClampedArray;
     }
   | StyleImageInterface;
+
+/**
+ * One entry of the `Image` component's `images` prop.
+ *
+ * Exported because a consumer building that array has to name its element
+ * type; the components reference documents it, and until this export existed
+ * that documentation named nothing importable.
+ */
+export interface ImageItem {
+  /** Unique identifier for the image */
+  id: string;
+  /** Image data (URL string or ImageData/HTMLImageElement) */
+  image: ImageDatas | string;
+  /** Optional image metadata and options */
+  options?: Partial<StyleImageMetadata>;
+}
 
 // Re-export consumer-facing event handler types
 export * from './event-handler-types';

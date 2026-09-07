@@ -178,7 +178,7 @@ Measured, not estimated. Re-measure before quoting these anywhere public.
 
 - **File**: `libs/components/Maplibre.vue`
 - **Purpose**: Root map component, provides map context
-- **Props**: `options`, `register`, `debug`, `autoCleanup`, `containerId`, `containerClass`, `onError`, `onLoad`
+- **Props**: `options`, `register`, `debug`, `autoCleanup`, `containerId`, `containerClass`, `onMapError`, `onMapLoad`
 - **Events**: `load`, `error`, `click`, `move`, `zoom` + 40+ MapLibre events
 - **Slots**: `default`, `loading`, `error`
 
@@ -186,7 +186,7 @@ Measured, not estimated. Re-measure before quoting these anywhere public.
 
 - **File**: `libs/components/GeoJsonSource.vue`
 - **Purpose**: GeoJSON data source provider
-- **Props**: `id`, `data`, `options`, `debug`, `autoCleanup`, `register`, `onLoad`, `onError`, `onDataUpdate`
+- **Props**: `id`, `data`, `options`, `debug`, `autoCleanup`, `register`, `onSourceLoad`, `onSourceError`, `onDataUpdate`, `debounceDelay`
 - **Events**: `register`, `load`, `error`, `data-update`
 
 ### 3. FillLayer

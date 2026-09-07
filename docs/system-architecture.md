@@ -702,13 +702,13 @@ const fillStyle = ref({ 'fill-color': '#088' });
 
 ### Error Levels
 
-| Level            | Handling                                            |
-| ---------------- | --------------------------------------------------- |
-| Setup Errors     | Throw immediately, prevent component mount          |
-| Event Errors     | Log and set status to `Error`                       |
-| Animation Errors | Reject promise and set status                       |
-| Lifecycle Errors | Safe cleanup, set `hasMapError` flag                |
-| Post-load Errors | Report via `error` / `onError`, keep the map usable |
+| Level            | Handling                                               |
+| ---------------- | ------------------------------------------------------ |
+| Setup Errors     | Throw immediately, prevent component mount             |
+| Event Errors     | Log and set status to `Error`                          |
+| Animation Errors | Reject promise and set status                          |
+| Lifecycle Errors | Safe cleanup, set `hasMapError` flag                   |
+| Post-load Errors | Report via `error` / `onMapError`, keep the map usable |
 
 ### Debug Mode
 

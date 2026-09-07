@@ -186,4 +186,27 @@ describe('<Maplibre> error state', () => {
     expect(onError).toHaveBeenCalledWith(tileError);
     expect(hasChild()).toBe(true);
   });
+
+  it('calls one @error listener once per map error', async () => {
+    // The component used to declare an `onError` callback prop alongside its
+    // `error` emit. Vue keys an emit's listener as `onError` too, so the two
+    // were one prop: `@error="fn"` reached `fn` twice -- once through the
+    // emit, once through `props.onError` -- and the two declarations
+    // intersected into a type no handler could satisfy.
+    const onError = vi.fn();
+    const { getMap } = await mountMaplibre(
+      { style: STYLE, center: [0, 0], zoom: 1 },
+      onError,
+    );
+    const map = getMap();
+
+    map.fire('load');
+    await nextTick();
+
+    map.fire('error', { error: new Error('404 tile') });
+    await nextTick();
+    await nextTick();
+
+    expect(onError).toHaveBeenCalledTimes(1);
+  });
 });

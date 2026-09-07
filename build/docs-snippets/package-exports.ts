@@ -107,3 +107,51 @@ export function typeParameters(rootDir: string): Map<string, string> {
   }
   return cachedParameters;
 }
+
+let cachedNames: Map<string, string[]> | null = null;
+
+/**
+ * The declared parameter names of each exported function, from its first
+ * signature.
+ *
+ * A `Parameters` table names either the function's arguments in order
+ * (`useDebouncedRef(initialValue, delay)`) or the fields of the single props
+ * object most of these composables take. Nothing in the table itself says
+ * which, and checking the wrong one would pass for the wrong reason, so the
+ * declaration is asked.
+ */
+export function parameterNames(rootDir: string): Map<string, string[]> {
+  if (cachedNames) return cachedNames;
+
+  const entry = resolve(rootDir, 'dist/index.d.ts');
+  const program = ts.createProgram([entry], {
+    target: ts.ScriptTarget.ESNext,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    skipLibCheck: true,
+    noEmit: true,
+    baseUrl: dirname(entry),
+  });
+
+  const source = program.getSourceFile(entry);
+  const checker = program.getTypeChecker();
+  const symbol = source && checker.getSymbolAtLocation(source);
+  cachedNames = new Map();
+  if (!symbol) return cachedNames;
+
+  for (const exported of checker.getExportsOfModule(symbol)) {
+    const resolved =
+      exported.flags & ts.SymbolFlags.Alias
+        ? checker.getAliasedSymbol(exported)
+        : exported;
+    for (const declaration of resolved.declarations ?? []) {
+      if (!ts.isFunctionDeclaration(declaration)) continue;
+      cachedNames.set(
+        exported.name,
+        declaration.parameters.map((parameter) => parameter.name.getText()),
+      );
+      break;
+    }
+  }
+  return cachedNames;
+}

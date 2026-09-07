@@ -116,6 +116,7 @@ const AMBIENT = new Set([
   'HTMLImageElement',
   'ImageBitmap',
   'ImageData',
+  'MouseEvent',
   'Number',
   'Omit',
   'Parameters',
@@ -128,7 +129,9 @@ const AMBIENT = new Set([
   'Required',
   'ReturnType',
   'String',
+  'TouchEvent',
   'Uint8Array',
+  'WheelEvent',
 ]);
 
 /**
@@ -634,5 +637,289 @@ export function attributeSnippet(
     label: 'attrs',
     code: [...head, ...rows].join('\n'),
     lineMap: [...head.map(() => snippet.fenceLine), ...rowLines],
+  };
+}
+
+/**
+ * The prop key Vue gives an emit. Vue capitalises the first letter and nothing
+ * else, so `data-update` becomes `onData-update` and `update:show` becomes
+ * `onUpdate:show` -- camelising here would look right and match nothing.
+ */
+function handlerKey(event: string): string {
+  return `on${event[0]!.toUpperCase()}${event.slice(1)}`;
+}
+
+/**
+ * Imports for the types a set of rows names, split by where they come from.
+ * Shared by every table check: the columns quote types by bare name, and a
+ * reader has to be able to import each one from somewhere.
+ */
+function typeImports(types: string[], exported?: Set<string>): string[] {
+  const names = [...new Set(types.flatMap((type) => referencedTypes(type)))];
+  const from = (source: Set<string> | null, module: string): string[] => {
+    const wanted = names
+      .filter((name) =>
+        source
+          ? source.has(name)
+          : !FROM_VUE.has(name) &&
+            !FROM_MAPLIBRE.has(name) &&
+            (exported ? exported.has(name) : true),
+      )
+      .sort();
+    return wanted.length
+      ? [`import type { ${wanted.join(', ')} } from '${module}';`]
+      : [];
+  };
+  return [
+    ...from(FROM_VUE, 'vue'),
+    ...from(FROM_MAPLIBRE, 'maplibre-gl'),
+    ...from(null, 'vue3-maplibre-gl'),
+  ];
+}
+
+/**
+ * Turns a component's `Props` or `Events` table into assertions.
+ *
+ * These tables were the last unchecked ones in the reference. A `Props` row
+ * names a key of `$props` and gives its type; an `Events` row names an emit --
+ * whose key is `onFoo` -- and gives the *payload*, which is the handler's first
+ * argument rather than the handler itself.
+ */
+export function componentTableSnippet(
+  table: ReturnTable,
+  kind: 'props' | 'events',
+): Snippet {
+  const head = [
+    ...typeImports(table.fields.map((field) => field.type ?? '')),
+    `import { ${table.composable} } from 'vue3-maplibre-gl';`,
+    `type Props = InstanceType<typeof ${table.composable}>['$props'];`,
+  ];
+
+  const rows: string[] = [];
+  const rowLines: number[] = [];
+  table.fields.forEach((field, index) => {
+    const key = kind === 'events' ? handlerKey(field.name) : field.name;
+    // `$props` marks an optional prop `| undefined`; the Default column is
+    // where the reference says so, not the Type one.
+    // A `void` payload is the table saying the emit carries nothing, so the
+    // claim to check is that the handler takes no arguments -- reading
+    // `Parameters<...>[0]` off it would fail as a missing tuple element and
+    // report a row that is right.
+    const payload = field.type === 'void';
+    const real =
+      kind !== 'events'
+        ? `NonNullable<Props['${key}']>`
+        : payload
+          ? `Parameters<NonNullable<Props['${key}']>>['length']`
+          : `Parameters<NonNullable<Props['${key}']>>[0]`;
+    const lines = [`type _${index} = ${real};`];
+    if (payload) {
+      lines.push(`const _n${index}: 0 = null as unknown as _${index};`);
+      rows.push(...lines);
+      rowLines.push(...lines.map(() => field.line));
+      return;
+    }
+    if (field.type) {
+      lines.push(
+        `type _d${index} = ${field.type};`,
+        `const _to${index}: _d${index} = null as unknown as _${index};`,
+        `const _from${index}: _${index} = null as unknown as _d${index};`,
+      );
+    }
+    rows.push(...lines);
+    rowLines.push(...lines.map(() => field.line));
+  });
+
+  return {
+    file: table.file,
+    fenceLine: table.headingLine,
+    lang: 'ts',
+    ext: '.ts',
+    label: `${kind}-${table.composable}`,
+    code: [...head, ...rows].join('\n'),
+    lineMap: [...head.map(() => table.headingLine), ...rowLines],
+  };
+}
+
+export interface ComponentCoverage {
+  file: string;
+  component: string;
+  line: number;
+  props: string[];
+  events: string[];
+  /** A component whose events this one says it shares. */
+  eventsLike: string[];
+}
+
+/**
+ * The other direction for a component: a prop or emit no row documents.
+ *
+ * Vue's own `key`, `ref`, `class` and `style` live on `$props` too, so they are
+ * excluded -- they belong to every component and to none of these tables.
+ */
+export function componentCoverageSnippet(coverage: ComponentCoverage): Snippet {
+  const { component, props, events, eventsLike } = coverage;
+  const documented = [
+    ...props.map((name) => `'${name}'`),
+    ...events.map((name) => `'${handlerKey(name)}'`),
+    ...eventsLike.map(
+      (other) => `keyof InstanceType<typeof ${other}>['$props']`,
+    ),
+  ];
+
+  const imports = [component, ...eventsLike].sort();
+  const code = [
+    `import type {`,
+    `  AllowedComponentProps,`,
+    `  ComponentCustomProps,`,
+    `  VNodeProps,`,
+    `} from 'vue';`,
+    `import { ${imports.join(', ')} } from 'vue3-maplibre-gl';`,
+    `type Extra = Exclude<`,
+    `  keyof InstanceType<typeof ${component}>['$props'],`,
+    `  | keyof VNodeProps`,
+    `  | keyof AllowedComponentProps`,
+    `  | keyof ComponentCustomProps`,
+    ...(documented.length ? [`  | ${documented.join(' | ')}`] : []),
+    `>;`,
+    `type Undocumented = { __member: true }[[Extra] extends [never]`,
+    `  ? '__member'`,
+    `  : Extra];`,
+    'export type { Undocumented };',
+  ];
+
+  return {
+    file: coverage.file,
+    fenceLine: coverage.line,
+    lang: 'ts',
+    ext: '.ts',
+    label: `undocumented-${component}`,
+    code: code.join('\n'),
+    lineMap: code.map(() => coverage.line),
+  };
+}
+
+/**
+ * Turns a `Parameters` table into a call the compiler has to accept.
+ *
+ * Checking these rows by name against `Parameters<typeof f>` walks straight
+ * into the overload trap -- that helper resolves to the *last* signature -- so
+ * the table is checked by making the call it describes instead. Overload
+ * resolution then happens the way it does for a reader, excess-property
+ * checking catches a key the argument has no room for, and each row's declared
+ * type has to be a value the parameter accepts.
+ *
+ * A table names either the function's arguments in order or the fields of the
+ * single props object; `declared` is the parameter list from the built
+ * declarations, which is what decides between them.
+ */
+export function parametersSnippet(
+  table: ReturnTable,
+  declared: string[] | undefined,
+  nth = 1,
+  /** The composable's own type parameter list, as `tableSnippet` takes it. */
+  realParams?: string,
+): Snippet {
+  const rows = table.fields.filter((field) => field.type);
+  // A single row against a single parameter is that parameter, whatever the
+  // row calls it -- several of these take one destructured props object, whose
+  // declared "name" is the whole pattern. Otherwise the rows are the arguments
+  // in order only if the declaration has a parameter for each of their names;
+  // anything else is the fields of the props object.
+  const positional = Boolean(
+    declared?.length &&
+      (rows.length === 1 ||
+        rows.every((field) => declared.includes(field.name))),
+  );
+
+  const realNames = (realParams ?? '')
+    .slice(1, -1)
+    .split(/,(?![^<]*>)/)
+    .map((parameter) => parameter.trim().split(/[\s=]/)[0]!)
+    .filter(Boolean);
+  const generics = [
+    ...new Set(
+      rows.flatMap((field) =>
+        (field.type!.match(/\b[A-Z]\b/g) ?? []).filter((name) =>
+          GENERIC_RE.test(name),
+        ),
+      ),
+    ),
+  ].sort();
+  // Same device as `tableSnippet`: a documented `T` is checked as a real type
+  // parameter when the composable has one, and only falls back to `any` when
+  // it does not.
+  const generic = Boolean(generics.length && realParams);
+
+  const head = [
+    ...(generic ? [] : generics.map((name) => `type ${name} = any;`)),
+    ...typeImports(rows.map((field) => field.type!)).map((line) =>
+      // A documented type parameter is not a name to import.
+      generics.some((name) => line.includes(`{ ${name} }`)) ? '' : line,
+    ),
+    `import { ${table.composable} } from 'vue3-maplibre-gl';`,
+    ...(generic
+      ? [
+          `function _call${realParams}(): void {`,
+          ...generics
+            .map(
+              (name, index) => `type ${name} = ${realNames[index] ?? 'any'};`,
+            )
+            .filter((line) => !/^type (\w+) = \1;$/.test(line)),
+        ]
+      : []),
+  ].filter(Boolean);
+
+  const values: string[] = [];
+  const valueLines: number[] = [];
+  rows.forEach((field, index) => {
+    // `const x = null as unknown as T` rather than `declare const`, which is a
+    // modifier TypeScript will not accept inside the function body a generic
+    // table is checked in.
+    values.push(`const _v${index} = null as unknown as ${field.type};`);
+    valueLines.push(field.line);
+  });
+
+  // Void the result: these composables return values nothing here uses, and an
+  // unused expression is a lint error in the generated project.
+  //
+  // The object form is written one property per line so a diagnostic about one
+  // of them maps back to the row that wrote it. An overload failure is still
+  // reported at the call, which maps to the heading -- the message names the
+  // property either way.
+  const call = positional
+    ? [
+        `void ${table.composable}(` +
+          `${rows.map((_, index) => `_v${index}`).join(', ')});`,
+      ]
+    : [
+        `void ${table.composable}({`,
+        ...rows.map((field, index) => `  '${field.name}': _v${index},`),
+        `});`,
+      ];
+  const callLines = positional
+    ? [table.headingLine]
+    : [
+        table.headingLine,
+        ...rows.map((field) => field.line),
+        table.headingLine,
+      ];
+  if (generic) {
+    call.push('}', 'export { _call };');
+    callLines.push(table.headingLine, table.headingLine);
+  }
+
+  return {
+    file: table.file,
+    fenceLine: table.headingLine,
+    lang: 'ts',
+    ext: '.ts',
+    label: `parameters-${table.composable}-${nth}`,
+    code: [...head, ...values, ...call].join('\n'),
+    lineMap: [
+      ...head.map(() => table.headingLine),
+      ...valueLines,
+      ...callLines,
+    ],
   };
 }

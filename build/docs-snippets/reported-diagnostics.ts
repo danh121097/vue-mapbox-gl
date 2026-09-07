@@ -96,6 +96,14 @@ export function summarize(message: string): string {
     return `error: '${prop[1]}' is not a prop or an emit of this component`;
   }
 
+  const member =
+    /Property '([^']+)' does not exist on type '\{ __member: true; \}'/.exec(
+      message,
+    );
+  if (member) {
+    return `error: '${member[1]}' is a prop or an emit that no row documents`;
+  }
+
   const undocumented =
     /Property '([^']+)' does not exist on type '\{ __(?:none|all): true; \}'/.exec(
       message,

@@ -27,6 +27,10 @@ import {
 import { relative, resolve } from 'node:path';
 import { extractFromFile, type Snippet } from './extract-doc-snippets';
 import {
+  extractEventsLike,
+  extractEventTables,
+  extractParameterTables,
+  extractPropTables,
   extractTablesFromFile,
   listComposablesFromFile,
 } from './extract-doc-tables';
@@ -34,6 +38,7 @@ import { extractDocumentedTypesFromFile } from './extract-doc-types';
 import {
   componentExports,
   packageExports,
+  parameterNames,
   typeParameters,
 } from './package-exports';
 import { checkLinks } from './check-doc-links';
@@ -43,8 +48,11 @@ import { diagnosticCode, isReported, summarize } from './reported-diagnostics';
 import { extractTemplateAttributes } from './extract-template-attributes';
 import {
   attributeSnippet,
+  componentCoverageSnippet,
+  componentTableSnippet,
   coverageSnippet,
   documentedTypeSnippet,
+  parametersSnippet,
   tableSnippet,
   writeSnippetProject,
 } from './snippet-project';
@@ -97,6 +105,7 @@ const TABLE_PAGES = markdownFiles(resolve(rootDir, 'docs')).filter((path) =>
 );
 
 let tableCount = 0;
+let parameterCount = 0;
 let coverageCount = 0;
 let untabledCount = 0;
 for (const path of TABLE_PAGES) {
@@ -119,6 +128,27 @@ for (const path of TABLE_PAGES) {
       ),
     );
     tableCount++;
+  }
+
+  // A `Parameters` table is checked by making the call it describes. The rows
+  // are an input, so nothing about the return type would catch them.
+  const seenParameters = new Map<string, number>();
+  const declared = parameterNames(rootDir);
+  for (const table of extractParameterTables(
+    page,
+    readFileSync(path, 'utf8'),
+  )) {
+    const nth = (seenParameters.get(table.composable) ?? 0) + 1;
+    seenParameters.set(table.composable, nth);
+    snippets.push(
+      parametersSnippet(
+        table,
+        declared.get(table.composable),
+        nth,
+        generics.get(table.composable),
+      ),
+    );
+    parameterCount += table.fields.length;
   }
 
   // Completeness is per composable, not per table: a section documenting two
@@ -168,9 +198,70 @@ for (const path of markdownFiles(resolve(rootDir, 'docs/api'))) {
   }
 }
 
+// The components reference tabulates each component's props and events the way
+// the composables one tabulates returns, and the same thing is true of both: a
+// row is prose until something compiles it. `source-id` sat in one of these
+// tables for the life of the page.
+const components = componentExports(rootDir);
+const componentNameRe = new RegExp(
+  `\\b(?:${[...components].join('|')})\\b`,
+  'g',
+);
+const componentsPage = resolve(rootDir, 'docs/api/components.md');
+const componentsSource = readFileSync(componentsPage, 'utf8');
+const componentsPath = relative(rootDir, componentsPage);
+
+let propCount = 0;
+let eventCount = 0;
+const propsFor = new Map<string, string[]>();
+const eventsFor = new Map<string, string[]>();
+const componentLine = new Map<string, number>();
+
+for (const [kind, tables] of [
+  [
+    'props',
+    extractPropTables(componentsPath, componentsSource, componentNameRe),
+  ],
+  [
+    'events',
+    extractEventTables(componentsPath, componentsSource, componentNameRe),
+  ],
+] as const) {
+  for (const table of tables) {
+    snippets.push(componentTableSnippet(table, kind));
+    const into = kind === 'props' ? propsFor : eventsFor;
+    into.set(table.composable, [
+      ...(into.get(table.composable) ?? []),
+      ...table.fields.map((field) => field.name),
+    ]);
+    componentLine.set(
+      table.composable,
+      Math.min(
+        componentLine.get(table.composable) ?? Infinity,
+        table.headingLine,
+      ),
+    );
+    if (kind === 'props') propCount += table.fields.length;
+    else eventCount += table.fields.length;
+  }
+}
+
+const eventsLike = extractEventsLike(componentsSource, componentNameRe);
+for (const component of components) {
+  snippets.push(
+    componentCoverageSnippet({
+      file: componentsPath,
+      component,
+      line: componentLine.get(component) ?? 1,
+      props: [...new Set(propsFor.get(component) ?? [])],
+      events: [...new Set(eventsFor.get(component) ?? [])],
+      eventsLike: eventsLike.get(component) ?? [],
+    }),
+  );
+}
+
 // Vue lets an unknown attribute fall through to the root element, so a
 // misspelled prop compiles. Each example's attributes are asserted separately.
-const components = componentExports(rootDir);
 let attributeCount = 0;
 let blockCount = 0;
 
@@ -216,12 +307,14 @@ writeSnippetProject(
 console.log(
   `Checking ${blockCount} code ` +
     `blocks from docs/ and the READMEs (${skippedCount} skipped), plus ` +
-    `${tableCount} Returns tables, the return completeness of ` +
+    `${tableCount} Returns tables, ${parameterCount} documented ` +
+    `parameters, the return completeness of ` +
     `${coverageCount} composables` +
     (untabledCount
       ? ` (${untabledCount} of which describe their return in prose)`
       : '') +
-    `, ${typeCount} documented types, and ${attributeCount} component ` +
+    `, ${typeCount} documented types, ${propCount} component props, ` +
+    `${eventCount} component events, and ${attributeCount} component ` +
     `attributes in the Vue examples.`,
 );
 

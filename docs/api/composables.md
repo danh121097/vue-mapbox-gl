@@ -535,20 +535,20 @@ Creates and manages MapLibre GL Fill Layers with reactive updates and comprehens
 
 #### Parameters
 
-| Property      | Type                                                | Description                     |
-| ------------- | --------------------------------------------------- | ------------------------------- |
-| `map`         | `MaybeRef<Map \| null>`                             | Map instance reference          |
-| `source`      | `MaybeRef<string \| SourceSpecification \| object>` | Source id, or a spec with an id |
-| `style`       | `FillLayerStyle`                                    | Fill layer style configuration  |
-| `filter`      | `FilterSpecification`                               | Filter expression               |
-| `id`          | `string`                                            | Layer identifier                |
-| `beforeId`    | `string`                                            | Insert before this layer        |
-| `maxzoom`     | `number`                                            | Maximum zoom level              |
-| `minzoom`     | `number`                                            | Minimum zoom level              |
-| `metadata`    | `object`                                            | Layer metadata                  |
-| `sourceLayer` | `string`                                            | Source layer name               |
-| `debug`       | `boolean`                                           | Enable debug logging            |
-| `register`    | `(actions: CreateLayerActions, map: Map) => void`   | Registration callback           |
+| Property      | Type                                                                      | Description                     |
+| ------------- | ------------------------------------------------------------------------- | ------------------------------- |
+| `map`         | `MaybeRef<Map \| null>`                                                   | Map instance reference          |
+| `source`      | `MaybeRef<string \| SourceSpecification \| object>`                       | Source id, or a spec with an id |
+| `style`       | `FillLayerStyle`                                                          | Fill layer style configuration  |
+| `filter`      | `FilterSpecification`                                                     | Filter expression               |
+| `id`          | `string`                                                                  | Layer identifier                |
+| `beforeId`    | `string`                                                                  | Insert before this layer        |
+| `maxzoom`     | `number`                                                                  | Maximum zoom level              |
+| `minzoom`     | `number`                                                                  | Minimum zoom level              |
+| `metadata`    | `object`                                                                  | Layer metadata                  |
+| `sourceLayer` | `string`                                                                  | Source layer name               |
+| `debug`       | `boolean`                                                                 | Enable debug logging            |
+| `register`    | `(actions: CreateLayerActions<FillLayerSpecification>, map: Map) => void` | Registration callback           |
 
 A layer references its source by id, so an object passed to `source` must carry
 its own string `id`; a bare `{ type: 'geojson', data }` is rejected with an
@@ -1188,14 +1188,28 @@ function usePanTo(props: PanToProps): PanToActions;
 
 #### Parameters
 
-| Property  | Type                           | Description                                                   |
-| --------- | ------------------------------ | ------------------------------------------------------------- |
-| `map`     | `MaybeRef<Map \| null>`        | Map instance reference                                        |
-| `offset`  | `PointLike` (`usePanBy` only)  | Pixel offset `[x, y]`                                         |
-| `lnglat`  | `LngLatLike` (`usePanTo` only) | Target coordinate                                             |
-| `options` | `AnimationOptions`             | Animation options (duration, easing, etc.)                    |
-| `autoPan` | `boolean`                      | Auto-pan once offset/lnglat and map are set (default: `true`) |
-| `debug`   | `boolean`                      | Enable debug logging                                          |
+The two take the same props but for the target: `usePanBy` moves by a pixel
+offset, `usePanTo` to a coordinate.
+
+**`usePanBy`**
+
+| Property  | Type                    | Description                                            |
+| --------- | ----------------------- | ------------------------------------------------------ |
+| `map`     | `MaybeRef<Map \| null>` | Map instance reference                                 |
+| `offset`  | `PointLike`             | Pixel offset `[x, y]`                                  |
+| `options` | `AnimationOptions`      | Animation options (duration, easing, etc.)             |
+| `autoPan` | `boolean`               | Auto-pan once offset and map are set (default: `true`) |
+| `debug`   | `boolean`               | Enable debug logging                                   |
+
+**`usePanTo`**
+
+| Property  | Type                    | Description                                            |
+| --------- | ----------------------- | ------------------------------------------------------ |
+| `map`     | `MaybeRef<Map \| null>` | Map instance reference                                 |
+| `lnglat`  | `LngLatLike`            | Target coordinate                                      |
+| `options` | `AnimationOptions`      | Animation options (duration, easing, etc.)             |
+| `autoPan` | `boolean`               | Auto-pan once lnglat and map are set (default: `true`) |
+| `debug`   | `boolean`               | Enable debug logging                                   |
 
 #### Returns
 
@@ -1256,13 +1270,45 @@ function useResetNorthPitch(
 
 #### Parameters
 
-| Property                                | Type                          | Description                                              |
-| --------------------------------------- | ----------------------------- | -------------------------------------------------------- |
-| `map`                                   | `MaybeRef<Map \| null>`       | Map instance reference                                   |
-| `bearing`                               | `number` (`useRotateTo` only) | Target bearing in degrees                                |
-| `options`                               | `AnimationOptions`            | Animation options                                        |
-| `autoRotate` / `autoReset` / `autoSnap` | `boolean`                     | Auto-run once the map/bearing is ready (default: `true`) |
-| `debug`                                 | `boolean`                     | Enable debug logging                                     |
+All four take a map, animation options and a debug flag. They differ in the
+target and in the name of the auto-run flag.
+
+**`useRotateTo`**
+
+| Property     | Type                    | Description                                                   |
+| ------------ | ----------------------- | ------------------------------------------------------------- |
+| `map`        | `MaybeRef<Map \| null>` | Map instance reference                                        |
+| `bearing`    | `number`                | Target bearing in degrees                                     |
+| `options`    | `AnimationOptions`      | Animation options                                             |
+| `autoRotate` | `boolean`               | Auto-run once the map and bearing are ready (default: `true`) |
+| `debug`      | `boolean`               | Enable debug logging                                          |
+
+**`useSnapToNorth`**
+
+| Property   | Type                    | Description                                      |
+| ---------- | ----------------------- | ------------------------------------------------ |
+| `map`      | `MaybeRef<Map \| null>` | Map instance reference                           |
+| `options`  | `AnimationOptions`      | Animation options                                |
+| `autoSnap` | `boolean`               | Auto-run once the map is ready (default: `true`) |
+| `debug`    | `boolean`               | Enable debug logging                             |
+
+**`useResetNorth`**
+
+| Property    | Type                    | Description                                      |
+| ----------- | ----------------------- | ------------------------------------------------ |
+| `map`       | `MaybeRef<Map \| null>` | Map instance reference                           |
+| `options`   | `AnimationOptions`      | Animation options                                |
+| `autoReset` | `boolean`               | Auto-run once the map is ready (default: `true`) |
+| `debug`     | `boolean`               | Enable debug logging                             |
+
+**`useResetNorthPitch`**
+
+| Property    | Type                    | Description                                      |
+| ----------- | ----------------------- | ------------------------------------------------ |
+| `map`       | `MaybeRef<Map \| null>` | Map instance reference                           |
+| `options`   | `AnimationOptions`      | Animation options                                |
+| `autoReset` | `boolean`               | Auto-run once the map is ready (default: `true`) |
+| `debug`     | `boolean`               | Enable debug logging                             |
 
 #### Returns
 
@@ -1335,13 +1381,27 @@ function useZoomTo(props: ZoomToProps): ZoomToActions;
 
 #### Parameters
 
-| Property   | Type                        | Description                                                                  |
-| ---------- | --------------------------- | ---------------------------------------------------------------------------- |
-| `map`      | `MaybeRef<Map \| null>`     | Map instance reference                                                       |
-| `zoom`     | `number` (`useZoomTo` only) | Target zoom level (0-24)                                                     |
-| `options`  | `AnimationOptions`          | Animation options                                                            |
-| `autoZoom` | `boolean`                   | Auto-run once the map (and zoom, for `useZoomTo`) is ready (default: `true`) |
-| `debug`    | `boolean`                   | Enable debug logging                                                         |
+`useZoomTo` takes a target level; `useZoomIn` and `useZoomOut` step from
+wherever the map is.
+
+**`useZoomTo`**
+
+| Property   | Type                    | Description                                                |
+| ---------- | ----------------------- | ---------------------------------------------------------- |
+| `map`      | `MaybeRef<Map \| null>` | Map instance reference                                     |
+| `zoom`     | `number`                | Target zoom level (0-24)                                   |
+| `options`  | `AnimationOptions`      | Animation options                                          |
+| `autoZoom` | `boolean`               | Auto-run once the map and zoom are ready (default: `true`) |
+| `debug`    | `boolean`               | Enable debug logging                                       |
+
+**`useZoomIn`** / **`useZoomOut`**
+
+| Property   | Type                    | Description                                      |
+| ---------- | ----------------------- | ------------------------------------------------ |
+| `map`      | `MaybeRef<Map \| null>` | Map instance reference                           |
+| `options`  | `AnimationOptions`      | Animation options                                |
+| `autoZoom` | `boolean`               | Auto-run once the map is ready (default: `true`) |
+| `debug`    | `boolean`               | Enable debug logging                             |
 
 #### Returns
 
@@ -1408,11 +1468,23 @@ function useCameraForBounds(
 
 #### Parameters
 
-| Property  | Type                                                                                                | Description                        |
-| --------- | --------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| `map`     | `MaybeRef<Map \| null>`                                                                             | Map instance reference             |
-| `options` | `FitBoundsOptions` (`useFitBounds`) / `CameraForBoundsOptions & { bounds? }` (`useCameraForBounds`) | Fit/camera options, e.g. `padding` |
-| `debug`   | `boolean`                                                                                           | Enable debug logging               |
+Both take a map and a debug flag; only the options type differs.
+
+**`useFitBounds`**
+
+| Property  | Type                    | Description                 |
+| --------- | ----------------------- | --------------------------- |
+| `map`     | `MaybeRef<Map \| null>` | Map instance reference      |
+| `options` | `FitBoundsOptions`      | Fit options, e.g. `padding` |
+| `debug`   | `boolean`               | Enable debug logging        |
+
+**`useCameraForBounds`**
+
+| Property  | Type                                                     | Description                    |
+| --------- | -------------------------------------------------------- | ------------------------------ |
+| `map`     | `MaybeRef<Map \| null>`                                  | Map instance reference         |
+| `options` | `CameraForBoundsOptions & { bounds?: LngLatBoundsLike }` | Camera options, e.g. `padding` |
+| `debug`   | `boolean`                                                | Enable debug logging           |
 
 #### Returns
 

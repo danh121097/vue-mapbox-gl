@@ -111,6 +111,24 @@ const props = withDefaults(defineProps<MyComponentProps>(), {
 const emit = defineEmits<MyEmits>();
 ```
 
+A callback prop must never be named `on` + the name of an emit. Vue puts an
+emit's listener on `$props` under exactly that key, so the two become one prop:
+the handler fires twice, and the two declarations intersect into a type nothing
+satisfies. Three components in this package shipped that way. Name the prop for
+what it does instead — `onMapError` beside the `error` emit, `onSourceLoad`
+beside `load`.
+
+An emit's payload type is read out of the library it comes from rather than
+transcribed. Where an emit forwards a maplibre event, its payload is
+maplibre's, and the forwarding call site is written so TypeScript checks that:
+assigning the overloaded `emits` to one generic signature over `MapEventType`
+fails if any declared payload is not what maplibre delivers.
+
+Keep those signatures grouped by payload rather than one per line. Past roughly
+fifty separate overloads `vue-tsc` gives up and emits `any` for both the emits
+and the props of the component — which silently leaves it, and every docs check
+that reads its `$props`, checking nothing.
+
 ### Slot Usage
 
 Always document slots:
@@ -651,6 +669,48 @@ page.
 Which pages get the table and completeness checks is not a list to maintain: any
 page with a `Returns` heading gets them, because that heading is the page
 claiming to document a return.
+
+A `Parameters` table is checked by _making the call it describes_ rather than
+by naming keys. `Parameters<typeof f>` walks into the same trap
+`ReturnType<typeof f>` does — it resolves an overloaded function to its last
+signature — so the rows become a call instead: overload resolution then happens
+the way it does for a reader, excess-property checking catches a key the
+argument has no room for, and each row's declared type has to be a value the
+parameter accepts. Whether the rows are the arguments in order or the fields of
+one props object is not guessed; it is read off the built declarations.
+
+That check only sees rows whose Type cell is one backticked expression, and
+five tables were shared between composables with the difference written into
+that cell — `` `PointLike` (`usePanBy` only) ``. Those rows were silently
+unchecked. They are now a labelled table per composable, the same shape the
+Returns sections use, so every row belongs to exactly one signature.
+
+The components reference is tabulated the same way, and its tables were the
+last ones nothing compiled. A `Props` row is checked against the component's
+own `$props`; an `Events` row against the _payload_ the handler is given, which
+is `Parameters<...>[0]` of the `onFoo` key Vue derives from the emit name — and
+derives by capitalising the first letter and nothing else, so `data-update`
+keys `onData-update` and `update:show` keys `onUpdate:show`. A `void` payload
+is read as the claim that the handler takes no arguments. The other direction
+runs too: a prop or an emit that no row documents fails, with Vue's own `key`,
+`ref`, `class` and `style` excluded, since those belong to every component.
+
+Three layer components abridge their events on purpose — "same events as
+FillLayer" — and say so with `<!-- events-like: FillLayer -->`, which makes the
+abridgement a claim the compiler holds to: the two sets have to match, and an
+event outside the named component still fails.
+
+That first run found the reference honest and the _library_ wrong. `Maplibre`
+declared the DOM `Event` where maplibre delivers `MapLibreEvent`, so
+`@move="(e) => e.target"` did not type-check for anyone; a catch-all
+`(e: keyof MapEventType, ev: any)` overload advertised three events the
+component never forwards; and `Maplibre`, `GeoJsonSource` and
+`GeolocateControls` each declared an `onError`/`onLoad` callback prop beside an
+emit of the same name. Vue keys an emit's listener as `onError` too, so those
+were one prop, not two: `@error="fn"` called `fn` twice, and the two
+declarations intersected into a type no handler satisfies. The callback props
+are now `onMapError`, `onSourceLoad`, `onGeolocateSuccess` and so on — never
+the `on` + emit-name spelling.
 
 Component attributes in the Vue examples are checked separately, because an
 extra attribute on a component is legal Vue — it falls through to the root

@@ -378,14 +378,14 @@ In v6 the two cases are separated:
 - An error **before** the map loads still sets `MapCreationStatus.Error`, so
   `hasMapError` is true and the `error` slot renders. A later successful `load`
   clears it.
-- An error **after** the map has loaded invokes `onError` and emits `error` as
-  before, but leaves `mapCreationStatus`, `hasMapError`, `isMapReady` and the
-  default slot untouched.
+- An error **after** the map has loaded invokes the error callback and emits
+  `error` as before, but leaves `mapCreationStatus`, `hasMapError`, `isMapReady`
+  and the default slot untouched.
 
 This also reaches `useMaplibre` and `useCreateMaplibre` consumers, because v6
 made those status fields live refs rather than frozen snapshots. If you branch
 on `hasMapError` expecting it to catch transient resource errors, move that
-handling to the `error` event or the `onError` callback — which is where it
+handling to the `error` event or the `onMapError` callback — which is where it
 belonged, and where it still fires for both cases.
 
 ### `setMapOptions` no longer freezes the rest of `:options`

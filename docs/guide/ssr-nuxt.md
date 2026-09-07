@@ -378,7 +378,7 @@ export default defineNuxtConfig({
 
 **Cause**: Usually transient, map recovers automatically
 
-**Fix**: Use `onError` callback to recover
+**Fix**: Use the `error` event (or the `onMapError` prop) to recover
 
 ```vue
 <Maplibre :options="options" @error="handleMapError" />

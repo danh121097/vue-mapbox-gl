@@ -4,7 +4,7 @@ import { useLogger } from './useLogger';
 /**
  * Debounce options interface
  */
-interface DebounceOptions {
+export interface DebounceOptions {
   /** Delay in milliseconds (default: 300) */
   delay?: number;
   /** Whether to trigger on the leading edge (default: false) */

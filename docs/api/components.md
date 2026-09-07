@@ -16,63 +16,63 @@ The main map component that renders the MapLibre GL JS map. This is the core com
 | `autoCleanup`    | `boolean`                            | `true`      | Automatically cleanup resources on unmount                                                         |
 | `containerId`    | `string`                             | random      | Container id, generated per instance as `maplibre-<random>`, so two maps on one page never collide |
 | `containerClass` | `string`                             | `''`        | Custom container class names                                                                       |
-| `onError`        | `(error: any) => void`               | `undefined` | Error handling callback                                                                            |
-| `onLoad`         | `(map: Map) => void`                 | `undefined` | Load success callback                                                                              |
+| `onMapError`     | `(error: any) => void`               | `undefined` | Error handling callback. Not `onError`, which is the `error` emit's handler key                    |
+| `onMapLoad`      | `(map: Map) => void`                 | `undefined` | Load success callback. Not `onLoad`, which is the `load` emit's handler key                        |
 
 ### Events
 
-| Event                  | Payload              | Description                                          |
-| ---------------------- | -------------------- | ---------------------------------------------------- |
-| `register`             | `MaplibreActions`    | Fired when map actions are registered                |
-| `load`                 | `MapLibreEvent`      | Fired when the map has finished loading              |
-| `error`                | `ErrorEvent`         | Fired when an error occurs                           |
-| `click`                | `MapMouseEvent`      | Fired when the map is clicked                        |
-| `dblclick`             | `MapMouseEvent`      | Fired when the map is double-clicked                 |
-| `contextmenu`          | `MapMouseEvent`      | Fired when right-clicking the map                    |
-| `mousemove`            | `MapMouseEvent`      | Fired when mouse moves over the map                  |
-| `mouseup`              | `MapMouseEvent`      | Fired when mouse button is released                  |
-| `mousedown`            | `MapMouseEvent`      | Fired when mouse button is pressed                   |
-| `mouseout`             | `MapMouseEvent`      | Fired when mouse leaves the map                      |
-| `mouseover`            | `MapMouseEvent`      | Fired when mouse enters the map                      |
-| `movestart`            | `MapLibreEvent`      | Fired when map movement starts                       |
-| `move`                 | `MapLibreEvent`      | Fired during map movement                            |
-| `moveend`              | `MapLibreEvent`      | Fired when map movement ends                         |
-| `zoomstart`            | `MapLibreEvent`      | Fired when zoom starts                               |
-| `zoom`                 | `MapLibreEvent`      | Fired during zoom                                    |
-| `zoomend`              | `MapLibreEvent`      | Fired when zoom ends                                 |
-| `rotatestart`          | `MapLibreEvent`      | Fired when rotation starts                           |
-| `rotate`               | `MapLibreEvent`      | Fired during rotation                                |
-| `rotateend`            | `MapLibreEvent`      | Fired when rotation ends                             |
-| `dragstart`            | `MapLibreEvent`      | Fired when dragging starts                           |
-| `drag`                 | `MapLibreEvent`      | Fired during dragging                                |
-| `dragend`              | `MapLibreEvent`      | Fired when dragging ends                             |
-| `pitchstart`           | `MapLibreEvent`      | Fired when pitch starts                              |
-| `pitch`                | `MapLibreEvent`      | Fired during pitch                                   |
-| `pitchend`             | `MapLibreEvent`      | Fired when pitch ends                                |
-| `wheel`                | `MapWheelEvent`      | Fired on mouse wheel events                          |
-| `terrain`              | `MapTerrainEvent`    | Fired on terrain events                              |
-| `touchstart`           | `MapTouchEvent`      | Fired when a touch begins                            |
-| `touchmove`            | `MapTouchEvent`      | Fired as a touch moves                               |
-| `touchend`             | `MapTouchEvent`      | Fired when a touch ends                              |
-| `touchcancel`          | `MapTouchEvent`      | Fired when a touch is interrupted                    |
-| `boxzoomstart`         | `MapLibreZoomEvent`  | Fired when a box zoom begins                         |
-| `boxzoomend`           | `MapLibreZoomEvent`  | Fired when a box zoom completes                      |
-| `boxzoomcancel`        | `MapLibreZoomEvent`  | Fired when a box zoom is cancelled                   |
-| `idle`                 | `Event`              | Fired when the map stops rendering                   |
-| `render`               | `Event`              | Fired on every frame the map draws                   |
-| `resize`               | `Event`              | Fired when the map container resizes                 |
-| `remove`               | `Event`              | Fired when the map is destroyed                      |
-| `data`                 | `MapDataEvent`       | Fired when any map data loads or changes             |
-| `dataloading`          | `MapDataEvent`       | Fired when data begins loading                       |
-| `dataabort`            | `MapDataEvent`       | Fired when a data request is aborted                 |
-| `tiledataloading`      | `MapDataEvent`       | Fired when a tile begins loading                     |
-| `sourcedata`           | `MapSourceDataEvent` | Fired when source data loads or changes              |
-| `sourcedataloading`    | `MapSourceDataEvent` | Fired when source data begins loading                |
-| `sourcedataabort`      | `MapSourceDataEvent` | Fired when a source request is aborted               |
-| `styledata`            | `Event`              | Fired when the style loads or changes                |
-| `styleimagemissing`    | `Event`              | Fired when the style needs an image it does not have |
-| `webglcontextlost`     | `MapContextEvent`    | Fired when the WebGL context is lost                 |
-| `webglcontextrestored` | `MapContextEvent`    | Fired when the WebGL context is restored             |
+| Event                  | Payload                                                              | Description                                          |
+| ---------------------- | -------------------------------------------------------------------- | ---------------------------------------------------- |
+| `register`             | `MaplibreActions`                                                    | Fired when map actions are registered                |
+| `load`                 | `MapLibreEvent`                                                      | Fired when the map has finished loading              |
+| `error`                | `ErrorEvent`                                                         | Fired when an error occurs                           |
+| `click`                | `MapMouseEvent`                                                      | Fired when the map is clicked                        |
+| `dblclick`             | `MapMouseEvent`                                                      | Fired when the map is double-clicked                 |
+| `contextmenu`          | `MapMouseEvent`                                                      | Fired when right-clicking the map                    |
+| `mousemove`            | `MapMouseEvent`                                                      | Fired when mouse moves over the map                  |
+| `mouseup`              | `MapMouseEvent`                                                      | Fired when mouse button is released                  |
+| `mousedown`            | `MapMouseEvent`                                                      | Fired when mouse button is pressed                   |
+| `mouseout`             | `MapMouseEvent`                                                      | Fired when mouse leaves the map                      |
+| `mouseover`            | `MapMouseEvent`                                                      | Fired when mouse enters the map                      |
+| `movestart`            | `MapLibreEvent<MouseEvent \| TouchEvent \| WheelEvent \| undefined>` | Fired when map movement starts                       |
+| `move`                 | `MapLibreEvent<MouseEvent \| TouchEvent \| WheelEvent \| undefined>` | Fired during map movement                            |
+| `moveend`              | `MapLibreEvent<MouseEvent \| TouchEvent \| WheelEvent \| undefined>` | Fired when map movement ends                         |
+| `zoomstart`            | `MapLibreEvent<MouseEvent \| TouchEvent \| WheelEvent \| undefined>` | Fired when zoom starts                               |
+| `zoom`                 | `MapLibreEvent<MouseEvent \| TouchEvent \| WheelEvent \| undefined>` | Fired during zoom                                    |
+| `zoomend`              | `MapLibreEvent<MouseEvent \| TouchEvent \| WheelEvent \| undefined>` | Fired when zoom ends                                 |
+| `rotatestart`          | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired when rotation starts                           |
+| `rotate`               | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired during rotation                                |
+| `rotateend`            | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired when rotation ends                             |
+| `dragstart`            | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired when dragging starts                           |
+| `drag`                 | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired during dragging                                |
+| `dragend`              | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired when dragging ends                             |
+| `pitchstart`           | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired when pitch starts                              |
+| `pitch`                | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired during pitch                                   |
+| `pitchend`             | `MapLibreEvent<MouseEvent \| TouchEvent \| undefined>`               | Fired when pitch ends                                |
+| `wheel`                | `MapWheelEvent`                                                      | Fired on mouse wheel events                          |
+| `terrain`              | `MapTerrainEvent`                                                    | Fired on terrain events                              |
+| `touchstart`           | `MapTouchEvent`                                                      | Fired when a touch begins                            |
+| `touchmove`            | `MapTouchEvent`                                                      | Fired as a touch moves                               |
+| `touchend`             | `MapTouchEvent`                                                      | Fired when a touch ends                              |
+| `touchcancel`          | `MapTouchEvent`                                                      | Fired when a touch is interrupted                    |
+| `boxzoomstart`         | `MapLibreZoomEvent`                                                  | Fired when a box zoom begins                         |
+| `boxzoomend`           | `MapLibreZoomEvent`                                                  | Fired when a box zoom completes                      |
+| `boxzoomcancel`        | `MapLibreZoomEvent`                                                  | Fired when a box zoom is cancelled                   |
+| `idle`                 | `MapLibreEvent`                                                      | Fired when the map stops rendering                   |
+| `render`               | `MapLibreEvent`                                                      | Fired on every frame the map draws                   |
+| `resize`               | `MapLibreEvent`                                                      | Fired when the map container resizes                 |
+| `remove`               | `MapLibreEvent`                                                      | Fired when the map is destroyed                      |
+| `data`                 | `MapDataEvent`                                                       | Fired when any map data loads or changes             |
+| `dataloading`          | `MapDataEvent`                                                       | Fired when data begins loading                       |
+| `dataabort`            | `MapDataEvent`                                                       | Fired when a data request is aborted                 |
+| `tiledataloading`      | `MapDataEvent`                                                       | Fired when a tile begins loading                     |
+| `sourcedata`           | `MapSourceDataEvent`                                                 | Fired when source data loads or changes              |
+| `sourcedataloading`    | `MapSourceDataEvent`                                                 | Fired when source data begins loading                |
+| `sourcedataabort`      | `MapSourceDataEvent`                                                 | Fired when a source request is aborted               |
+| `styledata`            | `MapStyleDataEvent`                                                  | Fired when the style loads or changes                |
+| `styleimagemissing`    | `MapStyleImageMissingEvent`                                          | Fired when the style needs an image it does not have |
+| `webglcontextlost`     | `MapContextEvent`                                                    | Fired when the WebGL context is lost                 |
+| `webglcontextrestored` | `MapContextEvent`                                                    | Fired when the WebGL context is restored             |
 
 ### Slots
 
@@ -144,18 +144,18 @@ A component for adding GeoJSON data sources to the map. This component provides 
 
 ### Props
 
-| Prop            | Type                                                 | Default                                       | Description                                                |
-| --------------- | ---------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------- |
-| `id`            | `string`                                             | `undefined`                                   | Unique identifier for the source                           |
-| `data`          | `GeoJSONSourceSpecification['data']`                 | `{ type: 'FeatureCollection', features: [] }` | GeoJSON data or URL to GeoJSON                             |
-| `options`       | `Partial<GeoJSONSourceSpecification>`                | `{}`                                          | Additional GeoJSON source options                          |
-| `debug`         | `boolean`                                            | `false`                                       | Enable debug logging                                       |
-| `autoCleanup`   | `boolean`                                            | `true`                                        | Automatically cleanup resources on unmount                 |
-| `register`      | `(actions: CreateGeoJsonSourceActions) => void`      | `undefined`                                   | Callback for registering source actions                    |
-| `onLoad`        | `(source: any) => void`                              | `undefined`                                   | Load success callback                                      |
-| `onError`       | `(error: any) => void`                               | `undefined`                                   | Error handling callback                                    |
-| `debounceDelay` | `number`                                             | `100`                                         | Delay in ms before a `data` change is pushed to the source |
-| `onDataUpdate`  | `(data: GeoJSONSourceSpecification['data']) => void` | `undefined`                                   | Data update callback                                       |
+| Prop            | Type                                                 | Default                                       | Description                                                                     |
+| --------------- | ---------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------- |
+| `id`            | `string`                                             | `undefined`                                   | Unique identifier for the source                                                |
+| `data`          | `GeoJSONSourceSpecification['data']`                 | `{ type: 'FeatureCollection', features: [] }` | GeoJSON data or URL to GeoJSON                                                  |
+| `options`       | `Partial<GeoJSONSourceSpecification>`                | `{}`                                          | Additional GeoJSON source options                                               |
+| `debug`         | `boolean`                                            | `false`                                       | Enable debug logging                                                            |
+| `autoCleanup`   | `boolean`                                            | `true`                                        | Automatically cleanup resources on unmount                                      |
+| `register`      | `(actions: CreateGeoJsonSourceActions) => void`      | `undefined`                                   | Callback for registering source actions                                         |
+| `onSourceLoad`  | `(source: GeoJSONSource) => void`                    | `undefined`                                   | Load success callback. Not `onLoad`, which is the `load` emit's handler key     |
+| `onSourceError` | `(error: any) => void`                               | `undefined`                                   | Error handling callback. Not `onError`, which is the `error` emit's handler key |
+| `debounceDelay` | `number`                                             | `100`                                         | Delay in ms before a `data` change is pushed to the source                      |
+| `onDataUpdate`  | `(data: GeoJSONSourceSpecification['data']) => void` | `undefined`                                   | Data update callback                                                            |
 
 ### Events
 
@@ -240,22 +240,22 @@ A component for rendering filled polygons from a data source. Supports all MapLi
 
 ### Events
 
-| Event         | Payload              | Description                                  |
-| ------------- | -------------------- | -------------------------------------------- |
-| `register`    | `CreateLayerActions` | Fired when layer is registered               |
-| `click`       | `MapLayerMouseEvent` | Fired when layer is clicked                  |
-| `dblclick`    | `MapLayerMouseEvent` | Fired when layer is double-clicked           |
-| `mousedown`   | `MapLayerMouseEvent` | Fired when mouse button is pressed on layer  |
-| `mouseup`     | `MapLayerMouseEvent` | Fired when mouse button is released on layer |
-| `mousemove`   | `MapLayerMouseEvent` | Fired when mouse moves over layer            |
-| `mouseenter`  | `MapLayerMouseEvent` | Fired when mouse enters layer                |
-| `mouseleave`  | `MapLayerMouseEvent` | Fired when mouse leaves layer                |
-| `mouseover`   | `MapLayerMouseEvent` | Fired when mouse is over layer               |
-| `mouseout`    | `MapLayerMouseEvent` | Fired when mouse leaves layer                |
-| `contextmenu` | `MapLayerMouseEvent` | Fired when right-clicking layer              |
-| `touchstart`  | `MapLayerTouchEvent` | Fired when touch starts on layer             |
-| `touchend`    | `MapLayerTouchEvent` | Fired when touch ends on layer               |
-| `touchcancel` | `MapLayerTouchEvent` | Fired when touch is cancelled on layer       |
+| Event         | Payload                                      | Description                                  |
+| ------------- | -------------------------------------------- | -------------------------------------------- |
+| `register`    | `CreateLayerActions<FillLayerSpecification>` | Fired when layer is registered               |
+| `click`       | `MapLayerMouseEvent`                         | Fired when layer is clicked                  |
+| `dblclick`    | `MapLayerMouseEvent`                         | Fired when layer is double-clicked           |
+| `mousedown`   | `MapLayerMouseEvent`                         | Fired when mouse button is pressed on layer  |
+| `mouseup`     | `MapLayerMouseEvent`                         | Fired when mouse button is released on layer |
+| `mousemove`   | `MapLayerMouseEvent`                         | Fired when mouse moves over layer            |
+| `mouseenter`  | `MapLayerMouseEvent`                         | Fired when mouse enters layer                |
+| `mouseleave`  | `MapLayerMouseEvent`                         | Fired when mouse leaves layer                |
+| `mouseover`   | `MapLayerMouseEvent`                         | Fired when mouse is over layer               |
+| `mouseout`    | `MapLayerMouseEvent`                         | Fired when mouse leaves layer                |
+| `contextmenu` | `MapLayerMouseEvent`                         | Fired when right-clicking layer              |
+| `touchstart`  | `MapLayerTouchEvent`                         | Fired when touch starts on layer             |
+| `touchend`    | `MapLayerTouchEvent`                         | Fired when touch ends on layer               |
+| `touchcancel` | `MapLayerTouchEvent`                         | Fired when touch is cancelled on layer       |
 
 ### Example
 
@@ -328,6 +328,8 @@ A component for rendering circles from point data sources. Perfect for displayin
 ### Events
 
 Same events as FillLayer (click, mousemove, etc.)
+
+<!-- events-like: FillLayer -->
 
 ### Example
 
@@ -402,6 +404,8 @@ A component for rendering lines from line data sources. Ideal for displaying rou
 
 Same events as FillLayer (click, mousemove, etc.)
 
+<!-- events-like: FillLayer -->
+
 ### Example
 
 ```vue
@@ -463,6 +467,8 @@ A component for rendering symbols (icons and text) from point data sources. Perf
 ### Events
 
 Same events as FillLayer (click, mousemove, etc.)
+
+<!-- events-like: FillLayer -->
 
 ### Example
 
@@ -721,17 +727,17 @@ A component for adding geolocation controls to the map. Provides user location t
 
 ### Props
 
-| Prop               | Type                               | Default          | Description                                      |
-| ------------------ | ---------------------------------- | ---------------- | ------------------------------------------------ |
-| `position`         | `ControlPosition`                  | `'bottom-right'` | Position of the control on the map               |
-| `options`          | `GeolocateControlOptions`          | `{}`             | Geolocate control configuration options          |
-| `debug`            | `boolean`                          | `false`          | Enable debug logging                             |
-| `autoCleanup`      | `boolean`                          | `true`           | Automatically cleanup resources on unmount       |
-| `onError`          | `(error: any) => void`             | `undefined`      | Error handling callback                          |
-| `onGeolocate`      | `(data: GeolocateSuccess) => void` | `undefined`      | Success callback for geolocation                 |
-| `onTrackingStart`  | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location tracking starts      |
-| `onTrackingEnd`    | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location tracking ends        |
-| `onOutOfMaxBounds` | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location is out of max bounds |
+| Prop                 | Type                               | Default          | Description                                                                      |
+| -------------------- | ---------------------------------- | ---------------- | -------------------------------------------------------------------------------- |
+| `position`           | `ControlPosition`                  | `'bottom-right'` | Position of the control on the map                                               |
+| `options`            | `GeolocateControlOptions`          | `{}`             | Geolocate control configuration options                                          |
+| `debug`              | `boolean`                          | `false`          | Enable debug logging                                                             |
+| `autoCleanup`        | `boolean`                          | `true`           | Automatically cleanup resources on unmount                                       |
+| `onGeolocateError`   | `(error: any) => void`             | `undefined`      | Error handling callback. Not `onError`, which is the `error` emit's handler key  |
+| `onGeolocateSuccess` | `(data: GeolocateSuccess) => void` | `undefined`      | Success callback. Not `onGeolocate`, which is the `geolocate` emit's handler key |
+| `onTrackingStart`    | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location tracking starts                                      |
+| `onTrackingEnd`      | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location tracking ends                                        |
+| `onOutOfMaxBounds`   | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location is out of max bounds                                 |
 
 ### Events
 

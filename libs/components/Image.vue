@@ -3,20 +3,8 @@ import { inject, ref, watch, onMounted, onUnmounted, effectScope } from 'vue';
 import type { EffectScope } from 'vue';
 import { useCreateImage, useLogger } from '@libs/composables';
 import { MapProvideKey } from '@libs/enums';
-import type { ImageDatas } from '@libs/types';
+import type { ImageItem } from '@libs/types';
 import type { StyleImageMetadata } from 'maplibre-gl';
-
-/**
- * Interface for individual image items
- */
-interface ImageItem {
-  /** Unique identifier for the image */
-  id: string;
-  /** Image data (URL string or ImageData/HTMLImageElement) */
-  image: ImageDatas | string;
-  /** Optional image metadata and options */
-  options?: Partial<StyleImageMetadata>;
-}
 
 /**
  * Props interface for Image component

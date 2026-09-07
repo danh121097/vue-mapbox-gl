@@ -38,7 +38,7 @@ interface GeoJsonSourceMethods {
 /**
  * Configuration options for GeoJSON source management
  */
-interface UseGeoJsonSourceProps {
+export interface UseGeoJsonSourceProps {
   debug?: boolean;
   autoRefresh?: boolean;
 }

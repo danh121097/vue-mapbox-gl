@@ -23,7 +23,7 @@ import {
   watchEffect,
 } from 'vue';
 
-interface CreateMaplibreProps extends MapOptions {
+export interface CreateMaplibreProps extends MapOptions {
   register?: (actions: SimplifiedCreateMaplibreActions) => void;
   debug?: boolean;
   onLoad?: (map: Map) => void;

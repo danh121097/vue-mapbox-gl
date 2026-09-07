@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { coverageSnippet, tableSnippet } from '../snippet-project';
+import {
+  componentCoverageSnippet,
+  componentTableSnippet,
+  coverageSnippet,
+  parametersSnippet,
+  tableSnippet,
+} from '../snippet-project';
 
 const FILE = 'docs/api/composables.md';
 
@@ -176,5 +182,213 @@ describe('tableSnippet', () => {
     };
 
     expect(tableSnippet(table, 1).label).not.toBe(tableSnippet(table, 2).label);
+  });
+});
+
+const COMPONENTS = 'docs/api/components.md';
+
+describe('componentTableSnippet', () => {
+  it('checks a prop row against the component instance type', () => {
+    const { code } = componentTableSnippet(
+      {
+        file: COMPONENTS,
+        composable: 'Marker',
+        headingLine: 10,
+        spreads: [],
+        fields: [{ name: 'lnglat', type: 'LngLatLike', line: 14 }],
+      },
+      'props',
+    );
+
+    expect(code).toContain(
+      "type Props = InstanceType<typeof Marker>['$props'];",
+    );
+    expect(code).toContain("type _0 = NonNullable<Props['lnglat']>;");
+    expect(code).toContain('type _d0 = LngLatLike;');
+  });
+
+  it('checks an event row against the payload, not the handler', () => {
+    const { code } = componentTableSnippet(
+      {
+        file: COMPONENTS,
+        composable: 'Maplibre',
+        headingLine: 22,
+        spreads: [],
+        fields: [{ name: 'click', type: 'MapMouseEvent', line: 29 }],
+      },
+      'events',
+    );
+
+    expect(code).toContain(
+      "type _0 = Parameters<NonNullable<Props['onClick']>>[0];",
+    );
+  });
+
+  it('keys a hyphenated or namespaced emit the way Vue does', () => {
+    // Vue capitalises the first letter and nothing else, so camelising here
+    // would produce `onDataUpdate` and `onUpdateShow` -- names no component has.
+    const { code } = componentTableSnippet(
+      {
+        file: COMPONENTS,
+        composable: 'GeoJsonSource',
+        headingLine: 22,
+        spreads: [],
+        fields: [
+          { name: 'data-update', type: 'string', line: 29 },
+          { name: 'update:show', type: 'boolean', line: 30 },
+        ],
+      },
+      'events',
+    );
+
+    expect(code).toContain("Props['onData-update']");
+    expect(code).toContain("Props['onUpdate:show']");
+  });
+
+  it('reads a void payload as a handler that takes no arguments', () => {
+    // `Parameters<...>[0]` on a no-argument handler fails as a missing tuple
+    // element, which would report a row that is right.
+    const { code } = componentTableSnippet(
+      {
+        file: COMPONENTS,
+        composable: 'Popup',
+        headingLine: 22,
+        spreads: [],
+        fields: [{ name: 'close', type: 'void', line: 29 }],
+      },
+      'events',
+    );
+
+    expect(code).toContain(
+      "type _0 = Parameters<NonNullable<Props['onClose']>>['length'];",
+    );
+    expect(code).toContain('const _n0: 0 =');
+  });
+});
+
+describe('componentCoverageSnippet', () => {
+  it('excludes documented props and emits, and Vue own keys', () => {
+    const { code } = componentCoverageSnippet({
+      file: COMPONENTS,
+      component: 'Popup',
+      line: 22,
+      props: ['lnglat'],
+      events: ['close', 'update:show'],
+      eventsLike: [],
+    });
+
+    expect(code).toContain("| 'lnglat' | 'onClose' | 'onUpdate:show'");
+    expect(code).toContain('| keyof VNodeProps');
+  });
+
+  it('forgives the events a component says it shares with another', () => {
+    const { code } = componentCoverageSnippet({
+      file: COMPONENTS,
+      component: 'CircleLayer',
+      line: 22,
+      props: ['id'],
+      events: [],
+      eventsLike: ['FillLayer'],
+    });
+
+    expect(code).toContain(
+      "import { CircleLayer, FillLayer } from 'vue3-maplibre-gl';",
+    );
+    expect(code).toContain("keyof InstanceType<typeof FillLayer>['$props']");
+  });
+});
+
+describe('parametersSnippet', () => {
+  it('makes the call the table describes, one property per line', () => {
+    const { code } = parametersSnippet(
+      {
+        file: FILE,
+        composable: 'useZoomTo',
+        headingLine: 40,
+        spreads: [],
+        fields: [
+          { name: 'map', type: 'MaybeRef<Map | null>', line: 44 },
+          { name: 'zoom', type: 'number', line: 45 },
+        ],
+      },
+      ['props'],
+    );
+
+    expect(code).toContain('void useZoomTo({');
+    expect(code).toContain("  'map': _v0,");
+    expect(code).toContain("  'zoom': _v1,");
+  });
+
+  it('passes the rows in order when they name the parameters themselves', () => {
+    const { code } = parametersSnippet(
+      {
+        file: FILE,
+        composable: 'useDebouncedRef',
+        headingLine: 40,
+        spreads: [],
+        fields: [
+          { name: 'initialValue', type: 'number', line: 44 },
+          { name: 'delay', type: 'number', line: 45 },
+        ],
+      },
+      ['initialValue', 'delay'],
+    );
+
+    expect(code).toContain('void useDebouncedRef(_v0, _v1);');
+  });
+
+  it('treats one row against one parameter as that parameter', () => {
+    // Several composables take a single destructured props object, whose
+    // declared "name" is the whole binding pattern rather than `props`.
+    const { code } = parametersSnippet(
+      {
+        file: FILE,
+        composable: 'useCreateGeoJsonSource',
+        headingLine: 40,
+        spreads: [],
+        fields: [{ name: 'props', type: 'CreateGeoJsonSourceProps', line: 44 }],
+      },
+      ['{ map: mapRef, id, data }'],
+    );
+
+    expect(code).toContain('void useCreateGeoJsonSource(_v0);');
+  });
+
+  it('checks a generic row with a real type parameter, not any', () => {
+    const { code } = parametersSnippet(
+      {
+        file: FILE,
+        composable: 'useDebouncedRef',
+        headingLine: 40,
+        spreads: [],
+        fields: [{ name: 'initialValue', type: 'T', line: 44 }],
+      },
+      ['initialValue'],
+      1,
+      '<T>',
+    );
+
+    expect(code).toContain('function _call<T>(): void {');
+    expect(code).not.toContain('type T = any;');
+  });
+
+  it('maps each row to its own markdown line', () => {
+    const { lineMap, code } = parametersSnippet(
+      {
+        file: FILE,
+        composable: 'useZoomTo',
+        headingLine: 40,
+        spreads: [],
+        fields: [
+          { name: 'map', type: 'MaybeRef<Map | null>', line: 44 },
+          { name: 'zoom', type: 'number', line: 45 },
+        ],
+      },
+      ['props'],
+    );
+
+    const lines = code.split('\n');
+    expect(lineMap).toHaveLength(lines.length);
+    expect(lineMap![lines.indexOf("  'zoom': _v1,")]).toBe(45);
   });
 });

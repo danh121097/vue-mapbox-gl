@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  extractEventsLike,
+  extractEventTables,
+  extractPropTables,
   extractReturnTables,
   listComposables,
   splitRow,
@@ -287,5 +290,122 @@ describe('listComposables', () => {
       { name: 'usePanTo', line: 3 },
       { name: 'useFlyTo', line: 7 },
     ]);
+  });
+});
+
+const COMPONENTS = 'docs/api/components.md';
+const COMPONENT_NAME_RE = /\b(?:Maplibre|FillLayer|CircleLayer|Popup)\b/g;
+
+describe('extractPropTables / extractEventTables', () => {
+  it('reads a component section headed at ##, not ###', () => {
+    const source = `## Maplibre
+
+### Props
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| \`debug\` | \`boolean\` | \`false\` | Log |
+
+### Events
+
+| Event | Payload | Description |
+| ----- | ------- | ----------- |
+| \`click\` | \`MapMouseEvent\` | Clicked |
+`;
+
+    expect(
+      extractPropTables(COMPONENTS, source, COMPONENT_NAME_RE).map((t) => [
+        t.composable,
+        t.fields.map((f) => [f.name, f.type]),
+      ]),
+    ).toEqual([['Maplibre', [['debug', 'boolean']]]]);
+
+    expect(
+      extractEventTables(COMPONENTS, source, COMPONENT_NAME_RE).map((t) => [
+        t.composable,
+        t.fields.map((f) => [f.name, f.type]),
+      ]),
+    ).toEqual([['Maplibre', [['click', 'MapMouseEvent']]]]);
+  });
+
+  it('reads an event name that is not a bare identifier', () => {
+    // `data-update` and `update:show` are real emit names, and Vue keys them
+    // verbatim. A pattern that only allowed identifiers dropped both rows, and
+    // a dropped row is a row nothing checks.
+    const found = extractEventTables(
+      COMPONENTS,
+      `## Popup
+
+### Events
+
+| Event | Payload | Description |
+| ----- | ------- | ----------- |
+| \`update:show\` | \`boolean\` | Shown |
+| \`data-update\` | \`string\` | Updated |
+`,
+      COMPONENT_NAME_RE,
+    );
+
+    expect(found[0]!.fields.map((f) => f.name)).toEqual([
+      'update:show',
+      'data-update',
+    ]);
+  });
+
+  it('does not read a Props table as an Events one', () => {
+    const source = `## Maplibre
+
+### Props
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| \`debug\` | \`boolean\` | \`false\` | Log |
+`;
+
+    expect(extractEventTables(COMPONENTS, source, COMPONENT_NAME_RE)).toEqual(
+      [],
+    );
+  });
+});
+
+describe('extractEventsLike', () => {
+  it('reads the component each marker defers to', () => {
+    expect(
+      extractEventsLike(
+        `## CircleLayer
+
+### Events
+
+Same events as FillLayer (click, mousemove, etc.)
+
+<!-- events-like: FillLayer -->
+
+## Popup
+
+### Events
+
+| Event | Payload |
+| ----- | ------- |
+| \`close\` | \`void\` |
+`,
+        COMPONENT_NAME_RE,
+      ),
+    ).toEqual(new Map([['CircleLayer', ['FillLayer']]]));
+  });
+
+  it('finds no marker where a section does not carry one', () => {
+    expect(
+      extractEventsLike(
+        `## Popup
+
+### Events
+
+| Event | Payload |
+| ----- | ------- |
+| \`close\` | \`void\` |
+`,
+        COMPONENT_NAME_RE,
+      ),
+    ).toEqual(new Map());
   });
 });

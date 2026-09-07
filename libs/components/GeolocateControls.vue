@@ -37,9 +37,17 @@ interface GeolocateControlProps {
   /** Automatically cleanup resources on unmount */
   autoCleanup?: boolean;
   /** Error handling callback */
-  onError?: (error: any) => void;
-  /** Success callback for geolocation */
-  onGeolocate?: (data: GeolocateSuccess) => void;
+  /**
+   * Error handling callback.
+   *
+   * Not `onError`: this component also emits `error`, and Vue puts an emit's
+   * handler on `$props` under that same `onError` key. One key for both meant
+   * `@error="fn"` called `fn` twice -- once through the emit, once through
+   * `props.onError`.
+   */
+  onGeolocateError?: (error: any) => void;
+  /** Success callback for geolocation. Named for the same reason as `onGeolocateError`. */
+  onGeolocateSuccess?: (data: GeolocateSuccess) => void;
   /** Callback when user location tracking starts */
   onTrackingStart?: (data: GeolocateSuccess) => void;
   /** Callback when user location tracking ends */
@@ -105,11 +113,11 @@ function handleGeolocateEvent(
     // Call specific callback handlers
     switch (eventType) {
       case 'geolocate':
-        props.onGeolocate?.(data as GeolocateSuccess);
+        props.onGeolocateSuccess?.(data as GeolocateSuccess);
         break;
       case 'error':
         controlError.value = data;
-        props.onError?.(data);
+        props.onGeolocateError?.(data);
         break;
       case 'trackuserlocationstart':
         props.onTrackingStart?.(data as GeolocateSuccess);
@@ -126,7 +134,7 @@ function handleGeolocateEvent(
   } catch (error) {
     logError(`Error handling ${eventType} event:`, error, { data });
     controlError.value = error;
-    props.onError?.(error);
+    props.onGeolocateError?.(error);
   }
 }
 
@@ -141,7 +149,7 @@ watchEffect(() => {
   } catch (error) {
     logError('Error registering geolocate control:', error);
     controlError.value = error;
-    props.onError?.(error);
+    props.onGeolocateError?.(error);
   }
 });
 
