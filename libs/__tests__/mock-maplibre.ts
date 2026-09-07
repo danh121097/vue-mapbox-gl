@@ -13,6 +13,13 @@ export class MockMap {
   style: Record<string, unknown> = {};
   private listeners = new Map<string, Set<(...args: any[]) => void>>();
   /**
+   * Layer-scoped handlers, keyed `event::layerId`. MapLibre's three-argument
+   * `on(type, layerId, handler)` is a different subscription from the global
+   * two-argument form, and the library uses it for every layer event — a mock
+   * that collapsed the two would make an unattached listener look attached.
+   */
+  private layerListeners = new Map<string, Set<(...args: any[]) => void>>();
+  /**
    * Per event, the wrapper `once` actually attached, keyed by the handler the
    * caller passed. MapLibre's `Evented` keeps one-time listeners in their own
    * list and `off` searches it by identity, so `off(type, handler)` cancels a
@@ -28,6 +35,13 @@ export class MockMap {
   private sources = new Map<string, unknown>();
   private layers = new Map<string, unknown>();
   private isLoaded = false;
+  /**
+   * Tracked separately from `isLoaded`: MapLibre's `loaded()` also waits on
+   * in-flight tiles, while `isStyleLoaded()` only reports the style. Code that
+   * gates on one is not interchangeable with code that gates on the other, so
+   * a test can drive them apart with `setStyleLoaded`.
+   */
+  private styleLoaded = false;
 
   setCenter = vi.fn();
   setZoom = vi.fn();
@@ -47,19 +61,60 @@ export class MockMap {
     this.options = options;
   }
 
-  on(event: string, handler: (...args: any[]) => void): this {
-    if (!this.listeners.has(event)) this.listeners.set(event, new Set());
-    this.listeners.get(event)!.add(handler);
+  /**
+   * Splits MapLibre's overloaded signature: `(type, handler)` subscribes to the
+   * map, `(type, layerId, handler)` subscribes to one layer.
+   */
+  private resolveTarget(
+    event: string,
+    layerIdOrHandler: string | ((...args: any[]) => void),
+    maybeHandler?: (...args: any[]) => void,
+  ): {
+    store: Map<string, Set<(...args: any[]) => void>>;
+    key: string;
+    handler: (...args: any[]) => void;
+  } {
+    if (typeof layerIdOrHandler === 'string') {
+      return {
+        store: this.layerListeners,
+        key: `${event}::${layerIdOrHandler}`,
+        handler: maybeHandler!,
+      };
+    }
+    return { store: this.listeners, key: event, handler: layerIdOrHandler };
+  }
+
+  on(
+    event: string,
+    layerIdOrHandler: string | ((...args: any[]) => void),
+    maybeHandler?: (...args: any[]) => void,
+  ): this {
+    const { store, key, handler } = this.resolveTarget(
+      event,
+      layerIdOrHandler,
+      maybeHandler,
+    );
+    if (!store.has(key)) store.set(key, new Set());
+    store.get(key)!.add(handler);
     return this;
   }
 
-  off(event: string, handler: (...args: any[]) => void): this {
-    this.listeners.get(event)?.delete(handler);
+  off(
+    event: string,
+    layerIdOrHandler: string | ((...args: any[]) => void),
+    maybeHandler?: (...args: any[]) => void,
+  ): this {
+    const { store, key, handler } = this.resolveTarget(
+      event,
+      layerIdOrHandler,
+      maybeHandler,
+    );
+    store.get(key)?.delete(handler);
 
-    const wrapped = this.onceWrappers.get(event)?.get(handler);
+    const wrapped = this.onceWrappers.get(key)?.get(handler);
     if (wrapped) {
-      this.listeners.get(event)?.delete(wrapped);
-      this.onceWrappers.get(event)!.delete(handler);
+      store.get(key)?.delete(wrapped);
+      this.onceWrappers.get(key)!.delete(handler);
     }
     return this;
   }
@@ -74,17 +129,40 @@ export class MockMap {
     return this.on(event, wrapped);
   }
 
-  /** Test helper — dispatches an event to every attached handler. */
+  /** Test helper — dispatches an event to every map-level handler. */
   fire(event: string, ...args: any[]): void {
-    if (event === 'load') this.isLoaded = true;
+    if (event === 'load') {
+      this.isLoaded = true;
+      this.styleLoaded = true;
+    }
     [...(this.listeners.get(event) ?? [])].forEach((handler) =>
       handler(...args),
     );
   }
 
-  /** Test helper — how many handlers are attached for an event. */
+  /** Test helper — dispatches an event to the handlers bound to one layer. */
+  fireOnLayer(event: string, layerId: string, ...args: any[]): void {
+    [...(this.layerListeners.get(`${event}::${layerId}`) ?? [])].forEach(
+      (handler) => handler(...args),
+    );
+  }
+
+  /** Test helper — how many map-level handlers are attached for an event. */
   listenerCount(event: string): number {
     return this.listeners.get(event)?.size ?? 0;
+  }
+
+  /** Test helper — how many handlers are bound to one layer's event. */
+  layerListenerCount(event: string, layerId: string): number {
+    return this.layerListeners.get(`${event}::${layerId}`)?.size ?? 0;
+  }
+
+  /**
+   * Test helper — drives `isStyleLoaded()` without also claiming every tile has
+   * arrived, so a gate on the wrong one of the two is visible.
+   */
+  setStyleLoaded(value: boolean): void {
+    this.styleLoaded = value;
   }
 
   loaded(): boolean {
@@ -92,7 +170,7 @@ export class MockMap {
   }
 
   isStyleLoaded(): boolean {
-    return this.isLoaded;
+    return this.styleLoaded;
   }
 
   getCenter() {
