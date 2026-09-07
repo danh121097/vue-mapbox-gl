@@ -443,6 +443,46 @@ for (let i = 0; i < lines.length; i++) {
 // than nullability is reported by both passes.
 // Links and names are prose, and prose is where the last several
 // documentation bugs lived.
+/**
+ * Every corpus the summary line counts, and the sentence that says what an
+ * empty one means. A count of zero is the one result that reads exactly like a
+ * clean run: nothing was wrong because nothing was looked at. The whole point
+ * of printing these numbers is that a person notices when one collapses -- and
+ * a person reading CI output is not a check, so the numbers are asserted.
+ */
+const CORPORA: [string, number, string][] = [
+  ['code blocks', blockCount, 'no fenced block was extracted from docs/'],
+  ['Returns tables', tableCount, 'no Returns heading was matched'],
+  [
+    'documented parameters',
+    parameterCount,
+    'no Parameters heading was matched',
+  ],
+  ['composable returns', coverageCount, 'no composable return was compared'],
+  ['documented types', typeCount, 'no type alias was matched'],
+  ['component props', propCount, 'no Props heading was matched'],
+  ['component events', eventCount, 'no Events heading was matched'],
+  ['component slots', slotCount, 'no Slots heading was matched'],
+  [
+    'prop/emit names',
+    collisions.checked,
+    'no built component declaration was read -- has `bun run build` run?',
+  ],
+  ['documented defaults', defaults.compared, 'no Default column was compared'],
+  [
+    'markup attributes',
+    attributeCount,
+    'no component tag was found in any example',
+  ],
+];
+for (const [corpus, count, why] of CORPORA) {
+  if (count > 0) continue;
+  reported.push({
+    location: 'build/docs-snippets/check-doc-snippets.ts',
+    message: `error: the ${corpus} check read nothing — ${why}`,
+  });
+}
+
 reported.push(...collisions.problems);
 reported.push(...defaults.problems);
 

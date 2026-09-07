@@ -22,7 +22,7 @@
  * that is intersected onto them, and those two are the only places the two
  * halves stay separate before Vue merges them.
  */
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import ts from 'typescript';
 
@@ -125,6 +125,11 @@ export function checkPropEmitCollisions(rootDir: string): {
   const dir = resolve(rootDir, 'dist/components');
   const problems: CollisionProblem[] = [];
   let checked = 0;
+
+  // Absent rather than empty is still zero read, and `checked` is what says
+  // so. Throwing here would make the caller's failure "no such directory"
+  // rather than "this check read nothing", which is the more useful sentence.
+  if (!existsSync(dir)) return { problems, checked };
 
   for (const entry of readdirSync(dir).sort()) {
     if (!entry.endsWith('.vue.d.ts')) continue;
