@@ -826,22 +826,31 @@ export function parametersSnippet(
   // declared "name" is the whole pattern. Otherwise the rows are the arguments
   // in order only if the declaration has a parameter for each of their names;
   // anything else is the fields of the props object.
+  const realNames = (realParams ?? '')
+    .slice(1, -1)
+    .split(/,(?![^<]*>)/)
+    .map((parameter) => parameter.trim().split(/[\s=]/)[0]!)
+    .filter(Boolean);
+
   const positional = Boolean(
     declared?.length &&
       (rows.length === 1 ||
         rows.every((field) => declared.includes(field.name))),
   );
 
-  const realNames = (realParams ?? '')
-    .slice(1, -1)
-    .split(/,(?![^<]*>)/)
-    .map((parameter) => parameter.trim().split(/[\s=]/)[0]!)
-    .filter(Boolean);
+  // The names to treat as type parameters rather than as package exports.
+  // A one-letter guess covers `T` and misses `Layer`, which `useCreateLayer`
+  // declares and the reference writes into `Layer['layout']`; the declaration
+  // is asked instead, and the one-letter rule stays as the fallback for a
+  // table whose composable has no declared parameters to read.
+  const declaredGenerics = new Set(realNames);
   const generics = [
     ...new Set(
       rows.flatMap((field) =>
-        (field.type!.match(/\b[A-Z]\b/g) ?? []).filter((name) =>
-          GENERIC_RE.test(name),
+        (field.type!.match(/\b[A-Z][A-Za-z0-9_]*\b/g) ?? []).filter((name) =>
+          declaredGenerics.size
+            ? declaredGenerics.has(name)
+            : GENERIC_RE.test(name),
         ),
       ),
     ),
@@ -851,12 +860,34 @@ export function parametersSnippet(
   // it does not.
   const generic = Boolean(generics.length && realParams);
 
+  // Imports, on the same terms as `tableSnippet`: a declared type parameter
+  // (`Layer`) is not a name to import, and the constraint its declaration
+  // names (`LayerSpecification`) is, because the generated function repeats
+  // the parameter list verbatim.
+  const imported = new Set(
+    [
+      ...rows.flatMap((field) => referencedTypes(field.type!)),
+      ...referencedTypes(realParams ?? ''),
+    ].filter((name) => !declaredGenerics.has(name)),
+  );
+  const from = (source: Set<string> | null, module: string): string[] => {
+    const wanted = [...imported]
+      .filter((name) =>
+        source
+          ? source.has(name)
+          : !FROM_VUE.has(name) && !FROM_MAPLIBRE.has(name),
+      )
+      .sort();
+    return wanted.length
+      ? [`import type { ${wanted.join(', ')} } from '${module}';`]
+      : [];
+  };
+
   const head = [
     ...(generic ? [] : generics.map((name) => `type ${name} = any;`)),
-    ...typeImports(rows.map((field) => field.type!)).map((line) =>
-      // A documented type parameter is not a name to import.
-      generics.some((name) => line.includes(`{ ${name} }`)) ? '' : line,
-    ),
+    ...from(FROM_VUE, 'vue'),
+    ...from(FROM_MAPLIBRE, 'maplibre-gl'),
+    ...from(null, 'vue3-maplibre-gl'),
     `import { ${table.composable} } from 'vue3-maplibre-gl';`,
     ...(generic
       ? [
@@ -887,23 +918,123 @@ export function parametersSnippet(
   // of them maps back to the row that wrote it. An overload failure is still
   // reported at the call, which maps to the heading -- the message names the
   // property either way.
-  const call = positional
-    ? [
-        `void ${table.composable}(` +
-          `${rows.map((_, index) => `_v${index}`).join(', ')});`,
-      ]
-    : [
-        `void ${table.composable}({`,
-        ...rows.map((field, index) => `  '${field.name}': _v${index},`),
-        `});`,
-      ];
-  const callLines = positional
-    ? [table.headingLine]
-    : [
-        table.headingLine,
-        ...rows.map((field) => field.line),
-        table.headingLine,
-      ];
+  // A row may name a declared parameter and then its fields
+  // (`options`, `options.debug`). The dot navigates from the parameter there,
+  // not from a property of one argument object, so each parameter is built
+  // separately and the call is positional after all.
+  const index = new Map(rows.map((field, at) => [field.name, at]));
+  const byParameter = (declared ?? []).map((parameter) => ({
+    parameter,
+    at: index.get(parameter),
+    children: rows.filter((field) => field.name.startsWith(`${parameter}.`)),
+  }));
+  const perParameter =
+    !positional && byParameter.some((entry) => entry.children.length);
+
+  // Which argument the object is. `useCreateMaplibre(elRef, styleRef, props)`
+  // and `useDebounce(func, options)` both tabulate their last parameter, and
+  // an options object is last by convention, so the earlier positions are
+  // filled with a `never` -- which every parameter accepts -- and the object
+  // goes at the end. Guessing wrong cannot pass quietly: the call stops
+  // compiling.
+  const leading = positional ? 0 : Math.max((declared?.length ?? 1) - 1, 0);
+
+  // A row may name a field of a nested object (`callbacks.onLoad`). Writing it
+  // flat would leave the object without the property the signature requires,
+  // and the whole call would fail for a reason no row is responsible for.
+  const nested = new Map<string, string[]>();
+  const flat: string[] = [];
+  const flatLines: number[] = [];
+  rows.forEach((field, index) => {
+    const dot = field.name.indexOf('.');
+    if (dot === -1) {
+      flat.push(`  '${field.name}': _v${index},`);
+      flatLines.push(field.line);
+      return;
+    }
+    const parent = field.name.slice(0, dot);
+    const child = field.name.slice(dot + 1);
+    nested.set(parent, [
+      ...(nested.get(parent) ?? []),
+      `    '${child}': _v${index},`,
+    ]);
+  });
+  const nestedLines: number[] = [];
+  const nestedBody: string[] = [];
+  for (const [parent, properties] of nested) {
+    nestedBody.push(`  '${parent}': {`, ...properties, '  },');
+    nestedLines.push(
+      table.headingLine,
+      ...properties.map(() => table.headingLine),
+      table.headingLine,
+    );
+  }
+
+  if (
+    leading ||
+    (perParameter &&
+      byParameter.some(
+        (entry) => entry.at === undefined && !entry.children.length,
+      ))
+  ) {
+    // `never` is assignable to every parameter type, so one placeholder stands
+    // in for any signature's earlier arguments without claiming to know them.
+    values.push('const _rest = null as never;');
+    valueLines.push(table.headingLine);
+  }
+
+  const perParameterCall: string[] = [];
+  const perParameterLines: number[] = [];
+  if (perParameter) {
+    perParameterCall.push(`void ${table.composable}(`);
+    perParameterLines.push(table.headingLine);
+    for (const entry of byParameter) {
+      if (entry.children.length) {
+        // The fields document the parameter; the row naming the parameter
+        // itself only says it is an object, which its own `const` already
+        // checks.
+        perParameterCall.push('  {');
+        perParameterLines.push(table.headingLine);
+        for (const field of entry.children) {
+          perParameterCall.push(
+            `    '${field.name.slice(entry.parameter.length + 1)}': ` +
+              `_v${index.get(field.name)},`,
+          );
+          perParameterLines.push(field.line);
+        }
+        perParameterCall.push('  },');
+        perParameterLines.push(table.headingLine);
+      } else {
+        perParameterCall.push(
+          entry.at === undefined ? '  _rest,' : `  _v${entry.at},`,
+        );
+        perParameterLines.push(
+          entry.at === undefined ? table.headingLine : rows[entry.at]!.line,
+        );
+      }
+    }
+    perParameterCall.push(');');
+    perParameterLines.push(table.headingLine);
+  }
+
+  const call = perParameter
+    ? perParameterCall
+    : positional
+      ? [
+          `void ${table.composable}(` +
+            `${rows.map((_, at) => `_v${at}`).join(', ')});`,
+        ]
+      : [
+          `void ${table.composable}(${'_rest, '.repeat(leading)}{`,
+          ...flat,
+          ...nestedBody,
+          `});`,
+        ];
+  const callLines = perParameter
+    ? perParameterLines
+    : positional
+      ? [table.headingLine]
+      : [table.headingLine, ...flatLines, ...nestedLines, table.headingLine];
   if (generic) {
     call.push('}', 'export { _call };');
     callLines.push(table.headingLine, table.headingLine);

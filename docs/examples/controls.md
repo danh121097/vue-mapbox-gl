@@ -47,30 +47,18 @@ function onGeolocateError(error) {
 </script>
 ```
 
-### Props
+### Props and events
 
-| Prop          | Type                      | Default          | Description                     |
-| ------------- | ------------------------- | ---------------- | ------------------------------- |
-| `position`    | `ControlPosition`         | `'bottom-right'` | Corner the control is placed in |
-| `options`     | `GeolocateControlOptions` | `{}`             | Passed to MapLibre's control    |
-| `debug`       | `boolean`                 | `false`          | Enable debug logging            |
-| `autoCleanup` | `boolean`                 | `true`           | Remove the control on unmount   |
+Both are tabulated in the reference: [`GeolocateControls`](/api/components#geolocatecontrols).
+They are not repeated here — the tables on this page had already drifted from
+it once, advertising callback props named `onGeolocate` and `onError` that were
+renamed when it turned out Vue keys the `geolocate` and `error` emits' own
+listeners there.
 
-Callback props mirror the events: `onGeolocateSuccess`, `onGeolocateError`,
-`onTrackingStart`, `onTrackingEnd`, `onOutOfMaxBounds`. The first two are not
-`onGeolocate` and `onError`, because Vue already keys the `geolocate` and
-`error` emits' listeners there.
-
-### Events
-
-| Event                    | Payload                    | Description                       |
-| ------------------------ | -------------------------- | --------------------------------- |
-| `register`               | `GeolocateControl`         | The underlying MapLibre control   |
-| `geolocate`              | `GeolocateSuccess`         | A position was resolved           |
-| `error`                  | `GeolocationPositionError` | Geolocation failed or was denied  |
-| `outofmaxbounds`         | `GeolocateSuccess`         | Position lies outside `maxBounds` |
-| `trackuserlocationstart` | `GeolocateSuccess`         | Continuous tracking began         |
-| `trackuserlocationend`   | `GeolocateSuccess`         | Continuous tracking ended         |
+Two things worth knowing before you read them: the event names are MapLibre's
+own, so `@trackuserlocationstart` rather than `@trackingstart`; and the
+callback props are `onGeolocateSuccess`, `onGeolocateError`, `onTrackingStart`,
+`onTrackingEnd` and `onOutOfMaxBounds`.
 
 ## MapLibre's own controls
 

@@ -30,7 +30,15 @@ const COMPOSABLE_NAME_RE = /\buse[A-Z][A-Za-z0-9_]*/g;
 const RETURNS_HEADING_RE = /^#{2,5}\s+Returns\s*$/;
 
 /** The other tabulated sections, which document an input rather than a return. */
-const PARAMETERS_HEADING_RE = /^#{2,5}\s+Parameters\s*$/;
+/**
+ * `#### Parameters`, and the qualified spellings the reference also uses:
+ * `#### Parameters (\`CreateImageProps\`)` names the interface the table
+ * describes, and `#### \`props\` fields` names the object those fields sit in.
+ * Anchoring on the bare word alone left ten tables matching nothing -- and a
+ * table no pattern reaches is a table nothing checks, which is exactly what a
+ * clean run looks like.
+ */
+const PARAMETERS_HEADING_RE = /^#{2,5}\s+(?:Parameters\b|`?props`? fields\s*$)/;
 const PROPS_HEADING_RE = /^#{2,5}\s+Props\s*$/;
 const EVENTS_HEADING_RE = /^#{2,5}\s+Events\s*$/;
 const SLOTS_HEADING_RE = /^#{2,5}\s+Slots\s*$/;
@@ -46,11 +54,15 @@ const TYPE_HEADERS = ['type', 'payload'];
 const DEFAULT_HEADER = 'default';
 
 /**
- * A table row's first cell, which holds the field name in backticks. A plain
- * number is a tuple index: `useDebouncedRef` returns `[ref, ref, flush, cancel]`
+ * A table row's first cell, which holds the field name in backticks. A dot is
+ * a path into a nested object -- `callbacks.onLoad` is a field of the
+ * `callbacks` the composable takes, and dropping the row rather than reading
+ * it left the whole table unchecked, because the object the check builds was
+ * then missing a property the signature requires. A plain number is a tuple
+ * index: `useDebouncedRef` returns `[ref, ref, flush, cancel]`
  * and documents it by position, and `Returned['0']` checks that just as well.
  */
-const FIELD_CELL_RE = /^\|\s*`([A-Za-z_$][\w$]*(?:[-:][\w$]+)*|\d+)`\s*\|/;
+const FIELD_CELL_RE = /^\|\s*`([A-Za-z_$][\w$]*(?:[-:.][\w$]+)*|\d+)`\s*\|/;
 
 /** A cell holding one backticked type expression and nothing else. */
 const TYPE_CELL_RE = /^`(.+)`$/;

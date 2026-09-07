@@ -472,3 +472,67 @@ describe('slotSnippet', () => {
     expect(code).toContain('__slot');
   });
 });
+
+describe('parametersSnippet argument positions', () => {
+  function table(fields: [string, string][], line = 44) {
+    return {
+      file: FILE,
+      composable: 'useThing',
+      headingLine: 40,
+      spreads: [],
+      fields: fields.map(([name, type], index) => ({
+        name,
+        type,
+        defaultCell: null,
+        line: line + index,
+      })),
+    };
+  }
+
+  it('puts the object last when the function takes more than one argument', () => {
+    // `useCreateMaplibre(elRef, styleRef, props)` tabulates only `props`.
+    // Calling it with the object alone failed on the argument count, which is a
+    // diagnostic about the check rather than about the table.
+    const { code } = parametersSnippet(
+      table([
+        ['debug', 'boolean'],
+        ['onLoad', '() => void'],
+      ]),
+      ['elRef', 'styleRef', 'props'],
+    );
+
+    expect(code).toContain('const _rest = null as never;');
+    expect(code).toContain('void useThing(_rest, _rest, {');
+  });
+
+  it('nests a dotted row under the object it belongs to', () => {
+    const { code } = parametersSnippet(
+      table([
+        ['map', 'MaybeRef<Map>'],
+        ['callbacks.onLoad', '(map: Map) => void'],
+      ]),
+      ['props'],
+    );
+
+    expect(code).toContain("'callbacks': {");
+    expect(code).toContain("    'onLoad': _v1,");
+  });
+
+  it('builds each parameter separately when a row names one', () => {
+    // `useMaplibre(options)` tabulates `options` and then `options.debug`. The
+    // dot navigates from the parameter there, not from a property of a single
+    // argument object, and writing it flat made the object claim a property
+    // called `options` that the signature has no room for.
+    const { code } = parametersSnippet(
+      table([
+        ['options', 'object'],
+        ['options.debug', 'boolean'],
+      ]),
+      ['options'],
+    );
+
+    expect(code).toContain('void useThing(');
+    expect(code).toContain("    'debug': _v1,");
+    expect(code).not.toContain("'options':");
+  });
+});

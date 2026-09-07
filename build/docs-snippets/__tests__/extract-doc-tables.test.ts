@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   extractEventsLike,
   extractEventTables,
+  extractParameterTables,
   extractPropTables,
   extractReturnTables,
   extractSlotTables,
@@ -484,5 +485,62 @@ describe('the Default column', () => {
     );
 
     expect(found[0]!.fields[0]!.defaultCell).toBeNull();
+  });
+});
+
+describe('extractParameterTables', () => {
+  it('reads a Parameters heading that names the interface it describes', () => {
+    // `#### Parameters (`CreateImageProps`)` and `#### `props` fields` are both
+    // in the reference. Anchoring on the bare word left ten tables matching no
+    // pattern at all, and a table nothing reaches looks exactly like a table
+    // with nothing wrong in it.
+    const found = extractParameterTables(
+      FILE,
+      `### useCreateImage
+
+#### Parameters (\`CreateImageProps\`)
+
+| Property | Type |
+| -------- | ---- |
+| \`map\` | \`MaybeRef<Map>\` |
+`,
+    );
+
+    expect(found.map((t) => t.composable)).toEqual(['useCreateImage']);
+  });
+
+  it('reads a `props` fields heading as a Parameters table', () => {
+    const found = extractParameterTables(
+      FILE,
+      `### useCreateMaplibre
+
+#### \`props\` fields
+
+| Property | Type |
+| -------- | ---- |
+| \`debug\` | \`boolean\` |
+`,
+    );
+
+    expect(found.map((t) => t.composable)).toEqual(['useCreateMaplibre']);
+  });
+
+  it('reads a row that names a field of a nested object', () => {
+    // Dropping `callbacks.onLoad` did not merely leave that row unchecked: the
+    // object the check builds then lacked a property the signature requires,
+    // so the whole table failed for a reason no row was responsible for.
+    const found = extractParameterTables(
+      FILE,
+      `### useMapReloadEvent
+
+#### Parameters
+
+| Property | Type |
+| -------- | ---- |
+| \`callbacks.onLoad\` | \`(map: Map) => void\` |
+`,
+    );
+
+    expect(found[0]!.fields[0]!.name).toBe('callbacks.onLoad');
   });
 });

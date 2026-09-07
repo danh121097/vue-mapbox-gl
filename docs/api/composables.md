@@ -21,12 +21,12 @@ which come from `elRef` and `styleRef`.
 
 #### `props` fields
 
-| Property   | Type                   | Default     | Description                          |
-| ---------- | ---------------------- | ----------- | ------------------------------------ |
-| `register` | `(actions) => void`    | `undefined` | Callback for registering map actions |
-| `debug`    | `boolean`              | `false`     | Enable debug logging                 |
-| `onLoad`   | `(map: Map) => void`   | `undefined` | Load success callback                |
-| `onError`  | `(error: any) => void` | `undefined` | Error handling callback              |
+| Property   | Type                   | Default     | Description                                |
+| ---------- | ---------------------- | ----------- | ------------------------------------------ |
+| `register` | `(actions) => void`    | `undefined` | Callback for registering map actions       |
+| `debug`    | `boolean`              | —           | Enable debug logging; omitted logs nothing |
+| `onLoad`   | `(map: Map) => void`   | `undefined` | Load success callback                      |
+| `onError`  | `(error: any) => void` | `undefined` | Error handling callback                    |
 
 #### Returns
 
@@ -214,14 +214,14 @@ function useCreateImage(props: CreateImageProps): CreateImageActions;
 
 #### Parameters (`CreateImageProps`)
 
-| Property                         | Type                          | Description                                                                                              |
-| -------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `map`                            | `MaybeRef<Map \| null>`       | Map instance reference                                                                                   |
-| `id`                             | `string`                      | Image identifier used in layer styles                                                                    |
-| `image`                          | `ImageDatas \| string`        | Image data (`HTMLImageElement`, `ImageBitmap`, `ImageData`, or raw pixel object) or a URL string to load |
-| `options`                        | `Partial<StyleImageMetadata>` | Image metadata (e.g. `pixelRatio`, `sdf`)                                                                |
-| `forceRecreateOnDimensionChange` | `boolean`                     | Remove+re-add on dimension change instead of trying an in-place update (default: `true`)                 |
-| `debug`                          | `boolean`                     | Enable debug logging                                                                                     |
+| Property                         | Type                          | Default | Description                                                                                              |
+| -------------------------------- | ----------------------------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| `map`                            | `MaybeRef<Map \| null>`       | —       | Map instance reference                                                                                   |
+| `id`                             | `string`                      | —       | Image identifier used in layer styles                                                                    |
+| `image`                          | `ImageDatas \| string`        | —       | Image data (`HTMLImageElement`, `ImageBitmap`, `ImageData`, or raw pixel object) or a URL string to load |
+| `options`                        | `Partial<StyleImageMetadata>` | —       | Image metadata (e.g. `pixelRatio`, `sdf`)                                                                |
+| `forceRecreateOnDimensionChange` | `boolean`                     | —       | Remove+re-add on dimension change instead of trying an in-place update; omitted is read as `true`        |
+| `debug`                          | `boolean`                     | —       | Enable debug logging                                                                                     |
 
 #### Returns
 
@@ -266,16 +266,16 @@ function useCreateMarker(props: CreateMarkerProps): CreateMarkerActions;
 
 #### Parameters (`CreateMarkerProps`)
 
-| Property  | Type                                | Description                                                   |
-| --------- | ----------------------------------- | ------------------------------------------------------------- |
-| `map`     | `MaybeRef<Map \| null>`             | Map instance reference                                        |
-| `lnglat`  | `MaybeRef<LngLatLike \| undefined>` | Marker position, reactive                                     |
-| `popup`   | `MaybeRef<Popup \| null>`           | Popup to attach to the marker                                 |
-| `el`      | `Ref<HTMLElement \| undefined>`     | Custom DOM element to use as the marker (from a template ref) |
-| `options` | `MarkerOptions`                     | Native MapLibre `Marker` options                              |
-| `on`      | `{ dragstart?, drag?, dragend? }`   | Drag event handlers                                           |
-| `autoAdd` | `boolean`                           | Automatically add the marker to the map (default: `true`)     |
-| `debug`   | `boolean`                           | Enable debug logging                                          |
+| Property  | Type                                | Default | Description                                                   |
+| --------- | ----------------------------------- | ------- | ------------------------------------------------------------- |
+| `map`     | `MaybeRef<Map \| null>`             | —       | Map instance reference                                        |
+| `lnglat`  | `MaybeRef<LngLatLike \| undefined>` | —       | Marker position, reactive                                     |
+| `popup`   | `MaybeRef<Popup \| null>`           | —       | Popup to attach to the marker                                 |
+| `el`      | `Ref<HTMLElement \| undefined>`     | —       | Custom DOM element to use as the marker (from a template ref) |
+| `options` | `MarkerOptions`                     | `{}`    | Native MapLibre `Marker` options                              |
+| `on`      | `{ dragstart?, drag?, dragend? }`   | `{}`    | Drag event handlers                                           |
+| `autoAdd` | `boolean`                           | `true`  | Automatically add the marker to the map                       |
+| `debug`   | `boolean`                           | `false` | Enable debug logging                                          |
 
 #### Returns
 
@@ -337,20 +337,20 @@ function useCreatePopup(props: CreatePopupProps): CreatePopupActions;
 
 #### Parameters (`CreatePopupProps`)
 
-| Property       | Type                                | Description                                                            |
-| -------------- | ----------------------------------- | ---------------------------------------------------------------------- |
-| `map`          | `MaybeRef<Map \| null>`             | Map instance reference                                                 |
-| `lnglat`       | `MaybeRef<LngLatLike \| undefined>` | Popup position, reactive                                               |
-| `html`         | `MaybeRef<string \| undefined>`     | Popup HTML content, reactive                                           |
-| `el`           | `Ref<HTMLElement \| undefined>`     | Custom DOM element to use as content                                   |
-| `options`      | `PopupOptions`                      | Native MapLibre `Popup` options                                        |
-| `show`         | `boolean`                           | Show the popup immediately once created (default: `true`)              |
-| `withMap`      | `boolean`                           | Attach the popup to the map (default: `true`)                          |
-| `autoCreate`   | `boolean`                           | Auto-create the popup when the map becomes available (default: `true`) |
-| `closeOnClick` | `boolean`                           | Close popup when the map is clicked (default: `true`)                  |
-| `closeButton`  | `boolean`                           | Show the close (×) button (default: `true`)                            |
-| `on`           | `{ open?, close? }`                 | Open/close event handlers                                              |
-| `debug`        | `boolean`                           | Enable debug logging                                                   |
+| Property       | Type                                | Default | Description                                          |
+| -------------- | ----------------------------------- | ------- | ---------------------------------------------------- |
+| `map`          | `MaybeRef<Map \| null>`             | —       | Map instance reference                               |
+| `lnglat`       | `MaybeRef<LngLatLike \| undefined>` | —       | Popup position, reactive                             |
+| `html`         | `MaybeRef<string \| undefined>`     | —       | Popup HTML content, reactive                         |
+| `el`           | `Ref<HTMLElement \| undefined>`     | —       | Custom DOM element to use as content                 |
+| `options`      | `PopupOptions`                      | `{}`    | Native MapLibre `Popup` options                      |
+| `show`         | `boolean`                           | `true`  | Show the popup immediately once created              |
+| `withMap`      | `boolean`                           | `true`  | Attach the popup to the map                          |
+| `autoCreate`   | `boolean`                           | `true`  | Auto-create the popup when the map becomes available |
+| `closeOnClick` | `boolean`                           | `true`  | Close popup when the map is clicked                  |
+| `closeButton`  | `boolean`                           | `true`  | Show the close (×) button                            |
+| `on`           | `{ open?, close? }`                 | `{}`    | Open/close event handlers                            |
+| `debug`        | `boolean`                           | `false` | Enable debug logging                                 |
 
 #### Returns
 
@@ -474,22 +474,22 @@ function useCreateLayer<Layer extends LayerSpecification>(
 
 #### Parameters (`CreateBaseLayerProps`)
 
-| Property      | Type                                                                     | Description                                   |
-| ------------- | ------------------------------------------------------------------------ | --------------------------------------------- |
-| `map`         | `MaybeRef<Map \| null>`                                                  | Map instance reference                        |
-| `source`      | `MaybeRef<string \| SourceSpecification \| object \| null \| undefined>` | Source id, spec, or reactive reference        |
-| `type`        | `LayerTypes`                                                             | MapLibre layer type (e.g. `'fill'`, `'line'`) |
-| `id`          | `string`                                                                 | Layer id (auto-generated if omitted)          |
-| `beforeId`    | `string`                                                                 | Insert layer before this layer id             |
-| `filter`      | `FilterSpecification`                                                    | Filter expression (default: `['all']`)        |
-| `layout`      | `Layer['layout']`                                                        | Layout properties                             |
-| `paint`       | `Layer['paint']`                                                         | Paint properties                              |
-| `maxzoom`     | `number`                                                                 | Maximum zoom (default: `24`)                  |
-| `minzoom`     | `number`                                                                 | Minimum zoom (default: `0`)                   |
-| `metadata`    | `object`                                                                 | Layer metadata                                |
-| `sourceLayer` | `string`                                                                 | Vector tile source layer name                 |
-| `debug`       | `boolean`                                                                | Enable debug logging                          |
-| `register`    | `(actions: CreateBaseLayerActions<Layer>, map: Map) => void`             | Registration callback                         |
+| Property      | Type                                                                     | Default   | Description                                   |
+| ------------- | ------------------------------------------------------------------------ | --------- | --------------------------------------------- |
+| `map`         | `MaybeRef<Map \| null>`                                                  | —         | Map instance reference                        |
+| `source`      | `MaybeRef<string \| SourceSpecification \| object \| null \| undefined>` | —         | Source id, spec, or reactive reference        |
+| `type`        | `LayerTypes`                                                             | —         | MapLibre layer type (e.g. `'fill'`, `'line'`) |
+| `id`          | `string`                                                                 | —         | Layer id (auto-generated if omitted)          |
+| `beforeId`    | `string`                                                                 | —         | Insert layer before this layer id             |
+| `filter`      | `FilterSpecification`                                                    | `['all']` | Filter expression                             |
+| `layout`      | `Layer['layout']`                                                        | `{}`      | Layout properties                             |
+| `paint`       | `Layer['paint']`                                                         | `{}`      | Paint properties                              |
+| `maxzoom`     | `number`                                                                 | `24`      | Maximum zoom                                  |
+| `minzoom`     | `number`                                                                 | `0`       | Minimum zoom                                  |
+| `metadata`    | `object`                                                                 | —         | Layer metadata                                |
+| `sourceLayer` | `string`                                                                 | `''`      | Vector tile source layer name                 |
+| `debug`       | `boolean`                                                                | `false`   | Enable debug logging                          |
+| `register`    | `(actions: CreateBaseLayerActions<Layer>, map: Map) => void`             | —         | Registration callback                         |
 
 #### Returns
 
@@ -1133,14 +1133,14 @@ function useMapReloadEvent(props: MapReloadEventProps): MapReloadEventActions;
 
 #### Parameters (`MapReloadEventProps`)
 
-| Property             | Type                    | Description                                                                |
-| -------------------- | ----------------------- | -------------------------------------------------------------------------- |
-| `map`                | `MaybeRef<Map \| null>` | Map instance reference                                                     |
-| `callbacks.onLoad`   | `(map: Map) => void`    | Called when the style finishes (re)loading                                 |
-| `callbacks.onUnload` | `(map: Map) => void`    | Called when the style starts reloading (optional)                          |
-| `callbacks.onError`  | `(error: any) => void`  | Called on handler errors (optional)                                        |
-| `debug`              | `boolean`               | Enable debug logging                                                       |
-| `autoTriggerOnMount` | `boolean`               | Fire `onLoad` immediately if the style is already loaded (default: `true`) |
+| Property             | Type                    | Default | Description                                                                                    |
+| -------------------- | ----------------------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `map`                | `MaybeRef<Map \| null>` | —       | Map instance reference                                                                         |
+| `callbacks.onLoad`   | `(map: Map) => void`    | —       | Called when the style finishes (re)loading                                                     |
+| `callbacks.onUnload` | `(map: Map) => void`    | —       | Called when the style starts reloading (optional)                                              |
+| `callbacks.onError`  | `(error: any) => void`  | —       | Called on handler errors (optional)                                                            |
+| `debug`              | `boolean`               | —       | Enable debug logging                                                                           |
+| `autoTriggerOnMount` | `boolean`               | —       | Fire `onLoad` immediately if the style is already loaded; only an explicit `false` disables it |
 
 #### Returns
 
@@ -1193,23 +1193,23 @@ offset, `usePanTo` to a coordinate.
 
 **`usePanBy`**
 
-| Property  | Type                    | Description                                            |
-| --------- | ----------------------- | ------------------------------------------------------ |
-| `map`     | `MaybeRef<Map \| null>` | Map instance reference                                 |
-| `offset`  | `PointLike`             | Pixel offset `[x, y]`                                  |
-| `options` | `AnimationOptions`      | Animation options (duration, easing, etc.)             |
-| `autoPan` | `boolean`               | Auto-pan once offset and map are set (default: `true`) |
-| `debug`   | `boolean`               | Enable debug logging                                   |
+| Property  | Type                    | Default | Description                                                                |
+| --------- | ----------------------- | ------- | -------------------------------------------------------------------------- |
+| `map`     | `MaybeRef<Map \| null>` | —       | Map instance reference                                                     |
+| `offset`  | `PointLike`             | —       | Pixel offset `[x, y]`                                                      |
+| `options` | `AnimationOptions`      | —       | Animation options (duration, easing, etc.)                                 |
+| `autoPan` | `boolean`               | —       | Auto-pan once offset and map are set; only an explicit `false` disables it |
+| `debug`   | `boolean`               | —       | Enable debug logging                                                       |
 
 **`usePanTo`**
 
-| Property  | Type                    | Description                                            |
-| --------- | ----------------------- | ------------------------------------------------------ |
-| `map`     | `MaybeRef<Map \| null>` | Map instance reference                                 |
-| `lnglat`  | `LngLatLike`            | Target coordinate                                      |
-| `options` | `AnimationOptions`      | Animation options (duration, easing, etc.)             |
-| `autoPan` | `boolean`               | Auto-pan once lnglat and map are set (default: `true`) |
-| `debug`   | `boolean`               | Enable debug logging                                   |
+| Property  | Type                    | Default | Description                                                                |
+| --------- | ----------------------- | ------- | -------------------------------------------------------------------------- |
+| `map`     | `MaybeRef<Map \| null>` | —       | Map instance reference                                                     |
+| `lnglat`  | `LngLatLike`            | —       | Target coordinate                                                          |
+| `options` | `AnimationOptions`      | —       | Animation options (duration, easing, etc.)                                 |
+| `autoPan` | `boolean`               | —       | Auto-pan once lnglat and map are set; only an explicit `false` disables it |
+| `debug`   | `boolean`               | —       | Enable debug logging                                                       |
 
 #### Returns
 
@@ -1275,40 +1275,40 @@ target and in the name of the auto-run flag.
 
 **`useRotateTo`**
 
-| Property     | Type                    | Description                                                   |
-| ------------ | ----------------------- | ------------------------------------------------------------- |
-| `map`        | `MaybeRef<Map \| null>` | Map instance reference                                        |
-| `bearing`    | `number`                | Target bearing in degrees                                     |
-| `options`    | `AnimationOptions`      | Animation options                                             |
-| `autoRotate` | `boolean`               | Auto-run once the map and bearing are ready (default: `true`) |
-| `debug`      | `boolean`               | Enable debug logging                                          |
+| Property     | Type                    | Default | Description                                                                       |
+| ------------ | ----------------------- | ------- | --------------------------------------------------------------------------------- |
+| `map`        | `MaybeRef<Map \| null>` | —       | Map instance reference                                                            |
+| `bearing`    | `number`                | —       | Target bearing in degrees                                                         |
+| `options`    | `AnimationOptions`      | —       | Animation options                                                                 |
+| `autoRotate` | `boolean`               | —       | Auto-run once the map and bearing are ready; only an explicit `false` disables it |
+| `debug`      | `boolean`               | —       | Enable debug logging                                                              |
 
 **`useSnapToNorth`**
 
-| Property   | Type                    | Description                                      |
-| ---------- | ----------------------- | ------------------------------------------------ |
-| `map`      | `MaybeRef<Map \| null>` | Map instance reference                           |
-| `options`  | `AnimationOptions`      | Animation options                                |
-| `autoSnap` | `boolean`               | Auto-run once the map is ready (default: `true`) |
-| `debug`    | `boolean`               | Enable debug logging                             |
+| Property   | Type                    | Default | Description                                                          |
+| ---------- | ----------------------- | ------- | -------------------------------------------------------------------- |
+| `map`      | `MaybeRef<Map \| null>` | —       | Map instance reference                                               |
+| `options`  | `AnimationOptions`      | —       | Animation options                                                    |
+| `autoSnap` | `boolean`               | —       | Auto-run once the map is ready; only an explicit `false` disables it |
+| `debug`    | `boolean`               | —       | Enable debug logging                                                 |
 
 **`useResetNorth`**
 
-| Property    | Type                    | Description                                      |
-| ----------- | ----------------------- | ------------------------------------------------ |
-| `map`       | `MaybeRef<Map \| null>` | Map instance reference                           |
-| `options`   | `AnimationOptions`      | Animation options                                |
-| `autoReset` | `boolean`               | Auto-run once the map is ready (default: `true`) |
-| `debug`     | `boolean`               | Enable debug logging                             |
+| Property    | Type                    | Default | Description                                                          |
+| ----------- | ----------------------- | ------- | -------------------------------------------------------------------- |
+| `map`       | `MaybeRef<Map \| null>` | —       | Map instance reference                                               |
+| `options`   | `AnimationOptions`      | —       | Animation options                                                    |
+| `autoReset` | `boolean`               | —       | Auto-run once the map is ready; only an explicit `false` disables it |
+| `debug`     | `boolean`               | —       | Enable debug logging                                                 |
 
 **`useResetNorthPitch`**
 
-| Property    | Type                    | Description                                      |
-| ----------- | ----------------------- | ------------------------------------------------ |
-| `map`       | `MaybeRef<Map \| null>` | Map instance reference                           |
-| `options`   | `AnimationOptions`      | Animation options                                |
-| `autoReset` | `boolean`               | Auto-run once the map is ready (default: `true`) |
-| `debug`     | `boolean`               | Enable debug logging                             |
+| Property    | Type                    | Default | Description                                                          |
+| ----------- | ----------------------- | ------- | -------------------------------------------------------------------- |
+| `map`       | `MaybeRef<Map \| null>` | —       | Map instance reference                                               |
+| `options`   | `AnimationOptions`      | —       | Animation options                                                    |
+| `autoReset` | `boolean`               | —       | Auto-run once the map is ready; only an explicit `false` disables it |
+| `debug`     | `boolean`               | —       | Enable debug logging                                                 |
 
 #### Returns
 
@@ -1386,22 +1386,22 @@ wherever the map is.
 
 **`useZoomTo`**
 
-| Property   | Type                    | Description                                                |
-| ---------- | ----------------------- | ---------------------------------------------------------- |
-| `map`      | `MaybeRef<Map \| null>` | Map instance reference                                     |
-| `zoom`     | `number`                | Target zoom level (0-24)                                   |
-| `options`  | `AnimationOptions`      | Animation options                                          |
-| `autoZoom` | `boolean`               | Auto-run once the map and zoom are ready (default: `true`) |
-| `debug`    | `boolean`               | Enable debug logging                                       |
+| Property   | Type                    | Default | Description                                                                    |
+| ---------- | ----------------------- | ------- | ------------------------------------------------------------------------------ |
+| `map`      | `MaybeRef<Map \| null>` | —       | Map instance reference                                                         |
+| `zoom`     | `number`                | —       | Target zoom level (0-24)                                                       |
+| `options`  | `AnimationOptions`      | —       | Animation options                                                              |
+| `autoZoom` | `boolean`               | —       | Auto-run once the map and zoom are ready; only an explicit `false` disables it |
+| `debug`    | `boolean`               | —       | Enable debug logging                                                           |
 
 **`useZoomIn`** / **`useZoomOut`**
 
-| Property   | Type                    | Description                                      |
-| ---------- | ----------------------- | ------------------------------------------------ |
-| `map`      | `MaybeRef<Map \| null>` | Map instance reference                           |
-| `options`  | `AnimationOptions`      | Animation options                                |
-| `autoZoom` | `boolean`               | Auto-run once the map is ready (default: `true`) |
-| `debug`    | `boolean`               | Enable debug logging                             |
+| Property   | Type                    | Default | Description                                                          |
+| ---------- | ----------------------- | ------- | -------------------------------------------------------------------- |
+| `map`      | `MaybeRef<Map \| null>` | —       | Map instance reference                                               |
+| `options`  | `AnimationOptions`      | —       | Animation options                                                    |
+| `autoZoom` | `boolean`               | —       | Auto-run once the map is ready; only an explicit `false` disables it |
+| `debug`    | `boolean`               | —       | Enable debug logging                                                 |
 
 #### Returns
 
@@ -1544,13 +1544,13 @@ function useFitScreenCoordinates(
 
 #### Parameters (`FitScreenCoordinatesProps`)
 
-| Property         | Type                                | Description                                    |
-| ---------------- | ----------------------------------- | ---------------------------------------------- |
-| `map`            | `MaybeRef<Map \| null>`             | Map instance reference                         |
-| `defaultOptions` | `Omit<FitBoundsOptions, 'bearing'>` | Default fit options                            |
-| `defaultBearing` | `number`                            | Default bearing to use if none is passed       |
-| `autoCleanup`    | `boolean`                           | Clear coordinates on unmount (default: `true`) |
-| `debug`          | `boolean`                           | Enable debug logging                           |
+| Property         | Type                                | Default | Description                              |
+| ---------------- | ----------------------------------- | ------- | ---------------------------------------- |
+| `map`            | `MaybeRef<Map \| null>`             | —       | Map instance reference                   |
+| `defaultOptions` | `Omit<FitBoundsOptions, 'bearing'>` | —       | Default fit options                      |
+| `defaultBearing` | `number`                            | —       | Default bearing to use if none is passed |
+| `autoCleanup`    | `boolean`                           | `true`  | Clear coordinates on unmount             |
+| `debug`          | `boolean`                           | `false` | Enable debug logging                     |
 
 #### Returns
 

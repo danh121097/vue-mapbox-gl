@@ -685,6 +685,24 @@ that cell — `` `PointLike` (`usePanBy` only) ``. Those rows were silently
 unchecked. They are now a labelled table per composable, the same shape the
 Returns sections use, so every row belongs to exactly one signature.
 
+A row can name an argument by position, a field of the one props object, or a
+path into a nested one (`callbacks.onLoad`, `options.debug`) — and the last of
+those is read as navigating from whatever it starts at: a declared parameter if
+one has that name, otherwise a property of the argument object. Where a table
+covers only the last of several parameters, the earlier ones are filled with a
+`never`, which every parameter accepts, so the call still says exactly one
+thing.
+
+The heading pattern is part of that check, and it is the part that failed
+quietly. `PARAMETERS_HEADING_RE` matched the bare word only, while the
+reference also writes `#### Parameters (\`CreateImageProps\`)`and`#### \`props\` fields`. Ten tables matched nothing, so nothing checked them —
+which reads exactly like ten tables with nothing wrong. Widening the pattern
+took the parameter count from 104 to 172 and the default count from 127 to 239,
+and surfaced five real errors on the first run. When adding a check that
+selects its input by pattern, corrupt a row in every table you believe it
+reaches and count the failures; the count is the only thing that separates
+"nothing is wrong" from "nothing was looked at".
+
 The components reference is tabulated the same way, and its tables were the
 last ones nothing compiled. A `Props` row is checked against the component's
 own `$props`; an `Events` row against the _payload_ the handler is given, which

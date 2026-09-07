@@ -60,8 +60,14 @@ function compare(
       continue;
     }
 
-    const has = defaults.has(field.name);
-    const actual = defaults.get(field.name) ?? null;
+    // A row may name a field by its path (`options.debug`), while the source
+    // destructures it under the leaf name. The leaf is only consulted when the
+    // full path finds nothing, so a real top-level default always wins.
+    const key = defaults.has(field.name)
+      ? field.name
+      : field.name.slice(field.name.lastIndexOf('.') + 1);
+    const has = defaults.has(key);
+    const actual = defaults.get(key) ?? null;
 
     const documented = VALUE_CELL_RE.exec(cell)?.[1];
     if (documented === undefined) {
