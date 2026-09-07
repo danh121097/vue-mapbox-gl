@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Downloads](https://img.shields.io/npm/dt/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-maplibre-gl?style=flat-square)](https://github.com/danh121097/vue-maplibre-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-maplibre-gl)](https://github.com/danh121097/vue-maplibre-gl/blob/main/LICENSE)
 
-> **The most comprehensive Vue 3 library for MapLibre GL JS** - Build interactive maps with 10+ components and 15+ composables
+> **The most comprehensive Vue 3 library for MapLibre GL JS** - Build interactive maps with 10 components and 38 composables
 
 A powerful, feature-rich Vue 3 component library that provides an intuitive, reactive way to build interactive maps in your Vue applications using MapLibre GL JS.
 
@@ -12,7 +12,7 @@ A powerful, feature-rich Vue 3 component library that provides an intuitive, rea
 
 - 🗺️ **Interactive Maps** - High-performance vector maps with WebGL rendering
 - 🧩 **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, GeolocateControls
-- 🔧 **15+ Composables** - Complete map management, animations, events, and utilities
+- 🔧 **38 Composables** - Complete map management, animations, events, and utilities
 - 🎯 **Full TypeScript Support** - Comprehensive type definitions and interfaces
 - ⚡ **High Performance** - Optimized rendering with automatic resource cleanup
 - 📱 **Mobile-Friendly** - Touch controls and responsive design for all devices
@@ -335,7 +335,7 @@ bun run docs:dev
 - **🎯 Vue 3 Native** - Built specifically for Vue 3 with Composition API support
 - **🗺️ MapLibre GL JS** - Uses the open-source MapLibre GL JS for high-performance rendering
 - **🧩 Component-Based** - 10+ Vue components for maps, layers, sources, markers, and controls
-- **🔧 Powerful Composables** - 15+ composables for map management, animations, and utilities
+- **🔧 Powerful Composables** - 38 composables for map management, animations, and utilities
 - **📚 Comprehensive Documentation** - Detailed guides, API references, and examples
 - **⚡ High Performance** - Optimized for performance with automatic resource cleanup
 - **🌐 Open Source** - MIT licensed with active community support

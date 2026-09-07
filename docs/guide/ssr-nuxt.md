@@ -1,6 +1,6 @@
 # SSR / Nuxt
 
-vue3-maplibre-gl v5 is **SSR-safe out of the box**. Map creation is guarded with `isBrowser` checks and all `window.*` references have been removed.
+vue3-maplibre-gl is **SSR-safe out of the box**. Map creation is guarded with `isBrowser` checks and all `window.*` references have been removed.
 
 ## Why SSR Compatibility Matters
 
@@ -10,17 +10,31 @@ MapLibre GL requires:
 - DOM manipulation (render phase only)
 - window/document APIs
 
-Without SSR guards, rendering on the server would fail. Vue3 MapLibre GL v5 handles this automatically.
+Without SSR guards, rendering on the server would fail. Vue3 MapLibre GL handles this automatically.
 
-## Nuxt Module (Recommended) - v1.0.0
+## Nuxt Module (Recommended)
 
 The official Nuxt module handles SSR configuration automatically. Install it for the best DX:
 
-```bash
+::: code-group
+
+```bash [bun]
 bun add nuxt-maplibre-gl
-# or
+```
+
+```bash [npm]
 npm install nuxt-maplibre-gl
 ```
+
+```bash [yarn]
+yarn add nuxt-maplibre-gl
+```
+
+```bash [pnpm]
+pnpm add nuxt-maplibre-gl
+```
+
+:::
 
 ### Setup
 
@@ -52,7 +66,7 @@ The module automatically configures:
 
 1. **CSS Auto-Import** - `maplibre-gl/dist/maplibre-gl.css` and `vue3-maplibre-gl/dist/style.css` injected
 2. **Component Auto-Import** - All 10 components available without imports
-3. **Composable Auto-Import** - All 15+ composables available without imports
+3. **Composable Auto-Import** - All 38 composables available without imports
 4. **SSR Support** - Map components rendered only on client
 5. **Build Configuration**:
    - vue3-maplibre-gl transpiled for SSR
@@ -195,9 +209,25 @@ If you prefer not to use the module, follow these steps:
 
 ### 1. Install Package
 
-```bash
+::: code-group
+
+```bash [bun]
 bun add vue3-maplibre-gl maplibre-gl
 ```
+
+```bash [npm]
+npm install vue3-maplibre-gl maplibre-gl
+```
+
+```bash [yarn]
+yarn add vue3-maplibre-gl maplibre-gl
+```
+
+```bash [pnpm]
+pnpm add vue3-maplibre-gl maplibre-gl
+```
+
+:::
 
 ### 2. Configure Nuxt
 

@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'Vue3 MapLibre GL'
   text: 'Interactive Maps for Vue 3'
-  tagline: '10+ components, 15+ composables, full TypeScript support — build production-ready maps in minutes'
+  tagline: '10 components, 38 composables, full TypeScript support — build production-ready maps in minutes'
   actions:
     - theme: brand
       text: Get Started
@@ -18,10 +18,10 @@ features:
     title: Interactive Maps
     details: High-performance vector maps with WebGL rendering via MapLibre GL JS. Reactive data binding out of the box.
   - icon: 🧩
-    title: 10+ Components
+    title: 10 Components
     details: Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, GeolocateControls.
   - icon: 🔧
-    title: 15+ Composables
+    title: 38 Composables
     details: Map management, camera animations (flyTo, easeTo, jumpTo), event listeners, layer management, and utilities.
   - icon: 🎯
     title: Full TypeScript

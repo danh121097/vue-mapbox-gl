@@ -1,6 +1,6 @@
 # Composables Overview
 
-Comprehensive reference for all 20+ composables available in vue3-maplibre-gl.
+Comprehensive reference for all 38 composables available in vue3-maplibre-gl.
 
 Every composable takes a single props object unless noted. The zoom, pan,
 rotate and `useJumpTo` composables also keep a legacy positional

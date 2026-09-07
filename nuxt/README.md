@@ -7,15 +7,35 @@
 ## Features
 
 - Auto-import 10+ map components (Maplibre, GeoJsonSource, FillLayer, etc.)
-- Auto-import 15+ composables (useFlyTo, useMapEventListener, etc.)
+- Auto-import 38 composables (useFlyTo, useMapEventListener, etc.)
 - Auto-import CSS — no manual style import needed
 - SSR-safe — components register client-only, composables have browser guards
 - Zero configuration required
 
 ## Installation
 
+### Using Bun (Recommended)
+
 ```bash
 bun add nuxt-maplibre-gl
+```
+
+### Using npm
+
+```bash
+npm install nuxt-maplibre-gl
+```
+
+### Using Yarn
+
+```bash
+yarn add nuxt-maplibre-gl
+```
+
+### Using pnpm
+
+```bash
+pnpm add nuxt-maplibre-gl
 ```
 
 ## Setup

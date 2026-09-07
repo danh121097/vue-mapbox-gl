@@ -16,23 +16,25 @@ Since v6 the two stylesheets are separate: this package ships only its own rules
 pnpm's isolated `node_modules` does not expose a dependency your app did not install itself, so `import 'maplibre-gl/dist/maplibre-gl.css'` fails unless `maplibre-gl` is in your own `package.json`. This has been true since v6 split the stylesheets, independently of the peer dependency.
 :::
 
-### Using Yarn (Recommended)
+::: code-group
 
-```bash
-yarn add vue3-maplibre-gl maplibre-gl
+```bash [bun]
+bun add vue3-maplibre-gl maplibre-gl
 ```
 
-### Using npm
-
-```bash
+```bash [npm]
 npm install vue3-maplibre-gl maplibre-gl
 ```
 
-### Using pnpm
+```bash [yarn]
+yarn add vue3-maplibre-gl maplibre-gl
+```
 
-```bash
+```bash [pnpm]
 pnpm add vue3-maplibre-gl maplibre-gl
 ```
+
+:::
 
 ## CDN Installation
 

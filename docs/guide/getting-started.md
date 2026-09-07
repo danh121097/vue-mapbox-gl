@@ -7,7 +7,7 @@ Vue3 MapLibre GL is a comprehensive Vue 3 component library that provides an int
 Vue3 MapLibre GL offers:
 
 - **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, and GeolocateControls
-- **15+ Composables** - For map management, layers, sources, controls, events, and utilities
+- **38 Composables** - For map management, layers, sources, controls, events, and utilities
 - **Full TypeScript Support** - Comprehensive type definitions and interfaces
 - **Reactive Data Binding** - Seamless integration with Vue 3's reactivity system
 - **Performance Optimized** - Automatic resource cleanup and minimal bundle size
@@ -31,12 +31,16 @@ Choose your preferred package manager:
 
 ::: code-group
 
-```bash [yarn]
-yarn add vue3-maplibre-gl maplibre-gl
+```bash [bun]
+bun add vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [npm]
 npm install vue3-maplibre-gl maplibre-gl
+```
+
+```bash [yarn]
+yarn add vue3-maplibre-gl maplibre-gl
 ```
 
 ```bash [pnpm]
