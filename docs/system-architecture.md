@@ -20,7 +20,7 @@ User Application (Vue 3 / Nuxt)
 
 ## Architectural Patterns
 
-### 1. Factory Pattern (v5)
+### 1. Factory Pattern
 
 The library uses factory functions to eliminate code duplication across similar features:
 
@@ -133,26 +133,39 @@ const mapInstance = inject(MapProvideKey);
 
 ### 3. Context & State Management
 
-#### Map Context
+#### Provided Contexts
 
-The main `Maplibre` component provides a context containing:
+There are two injection keys, both in `libs/enums/MapProvideKey.ts`.
 
-- `mapInstance: ComputedRef<Map | null>` - The MapLibre instance
-- `mapCreationStatus: ComputedRef<MapCreationStatus>` - Current initialization state
-- `isMapReady: ComputedRef<boolean>` - Map is fully loaded and interactive
+`MapProvideKey` — provided by `Maplibre`, carrying the map instance and nothing
+else. Status is not injected: a descendant that needs it calls `useMaplibre()`.
 
 ```typescript
-const mapInstance = inject<ComputedRef<Map | null>>(MapProvideKey);
-if (mapInstance?.value) {
+// Inject with a fallback ref, so a component used outside <Maplibre> renders
+// instead of throwing.
+const mapInstance = inject(MapProvideKey, shallowRef(null));
+if (mapInstance.value) {
   // Map is available, safe to use
 }
 ```
 
+`SourceProvideKey` — provided by `GeoJsonSource`, letting a layer nested inside
+it resolve its source without being passed an id.
+
 #### Status Enums
 
-- `MapCreationStatus` - Map lifecycle (NotInitialized, Initializing, Loading, Loaded, Error, Destroyed)
-- `EventListenerStatus` - Event attachment state (NotAttached, Attached, Error)
-- `AnimationStatus` - Animation state (NotStarted, Running, Completed, Error)
+Nineteen of them, one per feature area rather than one shared shape. Values are
+kebab-case strings, so they are readable in devtools.
+
+- `MapCreationStatus` — NotInitialized, Initializing, Loading, Loaded, Error, Destroyed
+- `EventListenerStatus`, `MapReloadEventStatus` — listener attachment
+- `AnimationStatus`, `FlyStatus`, `EaseStatus`, `JumpStatus`, `PanStatus`, `RotationStatus`, `ZoomStatus`, `BoundsStatus`, `FitScreenCoordinatesStatus` — camera
+- `LayerStatus`, `LayerManagementStatus`, `SourceStatus`, `GeoJsonSourceStatus` — layers and sources
+- `MarkerStatus`, `PopupStatus`, `ImageStatus` — overlays
+
+Since v6 every composable returns its status as a `ComputedRef`, so a consumer
+watching one sees it change. Collapsing these onto a single shared shape is a
+7.0 candidate — see [`project-roadmap.md`](./project-roadmap.md).
 
 ### 4. Lifecycle Management
 
@@ -646,9 +659,12 @@ export function useCreateFillLayer<
 
 ### Nuxt Module Features
 
-The `nuxt-maplibre-gl` module (v1.0.0) handles:
+The `nuxt-maplibre-gl` module handles:
 
-1. **Auto-import** - Components and composables available without imports
+1. **Auto-import** - All 10 components and all 38 composables, without imports.
+   The composable list is explicit in `nuxt/src/module.ts`; a name missing from
+   it is silently not auto-imported, so it must be kept in step with the
+   package's exports.
 2. **CSS auto-inject** - Styles loaded automatically
 3. **Browser guards** - SSR-safe out of the box
 4. **Transpilation** - vue3-maplibre-gl transpiled for SSR
@@ -736,12 +752,22 @@ export function useCustomListener(target: MapInstance, handler: Callback) {
 
 ## Testing Architecture
 
-### Test Coverage (27+ tests)
+### Test Coverage
 
-- **Event factories**: createEventListenerComposable tests
-- **Animation factories**: createCameraAnimation tests
-- **Layer property setters**: createPropertySetter tests
-- **Component integration**: Vi jest framework
+107 tests across 19 files, run with Vitest under happy-dom. Coverage is enforced
+as a ratchet in `vitest.config.ts` — see
+[`code-standards.md`](./code-standards.md).
+
+- **Event factories**: `createEventListenerComposable`, including the
+  layer-scoped `on(type, layerId, handler)` overload
+- **Animation factories**: `createCameraAnimation`, including settlement of an
+  interrupted animation
+- **Layer property setters**: `createLayerPropertySetters`
+- **Map lifecycle**: creation, reload, post-load error recovery
+
+Every test drives a hand-written MapLibre mock; no test runs a real map, so a
+wrong assumption about MapLibre's own behaviour stays invisible until a consumer
+hits it. That is the largest known gap in the suite.
 
 ### Test Patterns
 
@@ -764,10 +790,7 @@ describe('createEventListenerComposable', () => {
 
 ## Future Architecture
 
-### Planned Enhancements
+Owned by [`project-roadmap.md`](./project-roadmap.md), which tracks candidates
+against verified gaps and commits to no dates.
 
-- **Layer clustering** tier: Three-level cluster optimization
-- **Performance monitoring**: Composables for FPS/memory tracking
-- **Custom projections**: Beyond Web Mercator
-- **Advanced animations**: Keyframe animations, transition groups
 - **Plugin system**: Custom composables registry

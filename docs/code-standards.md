@@ -2,7 +2,7 @@
 
 ## Project Standards
 
-This document defines the code standards, conventions, and best practices used in vue3-maplibre-gl v5.
+This document defines the code standards, conventions, and best practices used in vue3-maplibre-gl.
 
 ## TypeScript & Language
 
@@ -24,16 +24,16 @@ import { Map } from 'maplibre-gl';  // Only for type, use type import
 
 ### Naming Conventions
 
-| Category               | Convention                  | Example                                          |
-| ---------------------- | --------------------------- | ------------------------------------------------ |
-| **Components**         | PascalCase                  | `Maplibre`, `GeoJsonSource`, `FillLayer`         |
-| **Composables**        | camelCase with `use` prefix | `useMaplibre`, `useFlyTo`, `useMapEventListener` |
-| **Enums**              | PascalCase                  | `MapCreationStatus`, `EventListenerStatus`       |
-| **Types/Interfaces**   | PascalCase                  | `MaplibreActions`, `CreateMaplibreActions`       |
-| **Constants**          | UPPER_SNAKE_CASE            | `MAP_DEFAULT_ZOOM`, `ANIMATION_TIMEOUT`          |
-| **Private variables**  | Leading underscore          | `_internalState`, `_cachedData`                  |
-| **Boolean properties** | `is*`, `has*`, `can*`       | `isMapReady`, `hasError`, `canAnimate`           |
-| **Event handlers**     | `handle*` or `on*`          | `handleMapClick`, `onLoad`                       |
+| Category               | Convention                               | Example                                          |
+| ---------------------- | ---------------------------------------- | ------------------------------------------------ |
+| **Components**         | PascalCase                               | `Maplibre`, `GeoJsonSource`, `FillLayer`         |
+| **Composables**        | camelCase with `use` prefix              | `useMaplibre`, `useFlyTo`, `useMapEventListener` |
+| **Enums**              | PascalCase                               | `MapCreationStatus`, `EventListenerStatus`       |
+| **Types/Interfaces**   | PascalCase                               | `MaplibreActions`, `CreateMaplibreActions`       |
+| **Constants**          | UPPER_SNAKE_CASE                         | module-level constants, none currently in `libs` |
+| **Status enums**       | `<Feature>Status` + values in kebab-case | `FlyStatus.NotStarted` = `'not-started'`         |
+| **Boolean properties** | `is*`, `has*`, `can*`                    | `isMapReady`, `hasError`, `canAnimate`           |
+| **Event handlers**     | `handle*` or `on*`                       | `handleMapClick`, `onLoad`                       |
 
 ### Imports Organization
 
@@ -154,12 +154,15 @@ watchEffect(() => {
 ### Error Handling
 
 ```typescript
+// MapLibre's own camera methods are not promises — `map.flyTo()` returns the
+// map. Await this package's composables instead, which resolve when the
+// animation they started settles.
+const { flyTo } = useFlyTo({ map: mapInstance });
+
 try {
-  // Operation that might fail
-  await mapInstance.value?.flyTo({ center: [0, 0] });
+  await flyTo({ center: [0, 0] });
 } catch (error) {
-  // Handle error
-  console.error('Animation failed:', error);
+  logError('Animation failed:', error);
   // Don't rethrow; handle gracefully
 }
 ```
@@ -202,11 +205,13 @@ export function useMyComposable(
     // Cleanup
   });
 
-  // Return public API
+  // Return public API. Return the reactive container itself — a `ComputedRef`
+  // or the ref — never `status.value`. Unwrapping here type-checks and then
+  // freezes the field at its setup-time value, which is the bug v6 fixed.
   return {
     startOperation,
     isActive,
-    status: readonly(status),
+    status: computed(() => status.value),
   };
 }
 ```
@@ -232,28 +237,32 @@ export function useMaplibre(): UseMaplibreResult {
 
 ### Composable Options Pattern
 
-```typescript
-// Support both object and separate parameters
-export function useFlyTo(
-  map: MaybeRef<Map | null>,
-  options?: Partial<CameraOptions>,
-): FlyToResult;
-export function useFlyTo(props: {
-  map: MaybeRef<Map | null>;
-  options?: Partial<CameraOptions>;
-}): FlyToResult;
-export function useFlyTo(
-  mapOrProps: MaybeRef<Map | null> | { map: MaybeRef<Map | null> },
-  options?: any,
-) {
-  const { map, ...opts } =
-    typeof mapOrProps === 'object' && !('value' in mapOrProps)
-      ? mapOrProps
-      : { map: mapOrProps, ...options };
+Some composables accept either a props object or positional arguments, kept for
+the pre-v5 call shape. `useZoomTo`, `useZoomIn`, `useZoomOut`, the `useRotate`
+family, `usePan`, `useJumpTo`, `useBounds`, `useFitScreenCoordinates` and
+`useMapReloadEvent` carry these overloads; everything else, `useFlyTo` included,
+takes a props object only.
 
-  // Implementation
+```typescript
+export function useZoomTo(props: ZoomToProps): ZoomToActions;
+export function useZoomTo(
+  map: MaybeRef<Nullable<Map>>,
+  options?: AnimationOptions & { zoom: number },
+): { zoomTo: (zoomVal: number, options?: AnimationOptions) => void };
+export function useZoomTo(
+  mapOrProps: MaybeRef<Nullable<Map>> | ZoomToProps,
+  legacyOptions?: AnimationOptions & { zoom: number },
+) {
+  // The positional form is detected by the absence of a `map` key, so a props
+  // object is never mistaken for a bare map ref.
+  const isLegacyAPI =
+    legacyOptions !== undefined || !('map' in (mapOrProps as any));
+  // ...
 }
 ```
+
+Prefer the props object in new code. Do not add overloads to a new composable —
+the two shapes exist to avoid breaking callers, not because both are wanted.
 
 ## Factory Functions
 
@@ -365,12 +374,22 @@ describe('createEventListenerComposable', () => {
 });
 ```
 
-### Test Coverage Goals
+### Test Coverage
 
-- Factory functions: 100% coverage
-- Public composables: 80%+ coverage
-- Components: 60%+ coverage (integration tests)
-- Edge cases and error paths: Explicitly tested
+Coverage is a ratchet in `vitest.config.ts`, not a target: every threshold is
+the number the suite actually reaches, so a change that lowers coverage on a
+covered file fails CI. Raising a number after adding tests is expected;
+lowering one needs a reason in the commit message.
+
+The global floor is deliberately low (39% statements at the time of writing)
+because most layer, source and control composables have no tests at all.
+[`project-roadmap.md`](./project-roadmap.md) lists which ones. The useful
+contribution is a test for anything on that list, since it raises the floor
+permanently.
+
+Factories carry the highest per-file thresholds, because they are the shared
+implementation behind many composables — `createEventListenerComposable` and
+`createCameraAnimation` sit near 90%.
 
 ## Performance
 
@@ -430,15 +449,13 @@ watch(
   height: 100%;
   position: relative;
 }
-
-/* Use CSS custom properties for theming */
-:root {
-  --maplibre-primary: #088;
-  --maplibre-error: #f56565;
-  --maplibre-border: 1px solid #e2e8f0;
-}
 </style>
 ```
+
+The package ships one shared rule in `style.css`, for `.maplibre-container`.
+There is no theming variable layer — do not document one until it exists.
+Since v6 this stylesheet carries only this package's rules; MapLibre's own
+stylesheet is imported by the app.
 
 ### No Style Conflicts
 
@@ -497,16 +514,22 @@ if (status.value === 'attached') return;
 <footer>
 ```
 
-Types:
+Types, and the changelog group each one lands in. `cliff.toml` is the source of
+truth; a type missing from it is silently dropped from the changelog.
 
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation
-- `style`: Formatting/style
-- `refactor`: Code refactor
-- `perf`: Performance
-- `test`: Tests
-- `chore`: Tooling/deps
+| Type       | Emoji | Changelog group                         |
+| ---------- | ----- | --------------------------------------- |
+| `feat`     | ✨    | Features                                |
+| `fix`      | 🐛    | Bug Fixes                               |
+| `perf`     | 🚀    | Performance                             |
+| `refactor` | 📦    | Refactor                                |
+| `docs`     | 📚    | Documentation                           |
+| `test`     | 🚨    | Tests                                   |
+| `build`    | 🛠    | Build — including dependency changes    |
+| `ci`       | ⚙️    | CI                                      |
+| `style`    | 💎    | Styles                                  |
+| `revert`   | ⏪    | Revert                                  |
+| `chore`    | ♻️    | skipped, never appears in the changelog |
 
 Example:
 
@@ -619,9 +642,12 @@ Not currently implemented, but planned for future versions.
 
 ### Deprecation Policy
 
-- Deprecated features supported for 2 major versions
-- Clear deprecation warnings with migration guides
-- Removed in next major version
+- Prefer a deprecation cycle: warn in one major, remove in the next
+- v6 did not get one. The composable return types were wrong rather than
+  merely outdated — a status unwrapped at setup could not be deprecated into
+  correctness, only replaced — so the break was immediate and documented in
+  [the v6 migration guide](./guide/migration-v6.md) instead
+- Any break, with or without a cycle, ships with a migration guide
 
 ## Code Review Standards
 
