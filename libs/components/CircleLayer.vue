@@ -136,10 +136,14 @@ const {
   map: mapInstance,
   source: effectiveSource,
   style: mergedStyle.value,
-  filter: props.filter || ['all'],
+  // Passed through untouched. `useCreateLayer` declares the defaults --
+  // `['all']`, `24` and `0` -- and a default applies to `undefined` only, so
+  // coalescing here would both duplicate them and change them: `|| 1` made an
+  // explicit `minzoom: 0` unreachable, since `0` is falsy.
+  filter: props.filter,
   id: props.id,
-  maxzoom: props.maxzoom || 22,
-  minzoom: props.minzoom || 1,
+  maxzoom: props.maxzoom,
+  minzoom: props.minzoom,
   metadata: props.metadata,
   sourceLayer: props.sourceLayer,
   register: handleRegister,
