@@ -1,4 +1,4 @@
-import { unref, watchEffect, computed, ref, onScopeDispose } from 'vue';
+import { unref, watch, computed, ref, onScopeDispose } from 'vue';
 import { useLogger } from '@libs/composables';
 import type { Nullable, ImageDatas } from '@libs/types';
 import type { ComputedRef, MaybeRef } from 'vue';
@@ -319,15 +319,19 @@ export function useCreateImage(props: CreateImageProps): CreateImageActions {
     }
   }
 
-  // Watch for map changes and manage image lifecycle
-  watchEffect(() => {
-    const map = mapInstance.value;
-    if (map && imageStatus.value === ImageStatus.NotCreated) {
+  // Add the image whenever a map becomes available. Keyed on the map alone,
+  // not on `imageStatus`: an explicit `remove()` also resets the status, and an
+  // effect that tracked it would put the image straight back.
+  watch(
+    mapInstance,
+    (map) => {
+      if (!map) return;
       updateImage(props.image).catch((error) => {
-        logError('Error in watchEffect updateImage:', error);
+        logError('Error adding image on map change:', error);
       });
-    }
-  });
+    },
+    { immediate: true },
+  );
 
   // Cleanup when the owning effect scope is disposed. A component's setup scope
   // is disposed on unmount, so this also covers direct use inside a component.

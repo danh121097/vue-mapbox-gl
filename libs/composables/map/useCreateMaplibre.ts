@@ -214,10 +214,20 @@ export function useCreateMaplibre(
   }
 
   /**
-   * Enhanced map error event handler
+   * Map error event handler.
+   *
+   * MapLibre fires `error` for every failed resource — a 404 tile, a missing
+   * glyph range, a sprite fetch — not only for a map that could not start. Once
+   * `load` has fired the map is working, so those are runtime errors: they are
+   * reported to `onError` but leave the status alone. Flipping to `Error` here
+   * would tear down every consumer gated on `isMapReady` / `hasMapError` over a
+   * single bad tile, with no later event to bring them back. Before `load` the
+   * status still goes to `Error`, and a subsequent `load` clears it.
    */
   function mapEventError(e: any): void {
-    mapCreationStatus.value = MapCreationStatus.Error;
+    if (mapCreationStatus.value !== MapCreationStatus.Loaded) {
+      mapCreationStatus.value = MapCreationStatus.Error;
+    }
 
     if (onError) {
       onError(e);

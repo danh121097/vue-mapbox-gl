@@ -155,3 +155,20 @@ describe('useCreateImage loadPromise settlement', () => {
     expect(settled).toBe(true);
   });
 });
+
+describe('useCreateImage explicit removal', () => {
+  it('keeps the image off the map after remove()', async () => {
+    const map = new MockMap();
+    const { actions } = createInScope(map, 'icon', pixel());
+    await actions.loadPromise;
+    expect(map.imageIds()).toContain('icon');
+
+    actions.remove();
+    // Creation used to be an effect that tracked the status `remove()`
+    // resets, so the removal was undone on the very next flush.
+    await flush();
+
+    expect(map.imageIds()).not.toContain('icon');
+    expect(actions.isImageReady.value).toBe(false);
+  });
+});

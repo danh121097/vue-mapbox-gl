@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computed, nextTick, shallowRef } from 'vue';
+import { computed, nextTick, ref, shallowRef } from 'vue';
 import type { Map } from 'maplibre-gl';
 import { MapCreationStatus } from '@libs/enums';
 import type { MaplibreActions } from '@libs/types';
@@ -72,5 +72,31 @@ describe('useMaplibre listener hygiene', () => {
 
     expect(isMapReady.value).toBe(true);
     expect(mock.listenerCount('load')).toBe(0);
+  });
+});
+
+describe('useMaplibre creation failure', () => {
+  it('reports hasMapError when the map could not be constructed', async () => {
+    // Mirrors `useCreateMaplibre` on a host without WebGL: `register` runs
+    // while nothing has happened yet, then `new Map()` throws and the map ref
+    // stays `null` for good — only the status changes.
+    const status = ref(MapCreationStatus.NotInitialized);
+    const instance = {
+      mapInstance: computed(() => null),
+      mapCreationStatus: computed(() => status.value),
+      isMapReady: computed(() => false),
+      isMapLoading: computed(() => status.value === MapCreationStatus.Loading),
+      hasMapError: computed(() => status.value === MapCreationStatus.Error),
+    } as unknown as MaplibreActions;
+
+    const { register, hasMapError, mapStatus } = withSetup(() => useMaplibre());
+    await register(instance);
+    expect(hasMapError.value).toBe(false);
+
+    status.value = MapCreationStatus.Error;
+    await nextTick();
+
+    expect(hasMapError.value).toBe(true);
+    expect(mapStatus.value).toBe(MapCreationStatus.Error);
   });
 });

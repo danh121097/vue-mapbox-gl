@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { nextTick, ref, shallowRef } from 'vue';
 import { Popup } from 'maplibre-gl';
 import type { Map } from 'maplibre-gl';
-import { withSetup } from '../../../test-utils';
+import { withSetup, withSetupScope } from '../../../test-utils';
 import { MockMap } from '../../../__tests__/mock-maplibre';
 import { useCreatePopup, PopupStatus } from '../useCreatePopup';
 
@@ -70,5 +70,26 @@ describe('useCreatePopup reactivity contract', () => {
 
     expect(popup.value).toBeInstanceOf(Popup);
     expect(popupStatus.value).toBe(PopupStatus.Created);
+  });
+});
+
+describe('useCreatePopup unmount', () => {
+  it('removes the popup when the host component unmounts', () => {
+    const map = shallowRef(new MockMap() as unknown as Map);
+    const offSpy = vi.spyOn(Popup.prototype, 'off');
+
+    const { result, unmount } = withSetupScope(() =>
+      useCreatePopup({ map, html: '<p>hello</p>', withMap: false }),
+    );
+    expect(result.isPopupCreated.value).toBe(true);
+
+    unmount();
+
+    // Teardown detaches the open/close handlers before dropping the popup
+    expect(offSpy).toHaveBeenCalledWith('open', expect.any(Function));
+    expect(offSpy).toHaveBeenCalledWith('close', expect.any(Function));
+    expect(result.popup.value).toBeNull();
+    expect(result.isPopupCreated.value).toBe(false);
+    offSpy.mockRestore();
   });
 });

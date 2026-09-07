@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { nextTick, ref, shallowRef, watch } from 'vue';
 import { Marker } from 'maplibre-gl';
 import type { Map } from 'maplibre-gl';
-import { withSetup } from '../../../test-utils';
+import { withSetup, withSetupScope } from '../../../test-utils';
 import { MockMap } from '../../../__tests__/mock-maplibre';
 import { useCreateMarker, MarkerStatus } from '../useCreateMarker';
 
@@ -129,5 +129,24 @@ describe('useCreateMarker lifecycle', () => {
     expect(marker.value).toBe(created);
     expect(marker.value?.getLngLat().lng).toBe(30);
     expect(marker.value?.getLngLat().lat).toBe(40);
+  });
+});
+
+describe('useCreateMarker unmount', () => {
+  it('removes the marker when the host component unmounts', () => {
+    const map = shallowRef(new MockMap() as unknown as Map);
+    const removeSpy = vi.spyOn(Marker.prototype, 'remove');
+
+    const { result, unmount } = withSetupScope(() =>
+      useCreateMarker({ map, lnglat: [10, 20], autoAdd: false }),
+    );
+    expect(result.isMarkerCreated.value).toBe(true);
+
+    unmount();
+
+    expect(removeSpy).toHaveBeenCalledTimes(1);
+    expect(result.marker.value).toBeNull();
+    expect(result.isMarkerCreated.value).toBe(false);
+    removeSpy.mockRestore();
   });
 });

@@ -143,8 +143,11 @@ const emits = defineEmits<Emits>();
 // Enhanced logging and error handling
 const { logError } = useLogger(props.debug);
 
-// Reactive state management
-const innerOptions = ref<Partial<MapOptions>>();
+// Only the keys overridden through `setMapOptions`. Merged over `props.options`
+// so a prop that was never overridden keeps flowing through. Shallow, so an
+// object `style` keeps its identity — the style watcher compares by reference,
+// and a proxy wrapper would re-issue `map.setStyle` for an unchanged style.
+const innerOptions = shallowRef<Partial<MapOptions>>({});
 const mapContainerRef = shallowRef<HTMLElement | null>(null);
 const styleRef = ref(props.options.style as string);
 
@@ -203,18 +206,11 @@ const hasMapError = computed(
 );
 
 /**
- * Enhanced map options setter with validation and error handling
+ * Overrides individual map options on top of the `options` prop
  * @param options - Partial map options to merge
  */
 function setMapOptions(options: Partial<MapOptions>): void {
-  try {
-    innerOptions.value = {
-      ...(unref(mapOptions) || {}),
-      ...options,
-    };
-  } catch (error) {
-    logError('Error setting map options:', error, { options });
-  }
+  innerOptions.value = { ...innerOptions.value, ...options };
 }
 
 // Enhanced map creation with comprehensive error handling and performance monitoring
@@ -262,8 +258,14 @@ const {
   },
   onError: (error) => {
     try {
-      mapCreationStatus.value = MapCreationStatus.Error;
-      logError('Map creation error:', error);
+      // A loaded map reports failed tiles, glyphs and sprites through the same
+      // callback. Those must reach the consumer but must not flip the template
+      // gate — `load` never fires again, so the default slot (and every layer,
+      // marker and popup inside it) would be gone for good.
+      if (!isMapReady.value) {
+        mapCreationStatus.value = MapCreationStatus.Error;
+      }
+      logError('Map error:', error);
       props.onError?.(error);
     } catch (handlerError) {
       logError('Error in error handler:', handlerError);

@@ -139,19 +139,23 @@ export function useMaplibre(
       mapStatus.value = instance.mapCreationStatus.value;
 
       watchScope.run(() => {
-        // One watcher on the instance's map: mirroring the reference and
-        // deriving the status share a single source, and subscribing twice
-        // only ran the same work twice.
+        // One watcher over the map and the instance's error flag. The flag is
+        // a real dependency, not just a read inside the callback: when map
+        // construction throws, `mapInstance` stays `null` and never changes,
+        // so watching it alone would never see the failure.
         watch(
-          () => instance.mapInstance.value,
-          (map, _previousMap, onCleanUp) => {
+          () =>
+            [instance.mapInstance.value, instance.hasMapError.value] as const,
+          ([map, hasError], _previous, onCleanUp) => {
             try {
               mapInstance.value = map;
               // No `loaded()` in the payload: it walks every source in the
               // style, and the branch below already logs that outcome.
               log('🗺️ Map instance updated in useMaplibre', { hasMap: !!map });
 
-              if (map) {
+              if (hasError) {
+                mapStatus.value = MapCreationStatus.Error;
+              } else if (map) {
                 // Map instance exists, check if it's loaded
                 if (map.loaded()) {
                   mapStatus.value = MapCreationStatus.Loaded;
@@ -170,15 +174,10 @@ export function useMaplibre(
                   map.once('load', onLoad);
                   onCleanUp(() => map.off('load', onLoad));
                 }
+              } else if (instance.isMapLoading.value) {
+                mapStatus.value = MapCreationStatus.Loading;
               } else {
-                // No map instance
-                if (instance.hasMapError.value) {
-                  mapStatus.value = MapCreationStatus.Error;
-                } else if (instance.isMapLoading.value) {
-                  mapStatus.value = MapCreationStatus.Loading;
-                } else {
-                  mapStatus.value = MapCreationStatus.NotInitialized;
-                }
+                mapStatus.value = MapCreationStatus.NotInitialized;
               }
             } catch (error) {
               mapStatus.value = MapCreationStatus.Error;
