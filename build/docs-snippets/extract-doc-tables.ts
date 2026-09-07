@@ -36,6 +36,32 @@ const RETURNS_HEADING_RE = /^#{2,5}\s+Returns\s*$/;
  */
 const FIELD_CELL_RE = /^\|\s*`([A-Za-z_$][\w$]*|\d+)`\s*\|/;
 
+/** A cell holding one backticked type expression and nothing else. */
+const TYPE_CELL_RE = /^`(.+)`$/;
+
+/**
+ * Splits a table row into cells on unescaped pipes. A `\|` inside a cell is a
+ * union, not a column boundary -- `ComputedRef<Map \| null>` is one cell.
+ */
+export function splitRow(row: string): string[] {
+  const cells: string[] = [];
+  let cell = '';
+  for (let i = 0; i < row.length; i++) {
+    if (row[i] === '\\' && row[i + 1] === '|') {
+      cell += '|';
+      i++;
+    } else if (row[i] === '|') {
+      cells.push(cell.trim());
+      cell = '';
+    } else {
+      cell += row[i];
+    }
+  }
+  cells.push(cell.trim());
+  // A markdown row starts and ends with a pipe, so the outer cells are empty.
+  return cells.slice(1, -1);
+}
+
 /** The `| --- | --- |` rule that separates a table's head from its body. */
 const TABLE_RULE_RE = /^\|[\s:|-]+\|$/;
 
@@ -49,6 +75,11 @@ const TABLE_LABEL_RE = /^\*\*`?(use[A-Z][A-Za-z0-9_]*)`?\*\*$/;
 
 export interface TableField {
   name: string;
+  /**
+   * The type the row documents, verbatim, or null when the row does not give
+   * one as a single backticked expression.
+   */
+  type: string | null;
   /** 1-based line of the row in the markdown. */
   line: number;
 }
@@ -111,13 +142,22 @@ export function extractReturnTables(
         continue;
       }
 
+      // Which column holds the type. Most tables put it second, but a tuple
+      // table is `| Index | Name | Type |`, so the header decides.
+      const headers = splitRow(lines[j]!).map((h) => h.toLowerCase());
+      const typeColumn = headers.indexOf('type');
+
       const fields: TableField[] = [];
       let k = j + 2;
       for (; k < lines.length && lines[k]!.startsWith('|'); k++) {
         const cell = FIELD_CELL_RE.exec(lines[k]!);
         // A row whose first cell is not a single backticked identifier is a
         // grouping row or a prose row; it names no field to check.
-        if (cell) fields.push({ name: cell[1]!, line: k + 1 });
+        if (!cell) continue;
+        const typeCell =
+          typeColumn === -1 ? null : splitRow(lines[k]!)[typeColumn];
+        const type = typeCell ? TYPE_CELL_RE.exec(typeCell)?.[1] : undefined;
+        fields.push({ name: cell[1]!, type: type ?? null, line: k + 1 });
       }
 
       if (fields.length) {

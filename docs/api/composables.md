@@ -49,7 +49,7 @@ which come from `elRef` and `styleRef`.
 | `isMapLoading`         | `ComputedRef<boolean>`                          | Whether the map is loading   |
 | `hasMapError`          | `ComputedRef<boolean>`                          | Whether the map has an error |
 | `getCurrentCamera`     | `() => CameraOptions \| null`                   | Read the camera as it is now |
-| `getCurrentStyle`      | `() => StyleSpecification \| undefined`         | Read the active style        |
+| `getCurrentStyle`      | `() => StyleSpecification \| string \| null`    | Read the active style        |
 | `initMap`              | `() => void`                                    | Create the map               |
 | `removeMap`            | `() => void`                                    | Remove the map from the DOM  |
 | `destroyMap`           | `() => void`                                    | Destroy the map instance     |
@@ -555,9 +555,9 @@ error rather than reaching `addLayer`.
 #### Returns
 
 | Property            | Type                                           | Description               |
-| ------------------- | ---------------------------------------------- | ------------------------- | ---------------------- |
+| ------------------- | ---------------------------------------------- | ------------------------- |
 | `layerId`           | `string`                                       | The layer's resolved id   |
-| `getLayer`          | `ComputedRef<LayerSpecification \| null>`      | Get layer specification   |
+| `getLayer`          | `ComputedRef<FillLayerSpecification \| null>`  | Get layer specification   |
 | `setStyle`          | `(style?: FillLayerStyle) => void`             | Set layer style           |
 | `setBeforeId`       | `(beforeId?: string) => void`                  | Set layer insertion point |
 | `setFilter`         | `(filter?: FilterSpecification) => void`       | Set layer filter          |
@@ -571,7 +571,7 @@ error rather than reaching `addLayer`.
 | `setPattern`        | `(pattern: string) => void`                    | Set `fill-pattern`        |
 | `setAntialias`      | `(antialias: boolean) => void`                 | Set `fill-antialias`      |
 | `setSortKey`        | `(sortKey: number) => void`                    | Set `fill-sort-key`       |
-| `setVisibility`     | `(visibility: 'visible'                        | 'none') => void`          | Show or hide the layer |
+| `setVisibility`     | `(visibility: 'visible' \| 'none') => void`    | Show or hide the layer    |
 
 Every `set*` above other than `setStyle` also takes an optional
 `StyleSetterOptions` as its last argument.
@@ -619,24 +619,24 @@ The same props as `useCreateFillLayer`, with `CircleLayerStyle` for `style`.
 
 #### Returns
 
-| Property            | Type                                           | Description                 |
-| ------------------- | ---------------------------------------------- | --------------------------- | ---------------------- |
-| `layerId`           | `string`                                       | The layer's resolved id     |
-| `getLayer`          | `ComputedRef<LayerSpecification \| null>`      | Get layer specification     |
-| `setStyle`          | `(style?: CircleLayerStyle) => void`           | Set layer style             |
-| `setBeforeId`       | `(beforeId?: string) => void`                  | Set layer insertion point   |
-| `setFilter`         | `(filter?: FilterSpecification) => void`       | Set layer filter            |
-| `setZoomRange`      | `(minzoom?: number, maxzoom?: number) => void` | Set zoom range              |
-| `setPaintProperty`  | `(name, value, options?) => void`              | Set one paint property      |
-| `setLayoutProperty` | `(name, value, options?) => void`              | Set one layout property     |
-| `removeLayer`       | `() => void`                                   | Remove the layer            |
-| `setRadius`         | `(radius: number                               | string) => void`            | Set `circle-radius`    |
-| `setColor`          | `(color: string) => void`                      | Set `circle-color`          |
-| `setOpacity`        | `(opacity: number) => void`                    | Set `circle-opacity`        |
-| `setStrokeWidth`    | `(width: number) => void`                      | Set `circle-stroke-width`   |
-| `setStrokeColor`    | `(color: string) => void`                      | Set `circle-stroke-color`   |
-| `setStrokeOpacity`  | `(opacity: number) => void`                    | Set `circle-stroke-opacity` |
-| `setVisibility`     | `(visibility: 'visible'                        | 'none') => void`            | Show or hide the layer |
+| Property            | Type                                            | Description                 |
+| ------------------- | ----------------------------------------------- | --------------------------- |
+| `layerId`           | `string`                                        | The layer's resolved id     |
+| `getLayer`          | `ComputedRef<CircleLayerSpecification \| null>` | Get layer specification     |
+| `setStyle`          | `(style?: CircleLayerStyle) => void`            | Set layer style             |
+| `setBeforeId`       | `(beforeId?: string) => void`                   | Set layer insertion point   |
+| `setFilter`         | `(filter?: FilterSpecification) => void`        | Set layer filter            |
+| `setZoomRange`      | `(minzoom?: number, maxzoom?: number) => void`  | Set zoom range              |
+| `setPaintProperty`  | `(name, value, options?) => void`               | Set one paint property      |
+| `setLayoutProperty` | `(name, value, options?) => void`               | Set one layout property     |
+| `removeLayer`       | `() => void`                                    | Remove the layer            |
+| `setRadius`         | `(radius: number \| string) => void`            | Set `circle-radius`         |
+| `setColor`          | `(color: string) => void`                       | Set `circle-color`          |
+| `setOpacity`        | `(opacity: number) => void`                     | Set `circle-opacity`        |
+| `setStrokeWidth`    | `(width: number) => void`                       | Set `circle-stroke-width`   |
+| `setStrokeColor`    | `(color: string) => void`                       | Set `circle-stroke-color`   |
+| `setStrokeOpacity`  | `(opacity: number) => void`                     | Set `circle-stroke-opacity` |
+| `setVisibility`     | `(visibility: 'visible' \| 'none') => void`     | Show or hide the layer      |
 
 Every `set*` above other than `setStyle` also takes an optional
 `StyleSetterOptions` as its last argument.
@@ -669,30 +669,30 @@ The same props as `useCreateFillLayer`, with `LineLayerStyle` for `style`.
 
 #### Returns
 
-| Property            | Type                                           | Description               |
-| ------------------- | ---------------------------------------------- | ------------------------- | ---------------------- | --------------- |
-| `layerId`           | `string`                                       | The layer's resolved id   |
-| `getLayer`          | `ComputedRef<LayerSpecification \| null>`      | Get layer specification   |
-| `setStyle`          | `(style?: LineLayerStyle) => void`             | Set layer style           |
-| `setBeforeId`       | `(beforeId?: string) => void`                  | Set layer insertion point |
-| `setFilter`         | `(filter?: FilterSpecification) => void`       | Set layer filter          |
-| `setZoomRange`      | `(minzoom?: number, maxzoom?: number) => void` | Set zoom range            |
-| `setPaintProperty`  | `(name, value, options?) => void`              | Set one paint property    |
-| `setLayoutProperty` | `(name, value, options?) => void`              | Set one layout property   |
-| `removeLayer`       | `() => void`                                   | Remove the layer          |
-| `setColor`          | `(color: string) => void`                      | Set `line-color`          |
-| `setWidth`          | `(width: number                                | string) => void`          | Set `line-width`       |
-| `setOpacity`        | `(opacity: number) => void`                    | Set `line-opacity`        |
-| `setBlur`           | `(blur: number) => void`                       | Set `line-blur`           |
-| `setCap`            | `(cap: 'butt'                                  | 'round'                   | 'square') => void`     | Set `line-cap`  |
-| `setJoin`           | `(join: 'bevel'                                | 'round'                   | 'miter') => void`      | Set `line-join` |
-| `setOffset`         | `(offset: number) => void`                     | Set `line-offset`         |
-| `setGapWidth`       | `(gapWidth: number) => void`                   | Set `line-gap-width`      |
-| `setDashArray`      | `(dashArray: number[]) => void`                | Set `line-dasharray`      |
-| `setGradient`       | `(gradient: string) => void`                   | Set `line-gradient`       |
-| `setPattern`        | `(pattern: string) => void`                    | Set `line-pattern`        |
-| `setSortKey`        | `(sortKey: number) => void`                    | Set `line-sort-key`       |
-| `setVisibility`     | `(visibility: 'visible'                        | 'none') => void`          | Show or hide the layer |
+| Property            | Type                                            | Description               |
+| ------------------- | ----------------------------------------------- | ------------------------- |
+| `layerId`           | `string`                                        | The layer's resolved id   |
+| `getLayer`          | `ComputedRef<LineLayerSpecification \| null>`   | Get layer specification   |
+| `setStyle`          | `(style?: LineLayerStyle) => void`              | Set layer style           |
+| `setBeforeId`       | `(beforeId?: string) => void`                   | Set layer insertion point |
+| `setFilter`         | `(filter?: FilterSpecification) => void`        | Set layer filter          |
+| `setZoomRange`      | `(minzoom?: number, maxzoom?: number) => void`  | Set zoom range            |
+| `setPaintProperty`  | `(name, value, options?) => void`               | Set one paint property    |
+| `setLayoutProperty` | `(name, value, options?) => void`               | Set one layout property   |
+| `removeLayer`       | `() => void`                                    | Remove the layer          |
+| `setColor`          | `(color: string) => void`                       | Set `line-color`          |
+| `setWidth`          | `(width: number \| string) => void`             | Set `line-width`          |
+| `setOpacity`        | `(opacity: number) => void`                     | Set `line-opacity`        |
+| `setBlur`           | `(blur: number) => void`                        | Set `line-blur`           |
+| `setCap`            | `(cap: 'butt' \| 'round' \| 'square') => void`  | Set `line-cap`            |
+| `setJoin`           | `(join: 'bevel' \| 'round' \| 'miter') => void` | Set `line-join`           |
+| `setOffset`         | `(offset: number) => void`                      | Set `line-offset`         |
+| `setGapWidth`       | `(gapWidth: number) => void`                    | Set `line-gap-width`      |
+| `setDashArray`      | `(dashArray: number[]) => void`                 | Set `line-dasharray`      |
+| `setGradient`       | `(gradient: string) => void`                    | Set `line-gradient`       |
+| `setPattern`        | `(pattern: string) => void`                     | Set `line-pattern`        |
+| `setSortKey`        | `(sortKey: number) => void`                     | Set `line-sort-key`       |
+| `setVisibility`     | `(visibility: 'visible' \| 'none') => void`     | Show or hide the layer    |
 
 Every `set*` above other than `setStyle` also takes an optional
 `StyleSetterOptions` as its last argument.
@@ -724,40 +724,40 @@ The same props as `useCreateFillLayer`, with `SymbolLayerStyle` for `style`.
 
 #### Returns
 
-| Property            | Type                                           | Description               |
-| ------------------- | ---------------------------------------------- | ------------------------- | ---------------------- |
-| `layerId`           | `string`                                       | The layer's resolved id   |
-| `getLayer`          | `ComputedRef<LayerSpecification \| null>`      | Get layer specification   |
-| `setStyle`          | `(style?: SymbolLayerStyle) => void`           | Set layer style           |
-| `setBeforeId`       | `(beforeId?: string) => void`                  | Set layer insertion point |
-| `setFilter`         | `(filter?: FilterSpecification) => void`       | Set layer filter          |
-| `setZoomRange`      | `(minzoom?: number, maxzoom?: number) => void` | Set zoom range            |
-| `setPaintProperty`  | `(name, value, options?) => void`              | Set one paint property    |
-| `setLayoutProperty` | `(name, value, options?) => void`              | Set one layout property   |
-| `removeLayer`       | `() => void`                                   | Remove the layer          |
-| `setIconImage`      | `(image: string) => void`                      | Set `icon-image`          |
-| `setIconSize`       | `(size: number                                 | string) => void`          | Set `icon-size`        |
-| `setIconColor`      | `(color: string) => void`                      | Set `icon-color`          |
-| `setIconOpacity`    | `(opacity: number) => void`                    | Set `icon-opacity`        |
-| `setIconRotate`     | `(rotation: number) => void`                   | Set `icon-rotate`         |
-| `setIconOffset`     | `(offset: [number, number]) => void`           | Set `icon-offset`         |
-| `setIconAnchor`     | `(anchor: string) => void`                     | Set `icon-anchor`         |
-| `setIconHaloColor`  | `(color: string) => void`                      | Set `icon-halo-color`     |
-| `setIconHaloWidth`  | `(width: number) => void`                      | Set `icon-halo-width`     |
-| `setIconHaloBlur`   | `(blur: number) => void`                       | Set `icon-halo-blur`      |
-| `setTextField`      | `(field: string) => void`                      | Set `text-field`          |
-| `setTextFont`       | `(font: string[]) => void`                     | Set `text-font`           |
-| `setTextSize`       | `(size: number                                 | string) => void`          | Set `text-size`        |
-| `setTextColor`      | `(color: string) => void`                      | Set `text-color`          |
-| `setTextOpacity`    | `(opacity: number) => void`                    | Set `text-opacity`        |
-| `setTextRotate`     | `(rotation: number) => void`                   | Set `text-rotate`         |
-| `setTextOffset`     | `(offset: [number, number]) => void`           | Set `text-offset`         |
-| `setTextAnchor`     | `(anchor: string) => void`                     | Set `text-anchor`         |
-| `setTextHaloColor`  | `(color: string) => void`                      | Set `text-halo-color`     |
-| `setTextHaloWidth`  | `(width: number) => void`                      | Set `text-halo-width`     |
-| `setTextHaloBlur`   | `(blur: number) => void`                       | Set `text-halo-blur`      |
-| `setSortKey`        | `(sortKey: number) => void`                    | Set `symbol-sort-key`     |
-| `setVisibility`     | `(visibility: 'visible'                        | 'none') => void`          | Show or hide the layer |
+| Property            | Type                                            | Description               |
+| ------------------- | ----------------------------------------------- | ------------------------- |
+| `layerId`           | `string`                                        | The layer's resolved id   |
+| `getLayer`          | `ComputedRef<SymbolLayerSpecification \| null>` | Get layer specification   |
+| `setStyle`          | `(style?: SymbolLayerStyle) => void`            | Set layer style           |
+| `setBeforeId`       | `(beforeId?: string) => void`                   | Set layer insertion point |
+| `setFilter`         | `(filter?: FilterSpecification) => void`        | Set layer filter          |
+| `setZoomRange`      | `(minzoom?: number, maxzoom?: number) => void`  | Set zoom range            |
+| `setPaintProperty`  | `(name, value, options?) => void`               | Set one paint property    |
+| `setLayoutProperty` | `(name, value, options?) => void`               | Set one layout property   |
+| `removeLayer`       | `() => void`                                    | Remove the layer          |
+| `setIconImage`      | `(image: string) => void`                       | Set `icon-image`          |
+| `setIconSize`       | `(size: number \| string) => void`              | Set `icon-size`           |
+| `setIconColor`      | `(color: string) => void`                       | Set `icon-color`          |
+| `setIconOpacity`    | `(opacity: number) => void`                     | Set `icon-opacity`        |
+| `setIconRotate`     | `(rotation: number) => void`                    | Set `icon-rotate`         |
+| `setIconOffset`     | `(offset: [number, number]) => void`            | Set `icon-offset`         |
+| `setIconAnchor`     | `(anchor: string) => void`                      | Set `icon-anchor`         |
+| `setIconHaloColor`  | `(color: string) => void`                       | Set `icon-halo-color`     |
+| `setIconHaloWidth`  | `(width: number) => void`                       | Set `icon-halo-width`     |
+| `setIconHaloBlur`   | `(blur: number) => void`                        | Set `icon-halo-blur`      |
+| `setTextField`      | `(field: string) => void`                       | Set `text-field`          |
+| `setTextFont`       | `(font: string[]) => void`                      | Set `text-font`           |
+| `setTextSize`       | `(size: number \| string) => void`              | Set `text-size`           |
+| `setTextColor`      | `(color: string) => void`                       | Set `text-color`          |
+| `setTextOpacity`    | `(opacity: number) => void`                     | Set `text-opacity`        |
+| `setTextRotate`     | `(rotation: number) => void`                    | Set `text-rotate`         |
+| `setTextOffset`     | `(offset: [number, number]) => void`            | Set `text-offset`         |
+| `setTextAnchor`     | `(anchor: string) => void`                      | Set `text-anchor`         |
+| `setTextHaloColor`  | `(color: string) => void`                       | Set `text-halo-color`     |
+| `setTextHaloWidth`  | `(width: number) => void`                       | Set `text-halo-width`     |
+| `setTextHaloBlur`   | `(blur: number) => void`                        | Set `text-halo-blur`      |
+| `setSortKey`        | `(sortKey: number) => void`                     | Set `symbol-sort-key`     |
+| `setVisibility`     | `(visibility: 'visible' \| 'none') => void`     | Show or hide the layer    |
 
 Every `set*` above other than `setStyle` also takes an optional
 `StyleSetterOptions` as its last argument.
@@ -1514,14 +1514,14 @@ Provides smooth animated transitions with easing functions for map camera change
 #### Returns
 
 | Property           | Type                                              | Description                     |
-| ------------------ | ------------------------------------------------- | ------------------------------- | ---------------------------- |
+| ------------------ | ------------------------------------------------- | ------------------------------- |
 | `easeTo`           | `(options?: EaseToOptions) => Promise<void>`      | Ease with the given options     |
 | `easeToCenter`     | `(center: LngLatLike, options?) => Promise<void>` | Ease to a centre                |
 | `easeToZoom`       | `(zoom: number, options?) => Promise<void>`       | Ease to a zoom level            |
 | `easeToBearing`    | `(bearing: number, options?) => Promise<void>`    | Ease to a bearing               |
 | `easeToPitch`      | `(pitch: number, options?) => Promise<void>`      | Ease to a pitch                 |
 | `stopEasing`       | `() => void`                                      | Stop the animation in place     |
-| `getCurrentCamera` | `() => CameraOptions                              | null`                           | Read the camera as it is now |
+| `getCurrentCamera` | `() => CameraOptions \| null`                     | Read the camera as it is now    |
 | `easeStatus`       | `ComputedRef<EaseStatus>`                         | Current animation status        |
 | `isEasing`         | `ComputedRef<boolean>`                            | Whether an animation is running |
 

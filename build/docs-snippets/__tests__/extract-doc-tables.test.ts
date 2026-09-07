@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { extractReturnTables, listComposables } from '../extract-doc-tables';
+import {
+  extractReturnTables,
+  listComposables,
+  splitRow,
+} from '../extract-doc-tables';
 
 const FILE = 'docs/api/composables.md';
 
@@ -24,6 +28,49 @@ describe('extractReturnTables', () => {
     expect(found[0]!.fields.map((f) => f.name)).toEqual(['flyTo', 'isFlying']);
   });
 
+  it('reads the documented type from the column the header names', () => {
+    const found = tables(`### useCreateFillLayer
+
+#### Returns
+
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| \`getLayer\` | \`ComputedRef<Layer \\| null>\` | Read it |
+| \`removeLayer\` | \`() => void\` | Remove it |
+`);
+
+    expect(found[0]!.fields.map((f) => f.type)).toEqual([
+      'ComputedRef<Layer | null>',
+      '() => void',
+    ]);
+  });
+
+  it('finds the type column when it is not the second one', () => {
+    const found = tables(`### useDebouncedRef
+
+#### Returns
+
+| Index | Name | Type |
+| ----- | ---- | ---- |
+| \`0\` | \`debouncedRef\` | \`Ref<T>\` |
+`);
+
+    expect(found[0]!.fields).toEqual([{ name: '0', type: 'Ref<T>', line: 7 }]);
+  });
+
+  it('leaves the type null when the cell is not one backticked expression', () => {
+    const found = tables(`### useFlyTo
+
+#### Returns
+
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| \`flyTo\` | see below | Fly |
+`);
+
+    expect(found[0]!.fields[0]!.type).toBeNull();
+  });
+
   it('records the markdown line of each row, so a bad row points at itself', () => {
     const found = tables(`### useFlyTo
 
@@ -37,8 +84,8 @@ describe('extractReturnTables', () => {
 
     expect(found[0]!.headingLine).toBe(3);
     expect(found[0]!.fields).toEqual([
-      { name: 'flyTo', line: 7 },
-      { name: 'isFlying', line: 8 },
+      { name: 'flyTo', type: '() => void', line: 7 },
+      { name: 'isFlying', type: 'ComputedRef<boolean>', line: 8 },
     ]);
   });
 
@@ -165,6 +212,22 @@ A tuple \`[debouncedRef, immediateRef, flush, cancel]\`:
 
     expect(found).toHaveLength(1);
     expect(found[0]!.fields.map((f) => f.name)).toEqual(['flyTo']);
+  });
+});
+
+describe('splitRow', () => {
+  it('splits on pipes and drops the outer empties', () => {
+    expect(splitRow('| `flyTo` | `() => void` | Fly |')).toEqual([
+      '`flyTo`',
+      '`() => void`',
+      'Fly',
+    ]);
+  });
+
+  it('keeps an escaped pipe inside a cell, so a union is one column', () => {
+    expect(
+      splitRow('| `getLayer` | `ComputedRef<Layer \\| null>` | Read it |'),
+    ).toEqual(['`getLayer`', '`ComputedRef<Layer | null>`', 'Read it']);
   });
 });
 

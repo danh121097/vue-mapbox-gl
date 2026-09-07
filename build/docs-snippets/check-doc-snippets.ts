@@ -175,12 +175,18 @@ for (let i = 0; i < lines.length; i++) {
 
   const code = diagnosticCode(full);
   if (code === null) continue;
+
+  const snippet = byGeneratedName.get(match[1]!);
+  // The curated allowlist exists to tolerate hand-written examples, which lean
+  // on inference and on names the surrounding application owns. Generated
+  // assertions have no such excuse, so every diagnostic in one counts --
+  // otherwise a mismatched type in a Returns table would be dropped as an
+  // assignability failure and the check would pass without checking.
+  const generated = Boolean(snippet?.lineMap);
   // A syntax error is always fatal, whatever it is: TypeScript stops before
   // the semantic pass when a program has any, so one malformed block would
   // silently switch off the entire check for every other block.
-  if (code >= 2000 && !isReported(code, full)) continue;
-
-  const snippet = byGeneratedName.get(match[1]!);
+  if (!generated && code >= 2000 && !isReported(code, full)) continue;
   if (!snippet) {
     unmapped++;
     reported.push({ location: match[1]!, message: summarize(full) });

@@ -571,10 +571,26 @@ function) passes, and a composable returning an object of ten fields fails with
 a line naming each one. Prose is for returns with no shape, not for returns
 whose shape is inconvenient to type out.
 
-What the table check does not do is prove the _types_ in the middle column are
-right, or that a field the composable returns is one the table lists — that
-second direction is the prose check above, and it only runs where there is no
-table.
+The `Type` column is checked too: the documented type and the real one must
+each be assignable to the other. Mutual assignability rather than identity,
+because the tables abridge on purpose — they leave off the trailing
+`StyleSetterOptions` argument every style setter takes, and a function type with
+fewer parameters is interchangeable with one that has more optional ones. It
+still catches a wrong parameter or return type, and a wrong wrapper (`Ref`
+documented for something that returns a `ComputedRef`).
+
+Type names in that column resolve through the package's own public surface, so
+a row naming a type the package does not export fails. That is the point: a
+type a reader cannot import is a type the reference should not use.
+
+Diagnostics in a generated check bypass the allowlist entirely. The allowlist
+exists to tolerate hand-written examples, which lean on inference and on names
+the surrounding application owns; a generated assertion has no such excuse, and
+filtering one would let a mismatched type pass as an assignability failure.
+
+What the table check still does not prove is that a field the composable
+returns is one the table lists — that direction is the prose check above, and
+it only runs where there is no table.
 
 Three things it cannot see: an extra attribute on a component is legal Vue
 (it falls through to the root element), so a misspelled prop compiles; a block

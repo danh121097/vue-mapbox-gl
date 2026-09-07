@@ -100,14 +100,140 @@ export function generatedName(snippet: Snippet): string {
  * every existing field is documented. Several composables spread a shared
  * actions object and their tables abridge it deliberately.
  */
+/** Type names the compiler already knows; importing them would shadow them. */
+const AMBIENT = new Set([
+  'Array',
+  'Awaited',
+  'Blob',
+  'Boolean',
+  'Error',
+  'Event',
+  'Exclude',
+  'File',
+  'HTMLElement',
+  'HTMLImageElement',
+  'ImageBitmap',
+  'ImageData',
+  'Number',
+  'Omit',
+  'Parameters',
+  'Partial',
+  'Pick',
+  'Promise',
+  'Readonly',
+  'Record',
+  'RequestInit',
+  'Required',
+  'ReturnType',
+  'String',
+  'Uint8Array',
+]);
+
+/**
+ * A single capital is a type parameter of the composable being documented, not
+ * a type to import. It is declared as `any` in the generated module: a row like
+ * `Ref<T>` then checks its wrapper without pinning the element type, which is
+ * the most the table can promise anyway.
+ */
+const GENERIC_RE = /^[A-Z]$/;
+
+/** Reactivity wrappers, which come from Vue rather than from this package. */
+const FROM_VUE = new Set([
+  'ComputedRef',
+  'Ref',
+  'ShallowRef',
+  'WatchSource',
+  'WritableComputedRef',
+]);
+
+/**
+ * Names the package root binds to something else.
+ *
+ * `Marker` and `Popup` at the root are this library's Vue components; MapLibre's
+ * classes of those names are re-exported as `MaplibreMarker` / `MaplibrePopup`.
+ * A Returns row saying `Marker` means MapLibre's, so the check has to take it
+ * from MapLibre or it would compare a component against a marker and fail.
+ */
+const FROM_MAPLIBRE = new Set(['Marker', 'Popup']);
+
+/** Type names a documented type expression refers to. */
+function referencedTypes(expression: string): string[] {
+  return [...new Set(expression.match(/\b[A-Z][A-Za-z0-9_]*/g) ?? [])].filter(
+    (name) => !AMBIENT.has(name) && !GENERIC_RE.test(name),
+  );
+}
+
+/**
+ * Turns a Returns table into a module that checks each row against the type.
+ *
+ * Per row: the field must exist, and the documented type and the real one must
+ * each be assignable to the other. Mutual assignability rather than identity,
+ * because the tables abridge on purpose -- they leave off the trailing
+ * `StyleSetterOptions` argument every style setter takes, and a function type
+ * with fewer parameters is interchangeable with one that has more optional
+ * ones. It still catches a wrong parameter type, a wrong wrapper
+ * (`Ref` where the code returns a `ComputedRef`) and a `void` documented for
+ * something that returns a promise.
+ *
+ * The check is one-directional at the table level: it proves every documented
+ * field exists, not that every existing field is documented. Composables that
+ * spread a shared actions object abridge their tables on purpose, and
+ * `noFieldsSnippet` covers the sections with no table at all.
+ */
 export function tableSnippet(table: ReturnTable): Snippet {
+  const names = new Set(
+    table.fields.flatMap((field) =>
+      field.type ? referencedTypes(field.type) : [],
+    ),
+  );
+  const from = (source: Set<string> | null, module: string): string[] => {
+    const wanted = [...names]
+      .filter((name) =>
+        source
+          ? source.has(name)
+          : !FROM_VUE.has(name) && !FROM_MAPLIBRE.has(name),
+      )
+      .sort();
+    return wanted.length
+      ? [`import type { ${wanted.join(', ')} } from '${module}';`]
+      : [];
+  };
+
+  const generics = [
+    ...new Set(
+      table.fields.flatMap((field) =>
+        (field.type?.match(/\b[A-Z]\b/g) ?? []).filter((name) =>
+          GENERIC_RE.test(name),
+        ),
+      ),
+    ),
+  ].sort();
+
   const head = [
+    ...generics.map((name) => `type ${name} = any;`),
+    ...from(FROM_VUE, 'vue'),
+    ...from(FROM_MAPLIBRE, 'maplibre-gl'),
+    ...from(null, 'vue3-maplibre-gl'),
     `import { ${table.composable} } from 'vue3-maplibre-gl';`,
     `type Returned = DocumentedReturn<typeof ${table.composable}>;`,
   ];
-  const rows = table.fields.map(
-    (field, index) => `type _${index} = Returned['${field.name}'];`,
-  );
+
+  const rows: string[] = [];
+  const rowLines: number[] = [];
+  table.fields.forEach((field, index) => {
+    const real = `Returned['${field.name}']`;
+    const lines = [`type _${index} = ${real};`];
+    if (field.type) {
+      lines.push(
+        `type _d${index} = ${field.type};`,
+        `const _to${index}: _d${index} = null as unknown as _${index};`,
+        `const _from${index}: _${index} = null as unknown as _d${index};`,
+      );
+    }
+    rows.push(...lines);
+    rowLines.push(...lines.map(() => field.line));
+  });
+
   return {
     file: table.file,
     fenceLine: table.headingLine,
@@ -117,7 +243,7 @@ export function tableSnippet(table: ReturnTable): Snippet {
     code: [...head, ...rows, 'export {};'].join('\n'),
     lineMap: [
       ...head.map(() => table.headingLine),
-      ...table.fields.map((field) => field.line),
+      ...rowLines,
       table.headingLine,
     ],
   };
