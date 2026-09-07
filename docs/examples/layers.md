@@ -9,7 +9,7 @@ Create areas with fill styling:
 ```vue
 <template>
   <Maplibre :options="mapOptions" style="height: 400px;">
-    <GeoJsonSource :data="polygonData" source-id="polygons">
+    <GeoJsonSource :data="polygonData" id="polygons">
       <FillLayer :style="fillStyle" />
     </GeoJsonSource>
   </Maplibre>
@@ -70,7 +70,7 @@ Display points as circles with customizable styling:
     </div>
 
     <Maplibre :options="mapOptions" style="height: 400px;">
-      <GeoJsonSource :data="pointData" source-id="points">
+      <GeoJsonSource :data="pointData" id="points">
         <CircleLayer :style="circleStyle" @click="onCircleClick" />
       </GeoJsonSource>
     </Maplibre>
@@ -168,7 +168,7 @@ Create lines and paths:
     </div>
 
     <Maplibre :options="mapOptions" style="height: 400px;">
-      <GeoJsonSource :data="lineData" source-id="route">
+      <GeoJsonSource :data="lineData" id="route">
         <LineLayer :style="lineStyle" />
       </GeoJsonSource>
     </Maplibre>
@@ -263,7 +263,7 @@ Add text and icon symbols:
 ```vue
 <template>
   <Maplibre :options="mapOptions" style="height: 400px;">
-    <GeoJsonSource :data="symbolData" source-id="symbols">
+    <GeoJsonSource :data="symbolData" id="symbols">
       <SymbolLayer :style="symbolStyle" />
     </GeoJsonSource>
   </Maplibre>
@@ -345,7 +345,7 @@ Combine different layer types:
     </div>
 
     <Maplibre :options="mapOptions" style="height: 400px;">
-      <GeoJsonSource :data="combinedData" source-id="combined">
+      <GeoJsonSource :data="combinedData" id="combined">
         <FillLayer v-if="showFill" :style="fillStyle" />
         <CircleLayer v-if="showCircles" :style="circleStyle" />
         <SymbolLayer v-if="showLabels" :style="symbolStyle" />

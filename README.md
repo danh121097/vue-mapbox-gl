@@ -185,8 +185,8 @@ Vue3 MapLibre GL provides 10+ reactive Vue components:
 - `useFlyTo` - Smooth map animations
 - `useEaseTo` - Easing animations
 - `useJumpTo` - Instant position changes
-- `useBounds` - Bounds management
-- `useZoom` - Zoom controls
+- `useFitBounds` - Fit the camera to a bounding box
+- `useZoomTo` - Zoom to a level
 - `useLogger` - Consistent logging
 
 ## 🎯 TypeScript Support

@@ -271,7 +271,7 @@ useMapEventListener({
 - **Source Management** - `useCreateGeoJsonSource`, `useGeoJsonSource`
 - **Event Handling** - `useMapEventListener`, `useLayerEventListener`
 - **Animations** - `useFlyTo`, `useEaseTo`, `useJumpTo`
-- **Utilities** - `useBounds`, `useZoom`, `useLogger`
+- **Utilities** - `useFitBounds`, `useZoomTo`, `useLogger`
 
 ### 🎯 **TypeScript Support**
 

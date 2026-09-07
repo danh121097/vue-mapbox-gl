@@ -88,6 +88,14 @@ export function diagnosticCode(message: string): number | null {
 export function summarize(message: string): string {
   // The undocumented-field probe indexes a one-property object, so its failure
   // reads as a missing property on `{ __none: true }`. Say what it means.
+  const prop =
+    /Property '([^']+)' does not exist on type '\{ __prop: true; \}'/.exec(
+      message,
+    );
+  if (prop) {
+    return `error: '${prop[1]}' is not a prop or an emit of this component`;
+  }
+
   const undocumented =
     /Property '([^']+)' does not exist on type '\{ __(?:none|all): true; \}'/.exec(
       message,

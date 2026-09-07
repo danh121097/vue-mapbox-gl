@@ -246,10 +246,11 @@ export function useMaplibre(): UseMaplibreResult {
 ### Composable Options Pattern
 
 Some composables accept either a props object or positional arguments, kept for
-the pre-v5 call shape. `useZoomTo`, `useZoomIn`, `useZoomOut`, the `useRotate`
-family, `usePan`, `useJumpTo`, `useBounds`, `useFitScreenCoordinates` and
-`useMapReloadEvent` carry these overloads; everything else, `useFlyTo` included,
-takes a props object only.
+the pre-v5 call shape. Twelve carry them: `useZoomTo`, `useZoomIn`,
+`useZoomOut`, `useRotateTo`, `useResetNorth`, `useResetNorthPitch`,
+`useSnapToNorth`, `usePanBy`, `usePanTo`, `useJumpTo`,
+`useFitScreenCoordinates` and `useMapReloadEvent`. Everything else — `useFlyTo`
+and `useFitBounds` included — takes a props object only.
 
 ```typescript
 export function useZoomTo(props: ZoomToProps): ZoomToActions;
@@ -647,11 +648,30 @@ Which pages get the table and completeness checks is not a list to maintain: any
 page with a `Returns` heading gets them, because that heading is the page
 claiming to document a return.
 
-Three more things it cannot see: an extra attribute on a component is legal Vue
-(it falls through to the root element), so a misspelled prop compiles; a block
-whose fence language is not `ts`, `js` or `vue` is never looked at; and a name
-in ordinary prose or in a heading is not a name in a code block, so it is not
-checked at all.
+Component attributes in the Vue examples are checked separately, because an
+extra attribute on a component is legal Vue — it falls through to the root
+element, so `vue-tsc` compiles a misspelled prop without a word. Every
+attribute an example puts on one of this package's components must be a
+declared prop or emit, with two deliberate exceptions: `class`, `style`, `ref`
+and the other universal attributes, and native DOM events, which fallthrough
+makes real. That first run found nine wrong attributes across five pages,
+including `source-id` on a component whose prop is `id` — in six examples.
+
+Names in prose are checked too. A name in a sentence or a heading is not a name
+in a code block, which is how the README came to advertise `useBounds` and
+`useZoom` on the page npm renders; neither has ever existed. Every backticked
+`use…` name must be exported, except on the changelog and the migration guides,
+whose job is to describe what the library no longer has. Write `useZoom*` for a
+family, and the star is checked as a prefix.
+
+The instructions outside the type system are checked as well: a `bun run …`
+must name a real package script, a `vue3-maplibre-gl/dist/…` path must be a
+file the build emits, and an advertised total ("10 components, 38 composables")
+must match what the package exports.
+
+One thing it still cannot see: a block whose fence language is not `ts`, `js`
+or `vue` is never compiled. The `bash` blocks are checked for the two things
+above; the two `html` ones are genuinely HTML.
 
 ## Git & Commits
 

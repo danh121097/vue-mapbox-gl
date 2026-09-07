@@ -65,7 +65,7 @@ the property-setter and lifecycle logic that the v6 fixes touched.
 | Map       | `useLayer`, `useGeoJsonSource`, `useMaplibreConfig`                                                            |
 | Events    | `useMapEventListener`, `useGeolocateEventListener`                                                             |
 | Controls  | `useGeolocateControl`                                                                                          |
-| Camera    | `useFlyTo`, `useEaseTo`, `useJumpTo`, `useBounds`                                                              |
+| Camera    | `useFlyTo`, `useEaseTo`, `useJumpTo`, `useFitBounds`                                                           |
 | Utilities | `useDebounce`, `useLogger`                                                                                     |
 
 `useFlyTo` / `useEaseTo` / `useJumpTo` are partly exercised through

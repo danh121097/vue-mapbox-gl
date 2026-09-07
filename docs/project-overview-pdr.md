@@ -187,14 +187,13 @@ Maplibre (Root Provider)
 
 ### Performance Optimizations
 
-| Optimization                               | Benefit                                          |
-| ------------------------------------------ | ------------------------------------------------ |
-| `shallowRef` for MapLibre objects          | Reduces unnecessary reactivity tracking          |
-| `markRaw` for native objects               | Prevents Vue from wrapping MapLibre GL objects   |
-| Automatic cleanup on unmount               | Zero memory leaks via defensive-in-depth pattern |
-| Event listener deduplication               | Prevents duplicate handlers via factory adapter  |
-| Shallow equality in `useOptimizedComputed` | Reduces garbage collector pressure               |
-| Tree-shakeable exports                     | Import only what you use                         |
+| Optimization                      | Benefit                                          |
+| --------------------------------- | ------------------------------------------------ |
+| `shallowRef` for MapLibre objects | Reduces unnecessary reactivity tracking          |
+| `markRaw` for native objects      | Prevents Vue from wrapping MapLibre GL objects   |
+| Automatic cleanup on unmount      | Zero memory leaks via defensive-in-depth pattern |
+| Event listener deduplication      | Prevents duplicate handlers via factory adapter  |
+| Tree-shakeable exports            | Import only what you use                         |
 
 ## Technical Specifications
 

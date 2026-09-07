@@ -40,7 +40,7 @@ Use the `GeoJsonSource` component to add data to your map:
 ```vue
 <template>
   <Maplibre :options="mapOptions" style="height: 400px;">
-    <GeoJsonSource :data="geoJsonData" source-id="my-data">
+    <GeoJsonSource :data="geoJsonData" id="my-data">
       <FillLayer :style="fillStyle" />
       <CircleLayer :style="circleStyle" />
     </GeoJsonSource>
@@ -271,10 +271,10 @@ Handle map and layer events:
     @click="onMapClick"
     @zoom="onMapZoom"
   >
-    <GeoJsonSource :data="geoJsonData" source-id="clickable-data">
+    <GeoJsonSource :data="geoJsonData" id="clickable-data">
       <CircleLayer
         :style="circleStyle"
-        layer-id="clickable-circles"
+        id="clickable-circles"
         @click="onCircleClick"
       />
     </GeoJsonSource>

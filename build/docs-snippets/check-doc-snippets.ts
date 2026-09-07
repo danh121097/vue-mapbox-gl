@@ -31,10 +31,14 @@ import {
   listComposablesFromFile,
 } from './extract-doc-tables';
 import { extractDocumentedTypesFromFile } from './extract-doc-types';
-import { packageExports } from './package-exports';
+import { componentExports, packageExports } from './package-exports';
 import { checkLinks } from './check-doc-links';
+import { checkNames } from './check-doc-names';
+import { checkReferences } from './check-doc-references';
 import { diagnosticCode, isReported, summarize } from './reported-diagnostics';
+import { extractTemplateAttributes } from './extract-template-attributes';
 import {
+  attributeSnippet,
   coverageSnippet,
   documentedTypeSnippet,
   tableSnippet,
@@ -153,10 +157,23 @@ for (const path of markdownFiles(resolve(rootDir, 'docs/api'))) {
   }
 }
 
+// Vue lets an unknown attribute fall through to the root element, so a
+// misspelled prop compiles. Each example's attributes are asserted separately.
+const components = componentExports(rootDir);
+let attributeCount = 0;
+let blockCount = 0;
+
 for (const path of pages) {
   const { snippets: found, skipped } = extractFromFile(path);
   for (const snippet of found) {
-    snippets.push({ ...snippet, file: relative(rootDir, snippet.file) });
+    const lifted = { ...snippet, file: relative(rootDir, snippet.file) };
+    snippets.push(lifted);
+    blockCount++;
+    if (lifted.ext !== '.vue') continue;
+    const attributes = extractTemplateAttributes(lifted.code, components);
+    if (!attributes.length) continue;
+    snippets.push(attributeSnippet(lifted, attributes));
+    attributeCount += attributes.length;
   }
   skippedCount += skipped.length;
   for (const skip of skipped) {
@@ -186,14 +203,15 @@ writeSnippetProject(
 ).forEach((snippet, name) => byGeneratedName.set(name, snippet));
 
 console.log(
-  `Checking ${snippets.length - tableCount - coverageCount - typeCount} code ` +
+  `Checking ${blockCount} code ` +
     `blocks from docs/ and the READMEs (${skippedCount} skipped), plus ` +
     `${tableCount} Returns tables, the return completeness of ` +
     `${coverageCount} composables` +
     (untabledCount
       ? ` (${untabledCount} of which describe their return in prose)`
       : '') +
-    `, and ${typeCount} documented types.`,
+    `, ${typeCount} documented types, and ${attributeCount} component ` +
+    `attributes in the Vue examples.`,
 );
 
 function compile(dir: string): string {
@@ -284,8 +302,16 @@ for (let i = 0; i < lines.length; i++) {
 
 // A generated snippet is compiled twice, so anything wrong for a reason other
 // than nullability is reported by both passes.
-// Links are prose, and prose is where the last two documentation bugs lived.
+// Links and names are prose, and prose is where the last several
+// documentation bugs lived.
 reported.push(...checkLinks(pages, rootDir));
+reported.push(...checkNames(pages, rootDir, exported));
+reported.push(
+  ...checkReferences(pages, rootDir, {
+    components: components.size,
+    composables: [...exported].filter((name) => /^use[A-Z]/.test(name)).length,
+  }),
+);
 
 const seenProblem = new Set<string>();
 const problems = reported.filter((problem) =>

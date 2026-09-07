@@ -171,13 +171,7 @@ A component for adding GeoJSON data sources to the map. This component provides 
 ```vue
 <template>
   <Maplibre :options="mapOptions">
-    <GeoJsonSource
-      id="my-source"
-      :data="geoJsonData"
-      :cluster="true"
-      :cluster-max-zoom="14"
-      :cluster-radius="50"
-    >
+    <GeoJsonSource id="my-source" :data="geoJsonData" :options="clusterOptions">
       <CircleLayer :style="circleStyle" />
     </GeoJsonSource>
   </Maplibre>
@@ -191,6 +185,14 @@ const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
   center: [0, 0],
   zoom: 2,
+});
+
+// Clustering is source configuration, so it goes in `options` rather than in
+// props of its own.
+const clusterOptions = ref({
+  cluster: true,
+  clusterMaxZoom: 14,
+  clusterRadius: 50,
 });
 
 const geoJsonData = ref({
@@ -542,7 +544,7 @@ A component for adding HTML markers to the map. Supports custom HTML content, dr
 <template>
   <Maplibre :options="mapOptions">
     <Marker
-      :lng-lat="markerPosition"
+      :lnglat="markerPosition"
       :draggable="true"
       @dragend="onMarkerDragEnd"
     >
@@ -609,7 +611,7 @@ A component for displaying popup windows on the map. Supports custom HTML conten
 ```vue
 <template>
   <Maplibre :options="mapOptions">
-    <Popup :lng-lat="popupPosition" :close-button="true" @close="onPopupClose">
+    <Popup :lnglat="popupPosition" :close-button="true" @close="onPopupClose">
       <div class="popup-content">
         <h3>Hello World!</h3>
         <p>This is a popup at {{ popupPosition }}.</p>

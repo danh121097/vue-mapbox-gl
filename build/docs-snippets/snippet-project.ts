@@ -5,6 +5,7 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Snippet } from './extract-doc-snippets';
 import type { DocumentedType } from './extract-doc-types';
+import type { TemplateAttribute } from './extract-template-attributes';
 import type { ReturnTable } from './extract-doc-tables';
 
 /**
@@ -541,4 +542,49 @@ function stripConstraints(params: string): string {
     )
     .filter(Boolean);
   return `<${inner.join(', ')}>`;
+}
+
+/**
+ * Turns the attributes an example puts on this package's components into
+ * assertions that each one is a real prop or emit.
+ *
+ * Vue lets an unknown attribute fall through to the root element, so
+ * `vue-tsc` compiles a misspelled prop without a word -- and a reader who
+ * copies the example gets an attribute that silently does nothing. One
+ * assertion per attribute, so a wrong one fails on its own line.
+ */
+export function attributeSnippet(
+  snippet: Snippet,
+  attributes: TemplateAttribute[],
+): Snippet {
+  const components = [
+    ...new Set(attributes.map((attribute) => attribute.component)),
+  ].sort();
+
+  const head = [`import { ${components.join(', ')} } from 'vue3-maplibre-gl';`];
+
+  const rows: string[] = [];
+  const rowLines: number[] = [];
+  attributes.forEach((attribute, index) => {
+    const props = `keyof InstanceType<typeof ${attribute.component}>['$props']`;
+    const lines = [
+      `type _u${index} = Exclude<'${attribute.prop}', ${props}>;`,
+      `type _p${index} = { __prop: true }[[_u${index}] extends [never] ? '__prop' : _u${index}];`,
+      `export type { _p${index} };`,
+    ];
+    rows.push(...lines);
+    // The attribute's own line in the markdown: the fence line, plus its line
+    // inside the block, plus one for the fence itself.
+    rowLines.push(...lines.map(() => snippet.fenceLine + attribute.line + 1));
+  });
+
+  return {
+    file: snippet.file,
+    fenceLine: snippet.fenceLine,
+    lang: 'ts',
+    ext: '.ts',
+    label: 'attrs',
+    code: [...head, ...rows].join('\n'),
+    lineMap: [...head.map(() => snippet.fenceLine), ...rowLines],
+  };
 }
