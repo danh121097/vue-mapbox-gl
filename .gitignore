@@ -31,12 +31,9 @@ docs/.vitepress/dist
 docs/.vitepress/cache
 
 # Project docs & plans
+# The maintainer docs under docs/ are tracked: they are excluded from the
+# published site by srcExclude in docs/.vitepress/config.ts, not from git.
 plans/
-docs/code-standards.md
-docs/codebase-summary.md
-docs/project-overview-pdr.md
-docs/project-roadmap.md
-docs/system-architecture.md
 repomix-output.xml
 
 # Nuxt module
