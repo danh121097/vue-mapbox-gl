@@ -164,12 +164,12 @@ vue-maplibre-gl/ (root)
 
 Measured, not estimated. Re-measure before quoting these anywhere public.
 
-| Metric                  | Count                          |
-| ----------------------- | ------------------------------ |
-| **Components**          | 10                             |
-| **Composables**         | 38                             |
-| **Unit Tests**          | 107 across 19 files            |
-| **Documentation Pages** | 23 Markdown pages under `docs` |
+| Metric                  | Count                            |
+| ----------------------- | -------------------------------- |
+| **Components**          | 10                               |
+| **Composables**         | 38                               |
+| **Unit Tests**          | 107 across 19 files              |
+| **Documentation Pages** | 23 Markdown pages under `docs`   |
 | **Lines of Code**       | 11,153 in `libs`, tests excluded |
 
 ## Component Reference
@@ -481,11 +481,11 @@ Both runtime dependencies are peers, so the app owns the versions:
 Measured on the built `dist`. `maplibre-gl` is externalized in both builds, so
 it is not counted here.
 
-| Artifact | Raw | Gzipped |
-| --- | --- | --- |
-| UMD (`index.umd.cjs`) | 84 KB | 20 KB |
-| ES entry chunks | 8.4 KB | 2.0 KB |
-| `style.css` | 78 B | — |
+| Artifact              | Raw    | Gzipped |
+| --------------------- | ------ | ------- |
+| UMD (`index.umd.cjs`) | 84 KB  | 20 KB   |
+| ES entry chunks       | 8.4 KB | 2.0 KB  |
+| `style.css`           | 78 B   | —       |
 
 The ES build is split per module, so an app pays only for what it imports.
 

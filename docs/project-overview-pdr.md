@@ -29,17 +29,17 @@ Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 
 ### Key Achievements
 
-| Aspect            | Achievement                                                    |
-| ----------------- | -------------------------------------------------------------- |
+| Aspect            | Achievement                                                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------- |
 | **Architecture**  | Factory-based composables — event listeners, camera animations and layer property setters each share one factory |
-| **Components**    | 10 fully-featured components with reactive data binding        |
-| **Composables**   | 38 composables for map management, animations, and utilities   |
-| **TypeScript**    | Comprehensive type definitions with event handler types        |
-| **Correctness**   | v6 fixed reactive status, camera promise settlement, listener attachment ordering, and post-load error recovery |
-| **SSR Support**   | Full Nuxt SSR/SSG compatibility with browser guards            |
-| **Nuxt Module**   | nuxt-maplibre-gl v2.0.0, auto-importing all 38 composables     |
-| **Testing**       | 107 tests across 19 files, with a coverage ratchet in CI       |
-| **Documentation** | VitePress docs with API reference, guides, and examples        |
+| **Components**    | 10 fully-featured components with reactive data binding                                                          |
+| **Composables**   | 38 composables for map management, animations, and utilities                                                     |
+| **TypeScript**    | Comprehensive type definitions with event handler types                                                          |
+| **Correctness**   | v6 fixed reactive status, camera promise settlement, listener attachment ordering, and post-load error recovery  |
+| **SSR Support**   | Full Nuxt SSR/SSG compatibility with browser guards                                                              |
+| **Nuxt Module**   | nuxt-maplibre-gl v2.0.0, auto-importing all 38 composables                                                       |
+| **Testing**       | 107 tests across 19 files, with a coverage ratchet in CI                                                         |
+| **Documentation** | VitePress docs with API reference, guides, and examples                                                          |
 
 ## Feature Set
 
@@ -224,11 +224,11 @@ Maplibre (Root Provider)
 Measured on the built `dist`, with `maplibre-gl` externalized in both builds —
 it is a peer dependency, so it is never bundled in these numbers.
 
-| Artifact | Raw | Gzipped |
-| --- | --- | --- |
-| UMD (`index.umd.cjs`) | 84 KB | 20 KB |
-| ES entry chunks | 8.4 KB | 2.0 KB |
-| `style.css` | 78 B | — |
+| Artifact              | Raw    | Gzipped |
+| --------------------- | ------ | ------- |
+| UMD (`index.umd.cjs`) | 84 KB  | 20 KB   |
+| ES entry chunks       | 8.4 KB | 2.0 KB  |
+| `style.css`           | 78 B   | —       |
 
 The ES build is split per module and tree-shakeable, so an app pays for the
 components and composables it imports rather than the figure above.
@@ -262,13 +262,13 @@ Only what the repository can prove. Adoption figures, frame rates and memory
 ceilings were previously asserted here with nothing measuring them, so they are
 gone rather than restated.
 
-| Metric | Current | Where it comes from |
-| --- | --- | --- |
-| Components | 10 | `libs/components` |
-| Composables | 38 | exported from the package root, all auto-imported by the Nuxt module |
-| Tests | 107 across 19 files | `bun run test` |
-| Coverage floor | 39% statements / 34% branches / 37% functions / 40% lines | ratchet in `vitest.config.ts`; CI fails if it drops |
-| Type safety | strict TypeScript, types generated on build | `tsconfig.json`, `bun run build` |
+| Metric         | Current                                                   | Where it comes from                                                  |
+| -------------- | --------------------------------------------------------- | -------------------------------------------------------------------- |
+| Components     | 10                                                        | `libs/components`                                                    |
+| Composables    | 38                                                        | exported from the package root, all auto-imported by the Nuxt module |
+| Tests          | 107 across 19 files                                       | `bun run test`                                                       |
+| Coverage floor | 39% statements / 34% branches / 37% functions / 40% lines | ratchet in `vitest.config.ts`; CI fails if it drops                  |
+| Type safety    | strict TypeScript, types generated on build               | `tsconfig.json`, `bun run build`                                     |
 
 Coverage is low by design of the ratchet, not by target: it is the number the
 suite actually reaches, and most layer, source and control composables still

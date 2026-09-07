@@ -15,13 +15,13 @@ document that is wrong a month later.
 built before `maplibre-gl` moved to `peerDependencies`, so its manifest still
 declared the runtime as a direct dependency.
 
-| | |
-| --- | --- |
-| Components | 10 |
-| Composables | 38, all exported from the package root |
-| Tests | 107 across 19 files |
-| Coverage | 41% statements / 36% branches / 39% functions / 42% lines |
-| Nuxt module | `nuxt-maplibre-gl` 2.0.0, published |
+|             |                                                           |
+| ----------- | --------------------------------------------------------- |
+| Components  | 10                                                        |
+| Composables | 38, all exported from the package root                    |
+| Tests       | 107 across 19 files                                       |
+| Coverage    | 41% statements / 36% branches / 39% functions / 42% lines |
+| Nuxt module | `nuxt-maplibre-gl` 2.0.0, published                       |
 
 Coverage is enforced as a ratchet in `vitest.config.ts`: every threshold is the
 number a file actually reached, so a change that lowers it fails CI. The global
@@ -59,14 +59,14 @@ Verified, not aspirational.
 These have no test file. The layer composables are the largest hole — they carry
 the property-setter and lifecycle logic that the v6 fixes touched.
 
-| Area | Modules |
-| --- | --- |
-| Layers | `useCreateFillLayer`, `useCreateCircleLayer`, `useCreateLineLayer`, `useCreateSymbolLayer`, `layerStyleConfig` |
-| Map | `useLayer`, `useGeoJsonSource`, `useMaplibreConfig` |
-| Events | `useMapEventListener`, `useGeolocateEventListener` |
-| Controls | `useGeolocateControl` |
-| Camera | `useFlyTo`, `useEaseTo`, `useJumpTo`, `useBounds` |
-| Utilities | `useDebounce`, `useLogger` |
+| Area      | Modules                                                                                                        |
+| --------- | -------------------------------------------------------------------------------------------------------------- |
+| Layers    | `useCreateFillLayer`, `useCreateCircleLayer`, `useCreateLineLayer`, `useCreateSymbolLayer`, `layerStyleConfig` |
+| Map       | `useLayer`, `useGeoJsonSource`, `useMaplibreConfig`                                                            |
+| Events    | `useMapEventListener`, `useGeolocateEventListener`                                                             |
+| Controls  | `useGeolocateControl`                                                                                          |
+| Camera    | `useFlyTo`, `useEaseTo`, `useJumpTo`, `useBounds`                                                              |
+| Utilities | `useDebounce`, `useLogger`                                                                                     |
 
 `useFlyTo` / `useEaseTo` / `useJumpTo` are partly exercised through
 `createCameraAnimation`'s tests, but nothing pins their own option handling.
@@ -116,11 +116,11 @@ Only breaking work belongs here. Nothing is committed.
 
 Current declared support, from `package.json`:
 
-| Dependency | Range | Kind |
-| --- | --- | --- |
-| `vue` | `^3.0.0` | peer |
-| `maplibre-gl` | `^5.6.1` | peer |
-| `typescript` | `^5.4.5` | dev — build and type generation |
+| Dependency    | Range    | Kind                            |
+| ------------- | -------- | ------------------------------- |
+| `vue`         | `^3.0.0` | peer                            |
+| `maplibre-gl` | `^5.6.1` | peer                            |
+| `typescript`  | `^5.4.5` | dev — build and type generation |
 
 `nuxt-maplibre-gl` declares `nuxt >=3.0.0` as a peer and keeps `maplibre-gl` in
 its own dependencies, so a Nuxt app is unaffected by the peer change.

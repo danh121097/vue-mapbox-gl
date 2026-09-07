@@ -211,7 +211,7 @@ Cleanup (Unmount)
 - `load` - Map fully loaded
 - `error` - A map error. Fired for both a failed initialisation and an ordinary
   runtime resource failure (a 404 tile, a missing glyph range, a sprite that
-  will not fetch). Only a failure *before* the map loads sets the error state
+  will not fetch). Only a failure _before_ the map loads sets the error state
   and swaps in the `error` slot; after load the event is reported and the map
   keeps running.
 - Map events (click, move, zoom, etc.)
@@ -685,12 +685,12 @@ Then use components without imports:
 
 ### Error Levels
 
-| Level            | Handling                                   |
-| ---------------- | ------------------------------------------ |
-| Setup Errors     | Throw immediately, prevent component mount |
-| Event Errors     | Log and set status to `Error`              |
-| Animation Errors | Reject promise and set status              |
-| Lifecycle Errors | Safe cleanup, set `hasMapError` flag       |
+| Level            | Handling                                            |
+| ---------------- | --------------------------------------------------- |
+| Setup Errors     | Throw immediately, prevent component mount          |
+| Event Errors     | Log and set status to `Error`                       |
+| Animation Errors | Reject promise and set status                       |
+| Lifecycle Errors | Safe cleanup, set `hasMapError` flag                |
 | Post-load Errors | Report via `error` / `onError`, keep the map usable |
 
 ### Debug Mode
