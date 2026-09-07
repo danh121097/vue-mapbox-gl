@@ -4,7 +4,10 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { checkReferences } from '../check-doc-references';
 
-function project(page: string): { root: string; pages: string[] } {
+function project(
+  page: string,
+  testFiles = 0,
+): { root: string; pages: string[] } {
   const root = mkdtempSync(resolve(tmpdir(), 'doc-refs-'));
   writeFileSync(
     resolve(root, 'package.json'),
@@ -12,6 +15,12 @@ function project(page: string): { root: string; pages: string[] } {
   );
   mkdirSync(resolve(root, 'dist'));
   writeFileSync(resolve(root, 'dist/style.css'), '');
+  if (testFiles) {
+    mkdirSync(resolve(root, '__tests__'));
+    for (let i = 0; i < testFiles; i++) {
+      writeFileSync(resolve(root, `__tests__/a${i}.test.ts`), '');
+    }
+  }
   const file = resolve(root, 'README.md');
   writeFileSync(file, page);
   return { root, pages: [file] };
@@ -19,8 +28,8 @@ function project(page: string): { root: string; pages: string[] } {
 
 const COUNTS = { components: 10, composables: 38 };
 
-function problems(page: string) {
-  const { root, pages } = project(page);
+function problems(page: string, testFiles = 0) {
+  const { root, pages } = project(page, testFiles);
   return checkReferences(pages, root, COUNTS).map((p) => p.message);
 }
 
@@ -54,6 +63,15 @@ describe('checkReferences', () => {
     expect(problems('10 components, 38 composables')).toEqual([]);
     expect(problems('All 40 composables are auto-imported.')).toEqual([
       'error: the docs say 40 composables, the package exports 38',
+    ]);
+  });
+
+  it('checks the advertised size of the test suite', () => {
+    // The count that was there had drifted from 19 files to 31 unnoticed,
+    // because nothing but a person rereading the table would have caught it.
+    expect(problems('Tests: 2 test files', 2)).toEqual([]);
+    expect(problems('Tests: 19 test files', 2)).toEqual([
+      'error: the docs say 19 test files, the repository has 2',
     ]);
   });
 
