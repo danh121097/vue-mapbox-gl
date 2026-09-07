@@ -6,7 +6,8 @@
       "name": "nuxt-maplibre-gl",
       "dependencies": {
         "@nuxt/kit": "^3.15.0",
-        "vue3-maplibre-gl": "^5.0.0",
+        "maplibre-gl": "^5.6.1",
+        "vue3-maplibre-gl": "^6.0.0",
       },
       "devDependencies": {
         "@nuxt/module-builder": "^1.0.2",
@@ -1341,7 +1342,7 @@
 
     "vue-sfc-transformer": ["vue-sfc-transformer@0.1.17", "", { "dependencies": { "@babel/parser": "^7.27.0" }, "peerDependencies": { "@vue/compiler-core": "^3.5.13", "esbuild": "*", "vue": "^3.5.13" } }, "sha512-0mpkDTWm1ybtp/Mp3vhrXP4r8yxcGF+quxGyJfrHDl2tl5naQjK3xkIGaVR5BtR5KG1LWJbdCrqn7I6f460j9A=="],
 
-    "vue3-maplibre-gl": ["vue3-maplibre-gl@5.0.1", "", { "dependencies": { "maplibre-gl": "^5.6.1" }, "peerDependencies": { "vue": "^3.0.0" } }, "sha512-ubByAOUaqZSelx7loNhYZu3d0FXEEmNrb8wdh3q92E5CnEepkjBEvIddxlLSS6Mt1lXJlYHLEQH9GAG/cCqW8A=="],
+    "vue3-maplibre-gl": ["vue3-maplibre-gl@6.0.1", "", { "peerDependencies": { "maplibre-gl": "^5.6.1", "vue": "^3.0.0" } }, "sha512-cXGyfRjwDHK2JN1FlOMgzy+3bqsJSKXv+q5OG37t0aco6IK3BvwkNliNa71INcRxh39NRv6Q/v+wHLU304cj/g=="],
 
     "webidl-conversions": ["webidl-conversions@3.0.1", "", {}, "sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ=="],
 
