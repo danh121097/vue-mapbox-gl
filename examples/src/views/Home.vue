@@ -7,7 +7,9 @@ import {
   type MapOptions,
 } from 'vue3-maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import 'vue3-maplibre-gl/dist/style.css';
+// A consumer also imports the package stylesheet, 'vue3-maplibre-gl/dist/style.css'.
+// This demo resolves the package to libs/ (see vite.config.ts), where that
+// stylesheet is the <style> block of Maplibre.vue and the component applies it.
 
 const options = computed<MapOptions>(() => ({
   container: 'map',

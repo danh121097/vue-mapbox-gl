@@ -18,6 +18,8 @@
     "types": ["vite/client", "../types/maplibre.d.ts"],
     "paths": {
       "@": ["./src"],
+      "vue3-maplibre-gl": ["../libs/index.ts"],
+      "vue3-maplibre-gl/maplibre": ["../libs/maplibre-reexports.ts"],
       "@libs/types": ["../libs/types"],
       "@libs/composables": ["../libs/composables"],
       "@libs/enums": ["../libs/enums"],

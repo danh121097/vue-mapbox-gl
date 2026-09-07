@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
+import { dropOrphanChunks } from './build/drop-orphan-chunks-plugin';
 import {
   assetFileNames,
   createResolveAliases,
@@ -44,6 +45,7 @@ export default defineConfig({
       rollupTypes: false, // Disable rollup types to avoid API extractor issues
       copyDtsFiles: false,
     }),
+    dropOrphanChunks(),
   ],
   resolve: {
     alias: createResolveAliases(__dirname),

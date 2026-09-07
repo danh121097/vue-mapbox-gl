@@ -81,7 +81,7 @@
     "test:build": "bun run build && bun pm pack --dry-run",
     "prepublishOnly": "bun run format:check && bun run lint:check && bun run type-check && bun run test:coverage && bun run build",
     "publish:vue": "bun run build && npm publish --access public",
-    "publish:nuxt": "npm --prefix nuxt version patch --no-git-tag-version && cd nuxt && bun install && bun run build && npm --prefix nuxt publish --access public",
+    "publish:nuxt": "bun run build/assert-nuxt-dependency-published.ts && npm --prefix nuxt version minor --no-git-tag-version && cd nuxt && bun install && bun run build && npm --prefix nuxt publish --access public",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -122,8 +122,7 @@
     "vue": "^3.5.17",
     "vue-eslint-parser": "^9.4.3",
     "vue-router": "^4.3.2",
-    "vue-tsc": "^2.0.19",
-    "vue3-maplibre-gl": "^4.2.1"
+    "vue-tsc": "^2.0.19"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,cjs,mjs,vue}": "eslint --fix",

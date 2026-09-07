@@ -3,6 +3,7 @@ name: CI/CD
 on:
   push:
     branches: [master]
+  pull_request:
 
 jobs:
   # Quality gate: format, lint, type-check, unit tests, and library build.
@@ -66,7 +67,20 @@ jobs:
           # narrower module graph, this catches it.
           grep -q 'maplibre-container' dist/style.css || exit 1
           test "$(wc -c < dist/style.css)" -lt 2000 || exit 1
+          # Every SFC leaves a one-line facade module (`Foo.vue2.js`) behind
+          # that nothing imports; the build drops those. One showing up again
+          # means the orphan-chunk plugin has stopped running.
+          test -z "$(find dist -name '*.vue[0-9]*.js' -print -quit)" || exit 1
           echo "All dist files present"
+
+      # What npm would actually upload. `files` in package.json is an allow
+      # list, so anything inside dist/ ships — including test fixtures or
+      # sourcemaps that a config regression could start emitting there.
+      - name: Verify tarball contents
+        run: |
+          bun pm pack --dry-run | tee /tmp/pack.txt
+          ! grep -E '\.map$|__tests__|test-utils|node_modules' /tmp/pack.txt || exit 1
+          echo "Tarball contains only publishable files"
 
   # Build the VitePress docs and deploy to Cloudflare Pages.
   deploy-docs:

@@ -88,6 +88,15 @@ const circleStyle = ref({ 'circle-radius': 6, 'circle-color': '#007cbf' });
 All 15+ composables from vue3-maplibre-gl are auto-imported:
 `useCreateMaplibre`, `useFlyTo`, `useEaseTo`, `useJumpTo`, `useMapEventListener`, etc.
 
+## Releasing
+
+This module depends on `vue3-maplibre-gl` by version range, and both are published from the same repository. Release them in this order, from the repository root:
+
+1. `bun run publish:vue` — publishes the root package.
+2. `bun run publish:nuxt` — refuses to run until the `vue3-maplibre-gl` range in `nuxt/package.json` resolves on npm, then bumps the minor version, refreshes `nuxt/bun.lock`, builds, and publishes.
+
+Commit the updated `nuxt/package.json` and `nuxt/bun.lock` afterwards.
+
 ## License
 
 MIT

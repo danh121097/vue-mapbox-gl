@@ -30,15 +30,20 @@ export default defineNuxtModule<ModuleOptions>({
     css: true,
     prefix: '',
   },
-  setup(options, nuxt) {
-    const { resolve } = createResolver(import.meta.url);
+  async setup(options, nuxt) {
+    const { resolve, resolvePath } = createResolver(import.meta.url);
 
     // Auto-import CSS. MapLibre's own stylesheet is no longer re-bundled into
     // the library's style.css, so both are pushed: upstream first, then this
-    // package's container rules.
+    // package's container rules. Both stylesheets are dependencies of this
+    // module, not of the consuming app, so they are resolved to absolute
+    // paths from here — a bare specifier is resolved from the app root, which
+    // under pnpm's isolated node_modules cannot see them at all.
     if (options.css) {
-      nuxt.options.css.push('maplibre-gl/dist/maplibre-gl.css');
-      nuxt.options.css.push('vue3-maplibre-gl/dist/style.css');
+      nuxt.options.css.push(
+        await resolvePath('maplibre-gl/dist/maplibre-gl.css'),
+        await resolvePath('vue3-maplibre-gl/dist/style.css'),
+      );
     }
 
     // Transpile vue3-maplibre-gl for SSR
