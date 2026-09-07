@@ -10,10 +10,12 @@ import type { GeolocateControl } from 'maplibre-gl';
 // Re-export with original name for backward compatibility
 export { BaseStatus as GeolocateEventListenerStatus };
 
-interface GeolocateEventListenerProps {
+/** `T` is inferred from `event`, so a `'geolocate'` handler receives a
+ * `GeolocateSuccess` rather than the union that also includes the error type. */
+interface GeolocateEventListenerProps<T extends keyof GeolocateEventTypes> {
   geolocate: MaybeRef<Nullable<GeolocateControl>>;
-  event: keyof GeolocateEventTypes;
-  on: <T extends keyof GeolocateEventTypes>(e: GeolocateEventTypes[T]) => void;
+  event: T;
+  on: (e: GeolocateEventTypes[T]) => void;
   debug?: boolean;
   once?: boolean;
 }
@@ -23,8 +25,8 @@ interface GeolocateEventListenerActions extends EventListenerActions {}
 /**
  * Composable for managing MapLibre GL Geolocate Control Event Listeners
  */
-export function useGeolocateEventListener(
-  props: GeolocateEventListenerProps,
+export function useGeolocateEventListener<T extends keyof GeolocateEventTypes>(
+  props: GeolocateEventListenerProps<T>,
 ): GeolocateEventListenerActions {
   return createEventListenerComposable<GeolocateControl>({
     target: props.geolocate,

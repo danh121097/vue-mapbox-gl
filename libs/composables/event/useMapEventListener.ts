@@ -10,10 +10,16 @@ import type { Map } from 'maplibre-gl';
 // Re-export for backward compatibility
 export { EventListenerStatus };
 
-interface MapEventListenerProps {
+/**
+ * `T` is inferred from `event`, which is the whole point of it: a handler
+ * registered for `'click'` has to receive a `MapMouseEvent`, not the union of
+ * every map event. The generic used to sit on `on` itself, where nothing could
+ * ever infer it, so `event.lngLat` failed to compile in correct code.
+ */
+interface MapEventListenerProps<T extends keyof MapEventTypes> {
   map: MaybeRef<Nullable<Map>>;
-  event: keyof MapEventTypes;
-  on: <T extends keyof MapEventTypes>(e: MapEventTypes[T]) => void;
+  event: T;
+  on: (e: MapEventTypes[T]) => void;
   debug?: boolean;
   once?: boolean;
 }
@@ -23,8 +29,8 @@ interface MapEventListenerActions extends EventListenerActions {}
 /**
  * Composable for managing MapLibre GL Map Event Listeners
  */
-export function useMapEventListener(
-  props: MapEventListenerProps,
+export function useMapEventListener<T extends keyof MapEventTypes>(
+  props: MapEventListenerProps<T>,
 ): MapEventListenerActions {
   return createEventListenerComposable<Map>({
     target: props.map,

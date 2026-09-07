@@ -15,7 +15,7 @@ export { BaseStatus as LayerEventListenerStatus };
 interface LayerEventListenerProps<T extends keyof MapLayerEventType> {
   map: MaybeRef<Nullable<Map>>;
   layer: MaybeRef<Nullable<LayerSpecification | string>>;
-  event: keyof MapLayerEventType;
+  event: T;
   on: (e: MapLayerEventType[T]) => void;
   debug?: boolean;
   once?: boolean;
