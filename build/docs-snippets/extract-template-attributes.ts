@@ -146,23 +146,23 @@ export function extractTemplateAttributes(
   const found: TemplateAttribute[] = [];
   const tagStart = /<([A-Z][A-Za-z0-9]*)/g;
 
-  // Only the template. A `<script setup>` writes `ref<Marker | null>(null)`,
-  // which is a type argument, not a tag.
-  const fullCode = code;
-  const template = /<template>([\s\S]*)<\/template>/.exec(code);
-  if (!template) return found;
-  const offset = template.index + '<template>'.length;
-  code = template[1]!;
-
-  const prefixLines = fullCode.slice(0, offset).split('\n').length - 1;
+  // Everything but the script. A `<script setup>` writes
+  // `ref<Marker | null>(null)`, which is a type argument, not a tag. Anchoring
+  // on `<template>` instead would have been narrower than the docs are: a
+  // `vue` fence showing one line of markup writes the tag bare, and three such
+  // fragments went unscanned until a canary attribute on one of them was not
+  // reported. Blanking the script keeps the line and column of everything
+  // after it, so a message still points at the attribute as written.
+  code = code.replace(/<script[\s\S]*?<\/script>/g, (block) =>
+    block.replace(/[^\n]/g, ' '),
+  );
 
   for (const match of code.matchAll(tagStart)) {
     const component = match[1]!;
     if (!components.has(component)) continue;
 
     const { body } = readTag(code, match.index + match[0].length);
-    const line =
-      prefixLines + code.slice(0, match.index).split('\n').length - 1;
+    const line = code.slice(0, match.index).split('\n').length - 1;
 
     for (const { text, offset } of attributesOf(body)) {
       const attribute = ATTRIBUTE_RE.exec(text);

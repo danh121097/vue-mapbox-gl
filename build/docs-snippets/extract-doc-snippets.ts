@@ -9,6 +9,13 @@ import { readFileSync } from 'node:fs';
 /** Fence languages worth handing to the compiler. */
 const TS_LANGS = new Set(['ts', 'typescript', 'js', 'javascript']);
 const VUE_LANGS = new Set(['vue']);
+/**
+ * Markup the compiler is not asked about, but that still shows this package's
+ * components. A block is fenced `html` when it cannot compile -- a `v5` line
+ * kept for contrast, an elision -- and the attribute check needs no compiler,
+ * so the tag names and prop spellings in one are still worth asserting.
+ */
+const MARKUP_LANGS = new Set(['html']);
 
 /**
  * Opts a block out of the check. Placed on the line before the fence, so it is
@@ -29,6 +36,12 @@ export interface Snippet {
   lang: string;
   /** Extension the block should be written with. */
   ext: '.ts' | '.vue';
+  /**
+   * The block is scanned for component attributes but never compiled -- an
+   * `html` fence is markup this package's components appear in, not code the
+   * page claims will typecheck.
+   */
+  markupOnly?: boolean;
   code: string;
   /**
    * Generated line (1-based) to markdown line, for snippets this tool wrote
@@ -82,7 +95,8 @@ export function extractFromMarkdown(
       }
     }
 
-    const isCheckable = TS_LANGS.has(lang) || VUE_LANGS.has(lang);
+    const isMarkup = MARKUP_LANGS.has(lang);
+    const isCheckable = TS_LANGS.has(lang) || VUE_LANGS.has(lang) || isMarkup;
     if (isCheckable) {
       const skip = findSkipMarker(lines, i);
       if (skip) {
@@ -92,7 +106,8 @@ export function extractFromMarkdown(
           file,
           fenceLine: i + 1,
           lang,
-          ext: VUE_LANGS.has(lang) ? '.vue' : '.ts',
+          ext: TS_LANGS.has(lang) ? '.ts' : '.vue',
+          ...(isMarkup ? { markupOnly: true } : {}),
           // Strip the fence's own indentation so a block nested in a list still
           // compiles; the line count is untouched, which keeps the mapping back
           // to the markdown exact.

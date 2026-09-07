@@ -72,6 +72,22 @@ const marker = ref<Marker | null>(null);
     ).toEqual([['Maplibre', 'options', 1]]);
   });
 
+  it('reads a fragment that is not wrapped in a template', () => {
+    expect(attributes('<GeoJsonSource :data="features" />')).toEqual([
+      ['GeoJsonSource', 'data', 0],
+    ]);
+  });
+
+  it('keeps the line of a tag written after the script block', () => {
+    expect(
+      attributes(`<script setup>
+const features = ref();
+</script>
+
+<GeoJsonSource :data="features" />`),
+    ).toEqual([['GeoJsonSource', 'data', 4]]);
+  });
+
   it('ignores attributes that are legal on any component', () => {
     expect(
       attributes(`<template>

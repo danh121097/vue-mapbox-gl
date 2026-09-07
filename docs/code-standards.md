@@ -695,13 +695,58 @@ thing.
 
 The heading pattern is part of that check, and it is the part that failed
 quietly. `PARAMETERS_HEADING_RE` matched the bare word only, while the
-reference also writes `#### Parameters (\`CreateImageProps\`)`and`#### \`props\` fields`. Ten tables matched nothing, so nothing checked them —
+reference also qualifies the heading — naming the interface a table describes,
+or the object its fields sit in. Ten tables matched nothing, so nothing checked them —
 which reads exactly like ten tables with nothing wrong. Widening the pattern
 took the parameter count from 104 to 172 and the default count from 127 to 239,
 and surfaced five real errors on the first run. When adding a check that
 selects its input by pattern, corrupt a row in every table you believe it
 reaches and count the failures; the count is the only thing that separates
 "nothing is wrong" from "nothing was looked at".
+
+### Every check was then counted
+
+That lesson was applied to the whole suite rather than to the one check that
+taught it. Each class was canaried by corrupting what it reads and counting
+what came back:
+
+<!-- names-skip: the canary value the sweep appended to every page -->
+
+| Check                   | Corruption                                  | Reached      |
+| ----------------------- | ------------------------------------------- | ------------ |
+| Returns types           | every Type cell, twice (a string, a number) | 40/40 tables |
+| Returns completeness    | the first row's name in every table         | 29/30\*      |
+| Parameters              | every Type cell, twice                      | 35/35 tables |
+| Props                   | every Type cell, twice                      | 10/10 tables |
+| Events                  | every Type cell, twice                      | 7/7 tables   |
+| Slots                   | a bogus row, and a dropped row              | 2/2          |
+| Documented types        | the first parameter of every alias          | 27/27        |
+| Template attributes     | `:__canary__="1"` on every component tag    | 114/114 tags |
+| Links, scripts, `dist/` | a bogus one appended to every page          | 25/25 pages  |
+| Prose names             | `useCanaryBogus` appended to every page     | 23/25 pages† |
+
+\* `useMaplibre` spreads `MaplibreMethods` and says so in prose, so its
+completeness direction is the one documented opt-out. Its row _names_ are still
+checked.
+† The changelog and the v5 migration guide are the documented `HISTORICAL`
+exemption: naming a removed composable is what those pages are for.
+
+Two corruptions are needed where one would seem to do, because a canary value
+has a type of its own. A row typed `string` accepts `'__canary__'` and a row
+typed `number` accepts `123456789`; only a table that survives both is a table
+nothing looked at. `never` is worse than useless as a parameter canary — it is
+assignable to every parameter — and a `=> void` return is bivariant, so
+corrupting an alias's return type proves nothing and its parameter type must be
+corrupted instead.
+
+The sweep found one more gap of its own. The attribute check anchored on
+`<template>`, but a `vue` fence that shows one line of markup writes the tag
+bare, and an `html` fence — the fence used for markup that cannot compile, a v5
+line kept for contrast — was not read at all. Five tags went unscanned. The
+check now blanks `<script>` blocks (which is what the `<template>` anchor was
+really for: `ref<Marker | null>` is a type argument, not a tag) and reads
+everything else, including `html` fences, which are scanned for attributes
+without ever being handed to the compiler.
 
 The components reference is tabulated the same way, and its tables were the
 last ones nothing compiled. A `Props` row is checked against the component's

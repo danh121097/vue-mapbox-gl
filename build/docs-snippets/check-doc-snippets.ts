@@ -286,8 +286,10 @@ for (const path of pages) {
   const { snippets: found, skipped } = extractFromFile(path);
   for (const snippet of found) {
     const lifted = { ...snippet, file: relative(rootDir, snippet.file) };
-    snippets.push(lifted);
-    blockCount++;
+    if (!lifted.markupOnly) {
+      snippets.push(lifted);
+      blockCount++;
+    }
     if (lifted.ext !== '.vue') continue;
     const attributes = extractTemplateAttributes(lifted.code, components);
     if (!attributes.length) continue;
@@ -348,7 +350,7 @@ console.log(
       : '') +
     `, and ` +
     `${attributeCount} component ` +
-    `attributes in the Vue examples.`,
+    `attributes in the markup examples.`,
 );
 
 function compile(dir: string): string {
