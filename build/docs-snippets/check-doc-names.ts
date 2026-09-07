@@ -31,6 +31,17 @@ const BARE_NAME_RE = /\buse[A-Z][A-Za-z0-9_]*/g;
  */
 const HISTORICAL = /(?:changelog|migration-v\d+)\.md$/;
 
+/**
+ * Exempts the paragraph below it, for prose that names something on purpose
+ * *because* it does not exist:
+ *
+ *     <!-- names-skip: the two names the README used to advertise -->
+ *
+ * The reason is required, and the exemption ends at the next blank line, so it
+ * cannot quietly widen to the rest of the page.
+ */
+const NAMES_SKIP_RE = /^<!--\s*names-skip:\s*(\S.*?)\s*-->$/;
+
 export function checkNames(
   pages: string[],
   rootDir: string,
@@ -48,6 +59,9 @@ export function checkNames(
 
     const lines = readFileSync(file, 'utf8').split('\n');
     let fence: string | null = null;
+    // 'pending' once the marker is read, 'active' through the paragraph that
+    // follows it, and off again at the blank line that ends that paragraph.
+    let exempt: 'off' | 'pending' | 'active' = 'off';
 
     lines.forEach((line, index) => {
       const open = /^\s*(`{3,})/.exec(line);
@@ -59,6 +73,17 @@ export function checkNames(
         fence = open[1]!;
         return;
       }
+
+      if (NAMES_SKIP_RE.test(line.trim())) {
+        exempt = 'pending';
+        return;
+      }
+      if (!line.trim()) {
+        if (exempt === 'active') exempt = 'off';
+        return;
+      }
+      if (exempt === 'pending') exempt = 'active';
+      if (exempt === 'active') return;
 
       const found = new Map<string, boolean>();
       for (const match of line.matchAll(NAME_RE)) {

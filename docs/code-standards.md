@@ -657,12 +657,17 @@ and the other universal attributes, and native DOM events, which fallthrough
 makes real. That first run found nine wrong attributes across five pages,
 including `source-id` on a component whose prop is `id` — in six examples.
 
+<!-- names-skip: the two names the README advertised, which never existed -->
+
 Names in prose are checked too. A name in a sentence or a heading is not a name
 in a code block, which is how the README came to advertise `useBounds` and
 `useZoom` on the page npm renders; neither has ever existed. Every backticked
 `use…` name must be exported, except on the changelog and the migration guides,
 whose job is to describe what the library no longer has. Write `useZoom*` for a
-family, and the star is checked as a prefix.
+family, and the star is checked as a prefix. A paragraph that has to name
+something because it does _not_ exist opts out with a marker carrying a reason,
+`<!-- names-skip: … -->`, which ends at the next blank line — the paragraph
+above this one uses it.
 
 The instructions outside the type system are checked as well: a `bun run …`
 must name a real package script, a `vue3-maplibre-gl/dist/…` path must be a
