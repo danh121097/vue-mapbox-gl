@@ -542,18 +542,20 @@ assignability failures caused by inference widening example data
 abridged example expects the surrounding application to own. `build/docs-snippets/reported-diagnostics.ts`
 lists every code and the reason it is or is not reported.
 
-A block that genuinely cannot compile — a `return` lifted out of the function it
-came from, a `// v5` line kept deliberately wrong — is opted out with an HTML
-comment on the line above its fence:
+A block that genuinely cannot compile can be opted out with an HTML comment on
+the line above its fence:
 
 ```md
 <!-- snippet-skip: quotes the v5 API on purpose -->
 ```
 
-The reason is required. Those blocks are the only documentation nothing
-verifies, so the list of them is worth keeping short and worth reading: it is
-currently two blocks, both in the v5 migration guide, and everything else in
-`docs/` compiles.
+The reason is required, and a skipped block is the only documentation nothing
+verifies — so the check prints the list on every run, and the list is currently
+empty. Every code block in `docs/` and both READMEs compiles. Before adding a
+skip, check whether the block is skippable for a fixable reason instead: a
+before/after where only the "after" needs to be true belongs in prose plus one
+compiled fence, and a fence labelled `ts` that holds template markup should be
+labelled `html`.
 
 Two things it cannot see: an extra attribute on a component is legal Vue
 (it falls through to the root element), so a misspelled prop compiles; and a

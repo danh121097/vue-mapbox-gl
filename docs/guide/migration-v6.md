@@ -6,15 +6,24 @@ v6 fixes a defect that made most composable state **frozen at setup time**. The 
 
 Composables built correct reactive state internally, then unwrapped it once in the return object:
 
-<!-- snippet-skip: a `return` lifted out of the v5 composable it quotes -->
-
 ```ts
-// v5 — libs/composables/map/useCreateMarker.ts
-return {
-  marker: marker.value, // null at setup; the marker is created later
-  markerStatus: markerStatus.value, // frozen at 'not-created'
-  isMarkerCreated: isMarkerCreated.value, // frozen at false
-};
+// v5 - libs/composables/map/useCreateMarker.ts
+import { computed, ref } from 'vue';
+import type { Marker } from 'maplibre-gl';
+
+function useCreateMarker() {
+  // The state itself was built correctly...
+  const marker = ref<Marker | null>(null);
+  const markerStatus = ref('not-created');
+  const isMarkerCreated = computed(() => markerStatus.value === 'created');
+
+  // ...and then unwrapped once, on the way out.
+  return {
+    marker: marker.value, // null at setup; the marker is created later
+    markerStatus: markerStatus.value, // frozen at 'not-created'
+    isMarkerCreated: isMarkerCreated.value, // frozen at false
+  };
+}
 ```
 
 Because the interfaces declared the _unwrapped_ type (`boolean`, not `ComputedRef<boolean>`), TypeScript never flagged it. At runtime the values never changed:
@@ -168,15 +177,13 @@ The package root re-exported MapLibre's entire runtime — the `maplibregl` name
 
 Those runtime values now live on `vue3-maplibre-gl/maplibre`:
 
-<!-- snippet-skip: the `// v5` line imports from the root on purpose, which is the point of the block -->
-
 ```ts
-// v5
-import { NavigationControl, maplibregl } from 'vue3-maplibre-gl';
-
 // v6
 import { NavigationControl, maplibregl } from 'vue3-maplibre-gl/maplibre';
 ```
+
+In v5 the same line read `from 'vue3-maplibre-gl'`. Only the specifier changed;
+the names are identical.
 
 Importing them straight from `maplibre-gl` works just as well and is one hop shorter — the subpath exists so the re-exports stay available, not because it is the preferred source.
 
