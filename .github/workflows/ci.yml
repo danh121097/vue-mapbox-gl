@@ -40,6 +40,12 @@ jobs:
       - name: Build
         run: bun run build
 
+      # Compiles every code block in docs/ and the READMEs against the dist/
+      # just built, so an example that names something the package does not
+      # export fails here instead of on a reader's machine.
+      - name: Check docs code blocks
+        run: bun run docs:check
+
       - name: Verify dist output
         run: |
           test -f dist/index.js || exit 1
