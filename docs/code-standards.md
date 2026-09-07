@@ -712,6 +712,39 @@ declarations intersected into a type no handler satisfies. The callback props
 are now `onMapError`, `onSourceLoad`, `onGeolocateSuccess` and so on — never
 the `on` + emit-name spelling.
 
+A `Slots` table is checked the same way in both directions, though a slot has
+no type to compare — a row must name a slot the component renders, and a slot
+it renders must have a row. The subtlety is where the slots are read from:
+`$slots` on a compiled SFC is the template's own slots intersected with Vue's
+generic `{ [name: string]: Slot | undefined }`, and under that index signature
+every name resolves and `keyof` collapses the real names into `string`. Read
+that way the check passes for a table of pure invention, so the index signature
+is dropped first and only the names the template declares remain.
+
+The `Default` column is the one claim the built declarations cannot settle:
+they carry a default's _type_ and never its value — `withDefaults(…, { debug:
+false })` arrives as `{ debug: boolean }`. So this single check reads `libs/`,
+deliberately and in one place. It compares only literals: both sides are parsed
+and canonicalised, because they are written differently on purpose (Vue makes
+an object default a factory, `() => ({})`; the sources close a literal with a
+trailing comma and the reference does not). A default that computes its value —
+`containerId`, random per instance — has nothing to compare against and is
+skipped, and the run prints how many cells it compared alongside how many it
+skipped, since a check that quietly settled nothing reports exactly what a
+clean one does.
+
+The column states the _declared_ default, not the effective one. Four layer
+components documented `maxzoom` as `24` and `minzoom` as `0` while declaring
+neither; the value each layer is actually created with is `props.maxzoom || 22`
+and `props.minzoom || 1`. Where a component falls back at the point of use, the
+cell says `undefined` and the description says what happens — which is also how
+`minzoom` came to admit that `0` is read as omitted.
+
+A component may never declare a callback prop named `on` + one of its own emit
+names, and a check over the built declarations enforces it: the props interface
+and the `Readonly<{ … }>` of emit listeners are the last place the two halves
+stay separate before Vue merges them, and no key may appear in both.
+
 Component attributes in the Vue examples are checked separately, because an
 extra attribute on a component is legal Vue — it falls through to the root
 element, so `vue-tsc` compiles a misspelled prop without a word. Every

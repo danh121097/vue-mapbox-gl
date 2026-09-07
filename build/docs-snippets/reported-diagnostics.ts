@@ -96,6 +96,14 @@ export function summarize(message: string): string {
     return `error: '${prop[1]}' is not a prop or an emit of this component`;
   }
 
+  const slot =
+    /Property '([^']+)' does not exist on type '\{ __slot: true; \}'/.exec(
+      message,
+    );
+  if (slot) {
+    return `error: '${slot[1]}' is a slot that no row documents`;
+  }
+
   const member =
     /Property '([^']+)' does not exist on type '\{ __member: true; \}'/.exec(
       message,

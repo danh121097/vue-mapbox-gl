@@ -4,6 +4,7 @@ import {
   componentTableSnippet,
   coverageSnippet,
   parametersSnippet,
+  slotSnippet,
   tableSnippet,
 } from '../snippet-project';
 
@@ -109,7 +110,9 @@ describe('tableSnippet', () => {
       composable: 'useFlyTo',
       headingLine: 3,
       spreads: [],
-      fields: [{ name: 'flyTo', type: '() => void', line: 7 }],
+      fields: [
+        { name: 'flyTo', type: '() => void', defaultCell: null, line: 7 },
+      ],
     });
 
     expect(snippet.code).toContain("type _0 = Returned['flyTo'];");
@@ -128,7 +131,14 @@ describe('tableSnippet', () => {
         composable: 'useDebounce',
         headingLine: 3,
         spreads: [],
-        fields: [{ name: 'flush', type: '() => ReturnType<T>', line: 7 }],
+        fields: [
+          {
+            name: 'flush',
+            type: '() => ReturnType<T>',
+            defaultCell: null,
+            line: 7,
+          },
+        ],
       },
       1,
       '<T extends (...args: any[]) => any>',
@@ -148,7 +158,14 @@ describe('tableSnippet', () => {
         composable: 'useCreateLayer',
         headingLine: 3,
         spreads: [],
-        fields: [{ name: 'getLayer', type: 'ComputedRef<T>', line: 7 }],
+        fields: [
+          {
+            name: 'getLayer',
+            type: 'ComputedRef<T>',
+            defaultCell: null,
+            line: 7,
+          },
+        ],
       },
       1,
       '<Layer extends LayerSpecification>',
@@ -166,7 +183,7 @@ describe('tableSnippet', () => {
       composable: 'useFlyTo',
       headingLine: 3,
       spreads: [],
-      fields: [{ name: 'flyTo', type: 'Ref<T>', line: 7 }],
+      fields: [{ name: 'flyTo', type: 'Ref<T>', defaultCell: null, line: 7 }],
     });
 
     expect(code).toContain('type T = any;');
@@ -178,7 +195,7 @@ describe('tableSnippet', () => {
       composable: 'usePanBy',
       headingLine: 3,
       spreads: [],
-      fields: [{ name: 'panBy', type: null, line: 7 }],
+      fields: [{ name: 'panBy', type: null, defaultCell: null, line: 7 }],
     };
 
     expect(tableSnippet(table, 1).label).not.toBe(tableSnippet(table, 2).label);
@@ -195,7 +212,9 @@ describe('componentTableSnippet', () => {
         composable: 'Marker',
         headingLine: 10,
         spreads: [],
-        fields: [{ name: 'lnglat', type: 'LngLatLike', line: 14 }],
+        fields: [
+          { name: 'lnglat', type: 'LngLatLike', defaultCell: null, line: 14 },
+        ],
       },
       'props',
     );
@@ -214,7 +233,9 @@ describe('componentTableSnippet', () => {
         composable: 'Maplibre',
         headingLine: 22,
         spreads: [],
-        fields: [{ name: 'click', type: 'MapMouseEvent', line: 29 }],
+        fields: [
+          { name: 'click', type: 'MapMouseEvent', defaultCell: null, line: 29 },
+        ],
       },
       'events',
     );
@@ -234,8 +255,8 @@ describe('componentTableSnippet', () => {
         headingLine: 22,
         spreads: [],
         fields: [
-          { name: 'data-update', type: 'string', line: 29 },
-          { name: 'update:show', type: 'boolean', line: 30 },
+          { name: 'data-update', type: 'string', defaultCell: null, line: 29 },
+          { name: 'update:show', type: 'boolean', defaultCell: null, line: 30 },
         ],
       },
       'events',
@@ -254,7 +275,7 @@ describe('componentTableSnippet', () => {
         composable: 'Popup',
         headingLine: 22,
         spreads: [],
-        fields: [{ name: 'close', type: 'void', line: 29 }],
+        fields: [{ name: 'close', type: 'void', defaultCell: null, line: 29 }],
       },
       'events',
     );
@@ -307,8 +328,13 @@ describe('parametersSnippet', () => {
         headingLine: 40,
         spreads: [],
         fields: [
-          { name: 'map', type: 'MaybeRef<Map | null>', line: 44 },
-          { name: 'zoom', type: 'number', line: 45 },
+          {
+            name: 'map',
+            type: 'MaybeRef<Map | null>',
+            defaultCell: null,
+            line: 44,
+          },
+          { name: 'zoom', type: 'number', defaultCell: null, line: 45 },
         ],
       },
       ['props'],
@@ -327,8 +353,8 @@ describe('parametersSnippet', () => {
         headingLine: 40,
         spreads: [],
         fields: [
-          { name: 'initialValue', type: 'number', line: 44 },
-          { name: 'delay', type: 'number', line: 45 },
+          { name: 'initialValue', type: 'number', defaultCell: null, line: 44 },
+          { name: 'delay', type: 'number', defaultCell: null, line: 45 },
         ],
       },
       ['initialValue', 'delay'],
@@ -346,7 +372,14 @@ describe('parametersSnippet', () => {
         composable: 'useCreateGeoJsonSource',
         headingLine: 40,
         spreads: [],
-        fields: [{ name: 'props', type: 'CreateGeoJsonSourceProps', line: 44 }],
+        fields: [
+          {
+            name: 'props',
+            type: 'CreateGeoJsonSourceProps',
+            defaultCell: null,
+            line: 44,
+          },
+        ],
       },
       ['{ map: mapRef, id, data }'],
     );
@@ -361,7 +394,9 @@ describe('parametersSnippet', () => {
         composable: 'useDebouncedRef',
         headingLine: 40,
         spreads: [],
-        fields: [{ name: 'initialValue', type: 'T', line: 44 }],
+        fields: [
+          { name: 'initialValue', type: 'T', defaultCell: null, line: 44 },
+        ],
       },
       ['initialValue'],
       1,
@@ -380,8 +415,13 @@ describe('parametersSnippet', () => {
         headingLine: 40,
         spreads: [],
         fields: [
-          { name: 'map', type: 'MaybeRef<Map | null>', line: 44 },
-          { name: 'zoom', type: 'number', line: 45 },
+          {
+            name: 'map',
+            type: 'MaybeRef<Map | null>',
+            defaultCell: null,
+            line: 44,
+          },
+          { name: 'zoom', type: 'number', defaultCell: null, line: 45 },
         ],
       },
       ['props'],
@@ -390,5 +430,45 @@ describe('parametersSnippet', () => {
     const lines = code.split('\n');
     expect(lineMap).toHaveLength(lines.length);
     expect(lineMap![lines.indexOf("  'zoom': _v1,")]).toBe(45);
+  });
+});
+
+describe('slotSnippet', () => {
+  const { code, lineMap } = slotSnippet({
+    file: COMPONENTS,
+    composable: 'Maplibre',
+    headingLine: 77,
+    spreads: [],
+    fields: [
+      { name: 'default', type: null, defaultCell: null, line: 81 },
+      { name: 'loading', type: null, defaultCell: null, line: 82 },
+    ],
+  });
+
+  it('reads the template slots, not the index signature Vue adds', () => {
+    // `$slots` on a compiled SFC is the template's own slots intersected with
+    // `{ [name: string]: Slot | undefined }`. Under that index signature every
+    // name resolves and `keyof` collapses to `string`, so both halves of this
+    // check would pass for a table of pure invention.
+    expect(code).toContain('type Named<T> = {');
+    expect(code).toContain('string extends K');
+    expect(code).toContain(
+      "type Slots = Named<InstanceType<typeof Maplibre>['$slots']>;",
+    );
+  });
+
+  it('names each documented slot on its own line', () => {
+    expect(code).toContain("type _0 = Slots['default'];");
+    expect(code).toContain("type _1 = Slots['loading'];");
+    expect(
+      lineMap?.[code.split('\n').indexOf("type _1 = Slots['loading'];")],
+    ).toBe(82);
+  });
+
+  it('leaves a slot no row documents as a reported key', () => {
+    expect(code).toContain(
+      "type Extra = Exclude<keyof Slots, 'default' | 'loading'>;",
+    );
+    expect(code).toContain('__slot');
   });
 });

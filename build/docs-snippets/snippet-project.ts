@@ -923,3 +923,62 @@ export function parametersSnippet(
     ],
   };
 }
+
+/**
+ * Turns a component's `Slots` table into assertions.
+ *
+ * A slot table carries no types, so both directions are about names: every
+ * documented slot has to be one the component renders, and every slot the
+ * component renders has to have a row. A misspelled slot name in a template is
+ * silent at runtime -- the content simply never appears -- so a misspelled one
+ * in the reference is worth just as little.
+ */
+export function slotSnippet(table: ReturnTable): Snippet {
+  const documented = table.fields.map((field) => `'${field.name}'`);
+  const head = [
+    `import { ${table.composable} } from 'vue3-maplibre-gl';`,
+    // `$slots` on a compiled SFC is the template's own slots intersected with
+    // Vue's generic `{ [name: string]: Slot | undefined }`, and that index
+    // signature would make both halves of this check pass for anything: every
+    // name resolves, and `keyof` collapses the literal names into `string`.
+    // Dropping the index signature leaves the names the template declares.
+    'type Named<T> = {',
+    '  [K in keyof T as string extends K',
+    '    ? never',
+    '    : number extends K',
+    '      ? never',
+    '      : K]: T[K];',
+    '};',
+    `type Slots = Named<InstanceType<typeof ${table.composable}>['$slots']>;`,
+  ];
+
+  const rows: string[] = [];
+  const rowLines: number[] = [];
+  table.fields.forEach((field, index) => {
+    const line = `type _${index} = Slots['${field.name}'];`;
+    rows.push(line);
+    rowLines.push(field.line);
+  });
+
+  const tail = [
+    `type Extra = Exclude<keyof Slots, ${documented.join(' | ') || 'never'}>;`,
+    `type Undocumented = { __slot: true }[[Extra] extends [never]`,
+    `  ? '__slot'`,
+    `  : Extra];`,
+    'export type { Undocumented };',
+  ];
+
+  return {
+    file: table.file,
+    fenceLine: table.headingLine,
+    lang: 'ts',
+    ext: '.ts',
+    label: `slots-${table.composable}`,
+    code: [...head, ...rows, ...tail].join('\n'),
+    lineMap: [
+      ...head.map(() => table.headingLine),
+      ...rowLines,
+      ...tail.map(() => table.headingLine),
+    ],
+  };
+}

@@ -31,6 +31,7 @@ import {
   extractEventTables,
   extractParameterTables,
   extractPropTables,
+  extractSlotTables,
   extractTablesFromFile,
   listComposablesFromFile,
 } from './extract-doc-tables';
@@ -43,6 +44,8 @@ import {
 } from './package-exports';
 import { checkLinks } from './check-doc-links';
 import { checkNames } from './check-doc-names';
+import { checkDefaults } from './check-doc-defaults';
+import { checkPropEmitCollisions } from './check-prop-emit-collisions';
 import { checkReferences } from './check-doc-references';
 import { diagnosticCode, isReported, summarize } from './reported-diagnostics';
 import { extractTemplateAttributes } from './extract-template-attributes';
@@ -53,6 +56,7 @@ import {
   coverageSnippet,
   documentedTypeSnippet,
   parametersSnippet,
+  slotSnippet,
   tableSnippet,
   writeSnippetProject,
 } from './snippet-project';
@@ -246,6 +250,19 @@ for (const [kind, tables] of [
   }
 }
 
+// Slots carry no types, so both directions are names: a row must name a slot
+// the component renders, and a slot it renders must have a row. A misspelled
+// slot is silent at runtime -- the content simply never appears.
+let slotCount = 0;
+for (const table of extractSlotTables(
+  componentsPath,
+  componentsSource,
+  componentNameRe,
+)) {
+  snippets.push(slotSnippet(table));
+  slotCount += table.fields.length;
+}
+
 const eventsLike = extractEventsLike(componentsSource, componentNameRe);
 for (const component of components) {
   snippets.push(
@@ -304,6 +321,15 @@ writeSnippetProject(
   { strictNullChecks: true },
 ).forEach((snippet, name) => byGeneratedName.set(name, snippet));
 
+// Not a documentation claim, but the defect it catches hid behind one: a prop
+// that shadows its own emit leaves both the Props and the Events table
+// describing something real, and only the component misbehaves.
+const collisions = checkPropEmitCollisions(rootDir);
+
+// The `Default` column, which is the one claim in the reference that the built
+// declarations cannot settle: they carry a default's type and never its value.
+const defaults = checkDefaults(rootDir, componentNameRe);
+
 console.log(
   `Checking ${blockCount} code ` +
     `blocks from docs/ and the READMEs (${skippedCount} skipped), plus ` +
@@ -314,7 +340,14 @@ console.log(
       ? ` (${untabledCount} of which describe their return in prose)`
       : '') +
     `, ${typeCount} documented types, ${propCount} component props, ` +
-    `${eventCount} component events, and ${attributeCount} component ` +
+    `${eventCount} component events, ${slotCount} component slots, ` +
+    `the prop/emit names of ${collisions.checked} components, ` +
+    `${defaults.compared} documented defaults` +
+    (defaults.skipped
+      ? ` (${defaults.skipped} described in prose rather than given a value)`
+      : '') +
+    `, and ` +
+    `${attributeCount} component ` +
     `attributes in the Vue examples.`,
 );
 
@@ -408,6 +441,9 @@ for (let i = 0; i < lines.length; i++) {
 // than nullability is reported by both passes.
 // Links and names are prose, and prose is where the last several
 // documentation bugs lived.
+reported.push(...collisions.problems);
+reported.push(...defaults.problems);
+
 reported.push(...checkLinks(pages, rootDir));
 reported.push(...checkNames(pages, rootDir, exported));
 reported.push(

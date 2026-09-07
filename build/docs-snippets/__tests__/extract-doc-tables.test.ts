@@ -4,6 +4,7 @@ import {
   extractEventTables,
   extractPropTables,
   extractReturnTables,
+  extractSlotTables,
   listComposables,
   splitRow,
 } from '../extract-doc-tables';
@@ -58,7 +59,9 @@ describe('extractReturnTables', () => {
 | \`0\` | \`debouncedRef\` | \`Ref<T>\` |
 `);
 
-    expect(found[0]!.fields).toEqual([{ name: '0', type: 'Ref<T>', line: 7 }]);
+    expect(found[0]!.fields).toEqual([
+      { name: '0', type: 'Ref<T>', defaultCell: null, line: 7 },
+    ]);
   });
 
   it('leaves the type null when the cell is not one backticked expression', () => {
@@ -87,8 +90,13 @@ describe('extractReturnTables', () => {
 
     expect(found[0]!.headingLine).toBe(3);
     expect(found[0]!.fields).toEqual([
-      { name: 'flyTo', type: '() => void', line: 7 },
-      { name: 'isFlying', type: 'ComputedRef<boolean>', line: 8 },
+      { name: 'flyTo', type: '() => void', defaultCell: null, line: 7 },
+      {
+        name: 'isFlying',
+        type: 'ComputedRef<boolean>',
+        defaultCell: null,
+        line: 8,
+      },
     ]);
   });
 
@@ -407,5 +415,74 @@ Same events as FillLayer (click, mousemove, etc.)
         COMPONENT_NAME_RE,
       ),
     ).toEqual(new Map());
+  });
+});
+
+describe('extractSlotTables', () => {
+  it('reads a Slots table, whose rows carry no type at all', () => {
+    const found = extractSlotTables(
+      COMPONENTS,
+      `## Maplibre
+
+### Slots
+
+| Slot      | Description  |
+| --------- | ------------ |
+| \`default\` | Main content |
+| \`loading\` | While loading |
+`,
+      COMPONENT_NAME_RE,
+    );
+
+    expect(found).toHaveLength(1);
+    expect(found[0]!.fields).toEqual([
+      { name: 'default', type: null, defaultCell: null, line: 7 },
+      { name: 'loading', type: null, defaultCell: null, line: 8 },
+    ]);
+  });
+});
+
+describe('the Default column', () => {
+  it('keeps the cell verbatim, so prose and a value stay distinguishable', () => {
+    // `see below` is not a default; treating it as one would compare a
+    // component against a sentence, and treating a real value as prose would
+    // excuse the row from being checked at all.
+    const found = extractPropTables(
+      COMPONENTS,
+      `## Maplibre
+
+### Props
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| \`debug\` | \`boolean\` | \`false\` | Log |
+| \`options\` | \`object\` | see below | Options |
+| \`id\` | \`string\` | | None |
+`,
+      COMPONENT_NAME_RE,
+    );
+
+    expect(found[0]!.fields.map((f) => f.defaultCell)).toEqual([
+      '`false`',
+      'see below',
+      '',
+    ]);
+  });
+
+  it('leaves the cell null where the table has no Default column', () => {
+    const found = extractEventTables(
+      COMPONENTS,
+      `## Maplibre
+
+### Events
+
+| Event | Payload |
+| ----- | ------- |
+| \`click\` | \`MapMouseEvent\` |
+`,
+      COMPONENT_NAME_RE,
+    );
+
+    expect(found[0]!.fields[0]!.defaultCell).toBeNull();
   });
 });

@@ -224,19 +224,19 @@ A component for rendering filled polygons from a data source. Supports all MapLi
 
 ### Props
 
-| Prop          | Type                                                                      | Default     | Description                                           |
-| ------------- | ------------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
-| `id`          | `string`                                                                  | `undefined` | Unique identifier for the layer                       |
-| `source`      | `string \| object`                                                        | `undefined` | Data source for the layer                             |
-| `sourceLayer` | `string`                                                                  | `undefined` | Source layer name for vector sources                  |
-| `filter`      | `FilterSpecification`                                                     | `['all']`   | Filter expression to apply to the layer               |
-| `style`       | `FillLayerStyle`                                                          | `{}`        | Style configuration for the fill layer                |
-| `maxzoom`     | `number`                                                                  | `24`        | Maximum zoom level for layer visibility               |
-| `minzoom`     | `number`                                                                  | `0`         | Minimum zoom level for layer visibility               |
-| `metadata`    | `object`                                                                  | `undefined` | Arbitrary metadata for the layer                      |
-| `beforeId`    | `string`                                                                  | `undefined` | ID of layer before which to insert this layer         |
-| `visible`     | `boolean`                                                                 | `true`      | Whether the layer is visible                          |
-| `register`    | `(actions: CreateLayerActions<FillLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists |
+| Prop          | Type                                                                      | Default     | Description                                                                                                     |
+| ------------- | ------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------- |
+| `id`          | `string`                                                                  | `undefined` | Unique identifier for the layer                                                                                 |
+| `source`      | `string \| object`                                                        | `undefined` | Data source for the layer                                                                                       |
+| `sourceLayer` | `string`                                                                  | `undefined` | Source layer name for vector sources                                                                            |
+| `filter`      | `FilterSpecification`                                                     | `undefined` | Filter expression to apply to the layer; the layer is created with `['all']` when omitted                       |
+| `style`       | `FillLayerStyle`                                                          | `undefined` | Style configuration for the fill layer; an omitted style contributes nothing                                    |
+| `maxzoom`     | `number`                                                                  | `undefined` | Maximum zoom level for layer visibility; the layer is created with `22` when omitted                            |
+| `minzoom`     | `number`                                                                  | `undefined` | Minimum zoom level for layer visibility; the layer is created with `1` when omitted, and `0` is read as omitted |
+| `metadata`    | `object`                                                                  | `undefined` | Arbitrary metadata for the layer                                                                                |
+| `beforeId`    | `string`                                                                  | `undefined` | ID of layer before which to insert this layer                                                                   |
+| `visible`     | `boolean`                                                                 | `true`      | Whether the layer is visible                                                                                    |
+| `register`    | `(actions: CreateLayerActions<FillLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists                                                           |
 
 ### Events
 
@@ -310,20 +310,20 @@ A component for rendering circles from point data sources. Perfect for displayin
 
 ### Props
 
-| Prop          | Type                                                                        | Default     | Description                                           |
-| ------------- | --------------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
-| `id`          | `string`                                                                    | `undefined` | Unique identifier for the layer                       |
-| `source`      | `string \| object`                                                          | `undefined` | Data source for the layer                             |
-| `sourceLayer` | `string`                                                                    | `undefined` | Source layer name for vector sources                  |
-| `filter`      | `FilterSpecification`                                                       | `['all']`   | Filter expression to apply to the layer               |
-| `style`       | `CircleLayerStyle`                                                          | `{}`        | Style configuration for the circle layer              |
-| `maxzoom`     | `number`                                                                    | `24`        | Maximum zoom level for layer visibility               |
-| `minzoom`     | `number`                                                                    | `0`         | Minimum zoom level for layer visibility               |
-| `metadata`    | `object`                                                                    | `undefined` | Arbitrary metadata for the layer                      |
-| `beforeId`    | `string`                                                                    | `undefined` | ID of layer before which to insert this layer         |
-| `visible`     | `boolean`                                                                   | `true`      | Whether the layer is visible                          |
-| `register`    | `(actions: CreateLayerActions<CircleLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists |
-| `debug`       | `boolean`                                                                   | `false`     | Enable debug logging                                  |
+| Prop          | Type                                                                        | Default     | Description                                                                                                     |
+| ------------- | --------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------- |
+| `id`          | `string`                                                                    | `undefined` | Unique identifier for the layer                                                                                 |
+| `source`      | `string \| object`                                                          | `undefined` | Data source for the layer                                                                                       |
+| `sourceLayer` | `string`                                                                    | `undefined` | Source layer name for vector sources                                                                            |
+| `filter`      | `FilterSpecification`                                                       | `['all']`   | Filter expression to apply to the layer                                                                         |
+| `style`       | `CircleLayerStyle`                                                          | `{}`        | Style configuration for the circle layer                                                                        |
+| `maxzoom`     | `number`                                                                    | `undefined` | Maximum zoom level for layer visibility; the layer is created with `22` when omitted                            |
+| `minzoom`     | `number`                                                                    | `undefined` | Minimum zoom level for layer visibility; the layer is created with `1` when omitted, and `0` is read as omitted |
+| `metadata`    | `object`                                                                    | `undefined` | Arbitrary metadata for the layer                                                                                |
+| `beforeId`    | `string`                                                                    | `undefined` | ID of layer before which to insert this layer                                                                   |
+| `visible`     | `boolean`                                                                   | `true`      | Whether the layer is visible                                                                                    |
+| `register`    | `(actions: CreateLayerActions<CircleLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists                                                           |
+| `debug`       | `boolean`                                                                   | `false`     | Enable debug logging                                                                                            |
 
 ### Events
 
@@ -386,19 +386,19 @@ A component for rendering lines from line data sources. Ideal for displaying rou
 
 ### Props
 
-| Prop          | Type                                                                      | Default     | Description                                           |
-| ------------- | ------------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
-| `id`          | `string`                                                                  | `undefined` | Unique identifier for the layer                       |
-| `source`      | `string \| object`                                                        | `undefined` | Data source for the layer                             |
-| `sourceLayer` | `string`                                                                  | `undefined` | Source layer name for vector sources                  |
-| `filter`      | `FilterSpecification`                                                     | `['all']`   | Filter expression to apply to the layer               |
-| `style`       | `LineLayerStyle`                                                          | `{}`        | Style configuration for the line layer                |
-| `maxzoom`     | `number`                                                                  | `24`        | Maximum zoom level for layer visibility               |
-| `minzoom`     | `number`                                                                  | `0`         | Minimum zoom level for layer visibility               |
-| `metadata`    | `object`                                                                  | `undefined` | Arbitrary metadata for the layer                      |
-| `beforeId`    | `string`                                                                  | `undefined` | ID of layer before which to insert this layer         |
-| `visible`     | `boolean`                                                                 | `true`      | Whether the layer is visible                          |
-| `register`    | `(actions: CreateLayerActions<LineLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists |
+| Prop          | Type                                                                      | Default     | Description                                                                                                     |
+| ------------- | ------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------- |
+| `id`          | `string`                                                                  | `undefined` | Unique identifier for the layer                                                                                 |
+| `source`      | `string \| object`                                                        | `undefined` | Data source for the layer                                                                                       |
+| `sourceLayer` | `string`                                                                  | `undefined` | Source layer name for vector sources                                                                            |
+| `filter`      | `FilterSpecification`                                                     | `undefined` | Filter expression to apply to the layer; the layer is created with `['all']` when omitted                       |
+| `style`       | `LineLayerStyle`                                                          | `undefined` | Style configuration for the line layer; an omitted style contributes nothing                                    |
+| `maxzoom`     | `number`                                                                  | `undefined` | Maximum zoom level for layer visibility; the layer is created with `22` when omitted                            |
+| `minzoom`     | `number`                                                                  | `undefined` | Minimum zoom level for layer visibility; the layer is created with `1` when omitted, and `0` is read as omitted |
+| `metadata`    | `object`                                                                  | `undefined` | Arbitrary metadata for the layer                                                                                |
+| `beforeId`    | `string`                                                                  | `undefined` | ID of layer before which to insert this layer                                                                   |
+| `visible`     | `boolean`                                                                 | `true`      | Whether the layer is visible                                                                                    |
+| `register`    | `(actions: CreateLayerActions<LineLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists                                                           |
 
 ### Events
 
@@ -450,19 +450,19 @@ A component for rendering symbols (icons and text) from point data sources. Perf
 
 ### Props
 
-| Prop          | Type                                                                        | Default     | Description                                           |
-| ------------- | --------------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
-| `id`          | `string`                                                                    | `undefined` | Unique identifier for the layer                       |
-| `source`      | `string \| object`                                                          | `undefined` | Data source for the layer                             |
-| `sourceLayer` | `string`                                                                    | `undefined` | Source layer name for vector sources                  |
-| `filter`      | `FilterSpecification`                                                       | `['all']`   | Filter expression to apply to the layer               |
-| `style`       | `SymbolLayerStyle`                                                          | `{}`        | Style configuration for the symbol layer              |
-| `maxzoom`     | `number`                                                                    | `24`        | Maximum zoom level for layer visibility               |
-| `minzoom`     | `number`                                                                    | `0`         | Minimum zoom level for layer visibility               |
-| `metadata`    | `object`                                                                    | `undefined` | Arbitrary metadata for the layer                      |
-| `beforeId`    | `string`                                                                    | `undefined` | ID of layer before which to insert this layer         |
-| `visible`     | `boolean`                                                                   | `true`      | Whether the layer is visible                          |
-| `register`    | `(actions: CreateLayerActions<SymbolLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists |
+| Prop          | Type                                                                        | Default     | Description                                                                                                     |
+| ------------- | --------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------- |
+| `id`          | `string`                                                                    | `undefined` | Unique identifier for the layer                                                                                 |
+| `source`      | `string \| object`                                                          | `undefined` | Data source for the layer                                                                                       |
+| `sourceLayer` | `string`                                                                    | `undefined` | Source layer name for vector sources                                                                            |
+| `filter`      | `FilterSpecification`                                                       | `undefined` | Filter expression to apply to the layer; the layer is created with `['all']` when omitted                       |
+| `style`       | `SymbolLayerStyle`                                                          | `undefined` | Style configuration for the symbol layer; an omitted style contributes nothing                                  |
+| `maxzoom`     | `number`                                                                    | `undefined` | Maximum zoom level for layer visibility; the layer is created with `22` when omitted                            |
+| `minzoom`     | `number`                                                                    | `undefined` | Minimum zoom level for layer visibility; the layer is created with `1` when omitted, and `0` is read as omitted |
+| `metadata`    | `object`                                                                    | `undefined` | Arbitrary metadata for the layer                                                                                |
+| `beforeId`    | `string`                                                                    | `undefined` | ID of layer before which to insert this layer                                                                   |
+| `visible`     | `boolean`                                                                   | `true`      | Whether the layer is visible                                                                                    |
+| `register`    | `(actions: CreateLayerActions<SymbolLayerSpecification>, map: Map) => void` | `undefined` | Callback receiving the layer's actions once it exists                                                           |
 
 ### Events
 
@@ -519,22 +519,22 @@ A component for adding HTML markers to the map. Supports custom HTML content, dr
 
 ### Props
 
-| Prop                | Type            | Default     | Description                            |
-| ------------------- | --------------- | ----------- | -------------------------------------- |
-| `lnglat`            | `LngLatLike`    | `undefined` | Geographic coordinates for the marker  |
-| `popup`             | `Popup`         | `undefined` | Popup to associate with the marker     |
-| `options`           | `MarkerOptions` | `{}`        | Marker configuration options           |
-| `draggable`         | `boolean`       | `false`     | Whether the marker is draggable        |
-| `element`           | `HTMLElement`   | `undefined` | Custom HTML element for the marker     |
-| `offset`            | `PointLike`     | `undefined` | Offset from the marker's position      |
-| `anchor`            | `Anchor`        | `undefined` | Anchor point for the marker            |
-| `color`             | `string`        | `undefined` | Color of the default marker            |
-| `clickTolerance`    | `number`        | `undefined` | Tolerance for click events             |
-| `rotation`          | `number`        | `undefined` | Rotation angle in degrees              |
-| `rotationAlignment` | `Alignment`     | `undefined` | Rotation alignment relative to the map |
-| `pitchAlignment`    | `Alignment`     | `undefined` | Pitch alignment relative to the map    |
-| `scale`             | `number`        | `undefined` | Scale factor for the marker            |
-| `occludedOpacity`   | `number`        | `undefined` | Opacity when marker is occluded        |
+| Prop                | Type            | Default     | Description                                                                                  |
+| ------------------- | --------------- | ----------- | -------------------------------------------------------------------------------------------- |
+| `lnglat`            | `LngLatLike`    | `undefined` | Geographic coordinates for the marker                                                        |
+| `popup`             | `Popup`         | `undefined` | Popup to associate with the marker                                                           |
+| `options`           | `MarkerOptions` | `{}`        | Marker configuration options                                                                 |
+| `draggable`         | `boolean`       | `undefined` | Whether the marker is draggable; omitted leaves the option unset, and MapLibre does not drag |
+| `element`           | `HTMLElement`   | `undefined` | Custom HTML element for the marker                                                           |
+| `offset`            | `PointLike`     | `undefined` | Offset from the marker's position                                                            |
+| `anchor`            | `Anchor`        | `undefined` | Anchor point for the marker                                                                  |
+| `color`             | `string`        | `undefined` | Color of the default marker                                                                  |
+| `clickTolerance`    | `number`        | `undefined` | Tolerance for click events                                                                   |
+| `rotation`          | `number`        | `undefined` | Rotation angle in degrees                                                                    |
+| `rotationAlignment` | `Alignment`     | `undefined` | Rotation alignment relative to the map                                                       |
+| `pitchAlignment`    | `Alignment`     | `undefined` | Pitch alignment relative to the map                                                          |
+| `scale`             | `number`        | `undefined` | Scale factor for the marker                                                                  |
+| `occludedOpacity`   | `number`        | `undefined` | Opacity when marker is occluded                                                              |
 
 ### Events
 
@@ -591,18 +591,18 @@ A component for displaying popup windows on the map. Supports custom HTML conten
 
 ### Props
 
-| Prop            | Type           | Default     | Description                          |
-| --------------- | -------------- | ----------- | ------------------------------------ |
-| `className`     | `string`       | `undefined` | CSS class name for the popup         |
-| `lnglat`        | `LngLatLike`   | `undefined` | Geographic coordinates for the popup |
-| `show`          | `boolean`      | `true`      | Whether the popup is visible         |
-| `withMap`       | `boolean`      | `true`      | Whether to attach popup to the map   |
-| `options`       | `PopupOptions` | `{}`        | Popup configuration options          |
-| `html`          | `string`       | `undefined` | HTML content for the popup           |
-| `maxWidth`      | `string`       | `undefined` | Maximum width of the popup           |
-| `closeButton`   | `boolean`      | `true`      | Whether to show close button         |
-| `closeOnClick`  | `boolean`      | `true`      | Whether to close on map click        |
-| `closeOnEscape` | `boolean`      | `true`      | Whether to close on escape key       |
+| Prop            | Type           | Default     | Description                                                        |
+| --------------- | -------------- | ----------- | ------------------------------------------------------------------ |
+| `className`     | `string`       | `undefined` | CSS class name for the popup                                       |
+| `lnglat`        | `LngLatLike`   | `undefined` | Geographic coordinates for the popup                               |
+| `show`          | `boolean`      | `true`      | Whether the popup is visible                                       |
+| `withMap`       | `boolean`      | `true`      | Whether to attach popup to the map                                 |
+| `options`       | `PopupOptions` | `undefined` | Popup configuration options; an omitted object contributes nothing |
+| `html`          | `string`       | `undefined` | HTML content for the popup                                         |
+| `maxWidth`      | `string`       | `undefined` | Maximum width of the popup                                         |
+| `closeButton`   | `boolean`      | `true`      | Whether to show close button                                       |
+| `closeOnClick`  | `boolean`      | `true`      | Whether to close on map click                                      |
+| `closeOnEscape` | `boolean`      | `true`      | Whether to close on escape key                                     |
 
 ### Events
 
@@ -660,7 +660,7 @@ A component for managing and loading images for use in MapLibre GL styles. Suppo
 | Prop                             | Type                          | Default     | Description                                                                                                                                |
 | -------------------------------- | ----------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | `images`                         | `ImageItem[]`                 | `[]`        | Array of images to load                                                                                                                    |
-| `options`                        | `Partial<StyleImageMetadata>` | `{}`        | Default options applied to all images                                                                                                      |
+| `options`                        | `Partial<StyleImageMetadata>` | `undefined` | Default options applied to all images; an omitted object contributes nothing                                                               |
 | `showLoading`                    | `boolean`                     | `true`      | Whether to show loading state                                                                                                              |
 | `forceRecreateOnDimensionChange` | `boolean`                     | `true`      | Remove and re-add an image whose dimensions changed, avoiding MapLibre's "width and height must be the same as the previous version" error |
 | `debug`                          | `boolean`                     | `undefined` | Whether to enable debug logging                                                                                                            |

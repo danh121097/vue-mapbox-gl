@@ -33,6 +33,7 @@ const RETURNS_HEADING_RE = /^#{2,5}\s+Returns\s*$/;
 const PARAMETERS_HEADING_RE = /^#{2,5}\s+Parameters\s*$/;
 const PROPS_HEADING_RE = /^#{2,5}\s+Props\s*$/;
 const EVENTS_HEADING_RE = /^#{2,5}\s+Events\s*$/;
+const SLOTS_HEADING_RE = /^#{2,5}\s+Slots\s*$/;
 
 /**
  * Column headers that hold a type. `Returns` and `Parameters` tables call it
@@ -40,6 +41,9 @@ const EVENTS_HEADING_RE = /^#{2,5}\s+Events\s*$/;
  * the handler is given rather than the handler itself.
  */
 const TYPE_HEADERS = ['type', 'payload'];
+
+/** The column holding the value an omitted prop or option falls back to. */
+const DEFAULT_HEADER = 'default';
 
 /**
  * A table row's first cell, which holds the field name in backticks. A plain
@@ -141,6 +145,13 @@ export interface TableField {
    * one as a single backticked expression.
    */
   type: string | null;
+  /**
+   * The `Default` cell verbatim, or null when the table has no such column.
+   * Kept raw rather than unwrapped: the difference between a backticked value,
+   * an em dash and a sentence is exactly what decides whether the cell is a
+   * claim the compiler can be held to.
+   */
+  defaultCell: string | null;
   /** 1-based line of the row in the markdown. */
   line: number;
 }
@@ -189,6 +200,19 @@ export function extractEventTables(
   names: RegExp,
 ): ReturnTable[] {
   return extractSectionTables(file, source, EVENTS_HEADING_RE, names, 2);
+}
+
+/**
+ * The `Slots` tables. A slot table has no type column at all -- a slot is a
+ * name and a sentence -- so every row comes back with a null type, and the
+ * only claim to check is that the name is a slot the component renders.
+ */
+export function extractSlotTables(
+  file: string,
+  source: string,
+  names: RegExp,
+): ReturnTable[] {
+  return extractSectionTables(file, source, SLOTS_HEADING_RE, names, 2);
 }
 
 function extractSectionTables(
@@ -265,6 +289,7 @@ function extractSectionTables(
       const typeColumn = headers.findIndex((header) =>
         TYPE_HEADERS.includes(header),
       );
+      const defaultColumn = headers.indexOf(DEFAULT_HEADER);
 
       const fields: TableField[] = [];
       let k = j + 2;
@@ -273,10 +298,16 @@ function extractSectionTables(
         // A row whose first cell is not a single backticked identifier is a
         // grouping row or a prose row; it names no field to check.
         if (!cell) continue;
-        const typeCell =
-          typeColumn === -1 ? null : splitRow(lines[k]!)[typeColumn];
+        const cells = splitRow(lines[k]!);
+        const typeCell = typeColumn === -1 ? null : cells[typeColumn];
         const type = typeCell ? TYPE_CELL_RE.exec(typeCell)?.[1] : undefined;
-        fields.push({ name: cell[1]!, type: type ?? null, line: k + 1 });
+        fields.push({
+          name: cell[1]!,
+          type: type ?? null,
+          defaultCell:
+            defaultColumn === -1 ? null : (cells[defaultColumn] ?? ''),
+          line: k + 1,
+        });
       }
 
       if (fields.length) {

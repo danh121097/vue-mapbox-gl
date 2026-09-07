@@ -960,13 +960,13 @@ Provides reactive event handling for MapLibre GL map events with automatic clean
 
 #### Parameters
 
-| Property | Type                    | Default | Description                  |
-| -------- | ----------------------- | ------- | ---------------------------- |
-| `map`    | `MaybeRef<Map \| null>` | —       | Map instance reference       |
-| `event`  | `keyof MapEventTypes`   | —       | Event type to listen for     |
-| `on`     | `(event) => void`       | —       | Event handler                |
-| `once`   | `boolean`               | `false` | Detach after the first event |
-| `debug`  | `boolean`               | `false` | Enable debug logging         |
+| Property | Type                    | Default     | Description                                                                      |
+| -------- | ----------------------- | ----------- | -------------------------------------------------------------------------------- |
+| `map`    | `MaybeRef<Map \| null>` | —           | Map instance reference                                                           |
+| `event`  | `keyof MapEventTypes`   | —           | Event type to listen for                                                         |
+| `on`     | `(event) => void`       | —           | Event handler                                                                    |
+| `once`   | `boolean`               | `undefined` | Detach after the first event; anything falsy, omission included, keeps listening |
+| `debug`  | `boolean`               | `undefined` | Enable debug logging; omitted logs nothing                                       |
 
 The handler prop is `on`, not `handler`.
 
@@ -1015,14 +1015,14 @@ Provides reactive event handling for MapLibre GL layer events with automatic cle
 
 #### Parameters
 
-| Property | Type                                             | Default | Description                  |
-| -------- | ------------------------------------------------ | ------- | ---------------------------- |
-| `map`    | `MaybeRef<Map \| null>`                          | —       | Map instance reference       |
-| `layer`  | `MaybeRef<LayerSpecification \| string \| null>` | —       | Layer, or its id             |
-| `event`  | `keyof MapLayerEventType`                        | —       | Event type to listen for     |
-| `on`     | `(event) => void`                                | —       | Event handler                |
-| `once`   | `boolean`                                        | `false` | Detach after the first event |
-| `debug`  | `boolean`                                        | `false` | Enable debug logging         |
+| Property | Type                                             | Default     | Description                                                                      |
+| -------- | ------------------------------------------------ | ----------- | -------------------------------------------------------------------------------- |
+| `map`    | `MaybeRef<Map \| null>`                          | —           | Map instance reference                                                           |
+| `layer`  | `MaybeRef<LayerSpecification \| string \| null>` | —           | Layer, or its id                                                                 |
+| `event`  | `keyof MapLayerEventType`                        | —           | Event type to listen for                                                         |
+| `on`     | `(event) => void`                                | —           | Event handler                                                                    |
+| `once`   | `boolean`                                        | `undefined` | Detach after the first event; anything falsy, omission included, keeps listening |
+| `debug`  | `boolean`                                        | `undefined` | Enable debug logging; omitted logs nothing                                       |
 
 The layer prop is `layer` and accepts a specification as well as an id; the
 handler prop is `on`, not `handler`.
@@ -1586,11 +1586,11 @@ Provides smooth animated transitions to new map positions with customizable easi
 
 #### Parameters
 
-| Property  | Type                    | Default | Description                    |
-| --------- | ----------------------- | ------- | ------------------------------ |
-| `map`     | `MaybeRef<Map \| null>` | —       | Map instance reference         |
-| `options` | `FlyToOptions`          | —       | Default options for every call |
-| `debug`   | `boolean`               | `false` | Enable debug logging           |
+| Property  | Type                    | Default     | Description                                |
+| --------- | ----------------------- | ----------- | ------------------------------------------ |
+| `map`     | `MaybeRef<Map \| null>` | —           | Map instance reference                     |
+| `options` | `FlyToOptions`          | —           | Default options for every call             |
+| `debug`   | `boolean`               | `undefined` | Enable debug logging; omitted logs nothing |
 
 #### Returns
 
@@ -1641,11 +1641,11 @@ Provides smooth animated transitions with easing functions for map camera change
 
 #### Parameters
 
-| Property  | Type                    | Default | Description                    |
-| --------- | ----------------------- | ------- | ------------------------------ |
-| `map`     | `MaybeRef<Map \| null>` | —       | Map instance reference         |
-| `options` | `EaseToOptions`         | —       | Default options for every call |
-| `debug`   | `boolean`               | `false` | Enable debug logging           |
+| Property  | Type                    | Default     | Description                                |
+| --------- | ----------------------- | ----------- | ------------------------------------------ |
+| `map`     | `MaybeRef<Map \| null>` | —           | Map instance reference                     |
+| `options` | `EaseToOptions`         | —           | Default options for every call             |
+| `debug`   | `boolean`               | `undefined` | Enable debug logging; omitted logs nothing |
 
 #### Returns
 
@@ -1689,12 +1689,12 @@ Provides instant map position changes without animation.
 
 #### Parameters
 
-| Property   | Type                    | Default | Description                          |
-| ---------- | ----------------------- | ------- | ------------------------------------ |
-| `map`      | `MaybeRef<Map \| null>` | —       | Map instance reference               |
-| `options`  | `JumpToOptions`         | —       | Default options for every call       |
-| `autoJump` | `boolean`               | `true`  | Jump as soon as the map is available |
-| `debug`    | `boolean`               | `false` | Enable debug logging                 |
+| Property   | Type                    | Default     | Description                                                                |
+| ---------- | ----------------------- | ----------- | -------------------------------------------------------------------------- |
+| `map`      | `MaybeRef<Map \| null>` | —           | Map instance reference                                                     |
+| `options`  | `JumpToOptions`         | —           | Default options for every call                                             |
+| `autoJump` | `boolean`               | `undefined` | Jump as soon as the map is available; only an explicit `false` disables it |
+| `debug`    | `boolean`               | `undefined` | Enable debug logging; omitted logs nothing                                 |
 
 #### Returns
 
