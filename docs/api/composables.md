@@ -103,16 +103,16 @@ hand it the actions `<Maplibre>` emits, via `@register`.
 
 #### Returns
 
-| Property        | Type                                           | Description                              |
-| --------------- | ---------------------------------------------- | ---------------------------------------- |
-| `mapInstance`   | `ComputedRef<Map \| null>`                     | Reactive map instance                    |
-| `mapStatus`     | `ComputedRef<MapCreationStatus>`               | Current creation status                  |
-| `isMapReady`    | `ComputedRef<boolean>`                         | Whether the map is ready for operations  |
-| `isMapLoading`  | `ComputedRef<boolean>`                         | Whether the map is currently loading     |
-| `hasMapError`   | `ComputedRef<boolean>`                         | Whether map creation failed              |
-| `isRegistered`  | `ComputedRef<boolean>`                         | Whether an instance has been registered  |
-| `register`      | `(instance: MaplibreActions) => Promise<void>` | Register an actions instance             |
-| `setMapOptions` | `(options: Partial<MapOptions>) => void`       | Apply options to the registered instance |
+| Property        | Type                                           | Description                                                                                                                                           |
+| --------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mapInstance`   | `ComputedRef<Map \| null>`                     | Reactive map instance                                                                                                                                 |
+| `mapStatus`     | `ComputedRef<MapCreationStatus>`               | Current creation status                                                                                                                               |
+| `isMapReady`    | `ComputedRef<boolean>`                         | Whether the map is ready for operations                                                                                                               |
+| `isMapLoading`  | `ComputedRef<boolean>`                         | Whether the map is currently loading                                                                                                                  |
+| `hasMapError`   | `ComputedRef<boolean>`                         | Whether map creation failed                                                                                                                           |
+| `isRegistered`  | `ComputedRef<boolean>`                         | Whether an instance has been registered                                                                                                               |
+| `register`      | `(instance: MaplibreActions) => Promise<void>` | Register an actions instance                                                                                                                          |
+| `setMapOptions` | `(options: Partial<MapOptions>) => void`       | Override individual options on the registered instance. Only the keys passed here are overridden; every other key keeps tracking the `:options` prop. |
 
 It also spreads in every accessor and setter of [`MaplibreMethods`](/api/types#maplibremethods)
 — `getCenter`, `getZoom`, `queryRenderedFeatures`, `setStyle`, `flyTo` and the
