@@ -8,49 +8,71 @@ The main map component that renders the MapLibre GL JS map. This is the core com
 
 ### Props
 
-| Prop             | Type                                 | Default      | Description                                |
-| ---------------- | ------------------------------------ | ------------ | ------------------------------------------ |
-| `options`        | `Partial<MapOptions>`                | `{}`         | Map configuration options from MapLibre GL |
-| `register`       | `(actions: MaplibreActions) => void` | `undefined`  | Callback for registering map actions       |
-| `debug`          | `boolean`                            | `false`      | Enable debug logging                       |
-| `autoCleanup`    | `boolean`                            | `true`       | Automatically cleanup resources on unmount |
-| `containerId`    | `string`                             | `'maplibre'` | Container ID for the map element           |
-| `containerClass` | `string`                             | `''`         | Custom container class names               |
-| `onError`        | `(error: any) => void`               | `undefined`  | Error handling callback                    |
-| `onLoad`         | `(map: Map) => void`                 | `undefined`  | Load success callback                      |
+| Prop             | Type                                 | Default     | Description                                                                                        |
+| ---------------- | ------------------------------------ | ----------- | -------------------------------------------------------------------------------------------------- |
+| `options`        | `Partial<MapOptions>`                | see below   | Map configuration options from MapLibre GL                                                         |
+| `register`       | `(actions: MaplibreActions) => void` | `undefined` | Callback for registering map actions                                                               |
+| `debug`          | `boolean`                            | `false`     | Enable debug logging                                                                               |
+| `autoCleanup`    | `boolean`                            | `true`      | Automatically cleanup resources on unmount                                                         |
+| `containerId`    | `string`                             | random      | Container id, generated per instance as `maplibre-<random>`, so two maps on one page never collide |
+| `containerClass` | `string`                             | `''`        | Custom container class names                                                                       |
+| `onError`        | `(error: any) => void`               | `undefined` | Error handling callback                                                                            |
+| `onLoad`         | `(map: Map) => void`                 | `undefined` | Load success callback                                                                              |
 
 ### Events
 
-| Event         | Payload           | Description                             |
-| ------------- | ----------------- | --------------------------------------- |
-| `register`    | `MaplibreActions` | Fired when map actions are registered   |
-| `load`        | `MapLibreEvent`   | Fired when the map has finished loading |
-| `error`       | `ErrorEvent`      | Fired when an error occurs              |
-| `click`       | `MapMouseEvent`   | Fired when the map is clicked           |
-| `dblclick`    | `MapMouseEvent`   | Fired when the map is double-clicked    |
-| `contextmenu` | `MapMouseEvent`   | Fired when right-clicking the map       |
-| `mousemove`   | `MapMouseEvent`   | Fired when mouse moves over the map     |
-| `mouseup`     | `MapMouseEvent`   | Fired when mouse button is released     |
-| `mousedown`   | `MapMouseEvent`   | Fired when mouse button is pressed      |
-| `mouseout`    | `MapMouseEvent`   | Fired when mouse leaves the map         |
-| `mouseover`   | `MapMouseEvent`   | Fired when mouse enters the map         |
-| `movestart`   | `MapLibreEvent`   | Fired when map movement starts          |
-| `move`        | `MapLibreEvent`   | Fired during map movement               |
-| `moveend`     | `MapLibreEvent`   | Fired when map movement ends            |
-| `zoomstart`   | `MapLibreEvent`   | Fired when zoom starts                  |
-| `zoom`        | `MapLibreEvent`   | Fired during zoom                       |
-| `zoomend`     | `MapLibreEvent`   | Fired when zoom ends                    |
-| `rotatestart` | `MapLibreEvent`   | Fired when rotation starts              |
-| `rotate`      | `MapLibreEvent`   | Fired during rotation                   |
-| `rotateend`   | `MapLibreEvent`   | Fired when rotation ends                |
-| `dragstart`   | `MapLibreEvent`   | Fired when dragging starts              |
-| `drag`        | `MapLibreEvent`   | Fired during dragging                   |
-| `dragend`     | `MapLibreEvent`   | Fired when dragging ends                |
-| `pitchstart`  | `MapLibreEvent`   | Fired when pitch starts                 |
-| `pitch`       | `MapLibreEvent`   | Fired during pitch                      |
-| `pitchend`    | `MapLibreEvent`   | Fired when pitch ends                   |
-| `wheel`       | `MapWheelEvent`   | Fired on mouse wheel events             |
-| `terrain`     | `MapTerrainEvent` | Fired on terrain events                 |
+| Event                  | Payload              | Description                                          |
+| ---------------------- | -------------------- | ---------------------------------------------------- |
+| `register`             | `MaplibreActions`    | Fired when map actions are registered                |
+| `load`                 | `MapLibreEvent`      | Fired when the map has finished loading              |
+| `error`                | `ErrorEvent`         | Fired when an error occurs                           |
+| `click`                | `MapMouseEvent`      | Fired when the map is clicked                        |
+| `dblclick`             | `MapMouseEvent`      | Fired when the map is double-clicked                 |
+| `contextmenu`          | `MapMouseEvent`      | Fired when right-clicking the map                    |
+| `mousemove`            | `MapMouseEvent`      | Fired when mouse moves over the map                  |
+| `mouseup`              | `MapMouseEvent`      | Fired when mouse button is released                  |
+| `mousedown`            | `MapMouseEvent`      | Fired when mouse button is pressed                   |
+| `mouseout`             | `MapMouseEvent`      | Fired when mouse leaves the map                      |
+| `mouseover`            | `MapMouseEvent`      | Fired when mouse enters the map                      |
+| `movestart`            | `MapLibreEvent`      | Fired when map movement starts                       |
+| `move`                 | `MapLibreEvent`      | Fired during map movement                            |
+| `moveend`              | `MapLibreEvent`      | Fired when map movement ends                         |
+| `zoomstart`            | `MapLibreEvent`      | Fired when zoom starts                               |
+| `zoom`                 | `MapLibreEvent`      | Fired during zoom                                    |
+| `zoomend`              | `MapLibreEvent`      | Fired when zoom ends                                 |
+| `rotatestart`          | `MapLibreEvent`      | Fired when rotation starts                           |
+| `rotate`               | `MapLibreEvent`      | Fired during rotation                                |
+| `rotateend`            | `MapLibreEvent`      | Fired when rotation ends                             |
+| `dragstart`            | `MapLibreEvent`      | Fired when dragging starts                           |
+| `drag`                 | `MapLibreEvent`      | Fired during dragging                                |
+| `dragend`              | `MapLibreEvent`      | Fired when dragging ends                             |
+| `pitchstart`           | `MapLibreEvent`      | Fired when pitch starts                              |
+| `pitch`                | `MapLibreEvent`      | Fired during pitch                                   |
+| `pitchend`             | `MapLibreEvent`      | Fired when pitch ends                                |
+| `wheel`                | `MapWheelEvent`      | Fired on mouse wheel events                          |
+| `terrain`              | `MapTerrainEvent`    | Fired on terrain events                              |
+| `touchstart`           | `MapTouchEvent`      | Fired when a touch begins                            |
+| `touchmove`            | `MapTouchEvent`      | Fired as a touch moves                               |
+| `touchend`             | `MapTouchEvent`      | Fired when a touch ends                              |
+| `touchcancel`          | `MapTouchEvent`      | Fired when a touch is interrupted                    |
+| `boxzoomstart`         | `MapLibreZoomEvent`  | Fired when a box zoom begins                         |
+| `boxzoomend`           | `MapLibreZoomEvent`  | Fired when a box zoom completes                      |
+| `boxzoomcancel`        | `MapLibreZoomEvent`  | Fired when a box zoom is cancelled                   |
+| `idle`                 | `Event`              | Fired when the map stops rendering                   |
+| `render`               | `Event`              | Fired on every frame the map draws                   |
+| `resize`               | `Event`              | Fired when the map container resizes                 |
+| `remove`               | `Event`              | Fired when the map is destroyed                      |
+| `data`                 | `MapDataEvent`       | Fired when any map data loads or changes             |
+| `dataloading`          | `MapDataEvent`       | Fired when data begins loading                       |
+| `dataabort`            | `MapDataEvent`       | Fired when a data request is aborted                 |
+| `tiledataloading`      | `MapDataEvent`       | Fired when a tile begins loading                     |
+| `sourcedata`           | `MapSourceDataEvent` | Fired when source data loads or changes              |
+| `sourcedataloading`    | `MapSourceDataEvent` | Fired when source data begins loading                |
+| `sourcedataabort`      | `MapSourceDataEvent` | Fired when a source request is aborted               |
+| `styledata`            | `Event`              | Fired when the style loads or changes                |
+| `styleimagemissing`    | `Event`              | Fired when the style needs an image it does not have |
+| `webglcontextlost`     | `MapContextEvent`    | Fired when the WebGL context is lost                 |
+| `webglcontextrestored` | `MapContextEvent`    | Fired when the WebGL context is restored             |
 
 ### Slots
 
@@ -565,13 +587,19 @@ A component for managing and loading images for use in MapLibre GL styles. Suppo
 
 ### Props
 
-| Prop                             | Type                          | Default | Description                                                                                                                                |
-| -------------------------------- | ----------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `images`                         | `ImageItem[]`                 | `[]`    | Array of images to load                                                                                                                    |
-| `options`                        | `Partial<StyleImageMetadata>` | `{}`    | Default options applied to all images                                                                                                      |
-| `showLoading`                    | `boolean`                     | `true`  | Whether to show loading state                                                                                                              |
-| `forceRecreateOnDimensionChange` | `boolean`                     | `true`  | Remove and re-add an image whose dimensions changed, avoiding MapLibre's "width and height must be the same as the previous version" error |
-| `debug`                          | `boolean`                     | `false` | Whether to enable debug logging                                                                                                            |
+| Prop                             | Type                          | Default     | Description                                                                                                                                |
+| -------------------------------- | ----------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `images`                         | `ImageItem[]`                 | `[]`        | Array of images to load                                                                                                                    |
+| `options`                        | `Partial<StyleImageMetadata>` | `{}`        | Default options applied to all images                                                                                                      |
+| `showLoading`                    | `boolean`                     | `true`      | Whether to show loading state                                                                                                              |
+| `forceRecreateOnDimensionChange` | `boolean`                     | `true`      | Remove and re-add an image whose dimensions changed, avoiding MapLibre's "width and height must be the same as the previous version" error |
+| `debug`                          | `boolean`                     | `undefined` | Whether to enable debug logging                                                                                                            |
+
+### Events
+
+| Event   | Payload | Description                       |
+| ------- | ------- | --------------------------------- |
+| `error` | `any`   | Fired when an image fails to load |
 
 ### ImageItem Interface
 
@@ -618,17 +646,17 @@ A component for adding geolocation controls to the map. Provides user location t
 
 ### Props
 
-| Prop               | Type                               | Default     | Description                                      |
-| ------------------ | ---------------------------------- | ----------- | ------------------------------------------------ |
-| `position`         | `ControlPosition`                  | `undefined` | Position of the control on the map               |
-| `options`          | `GeolocateControlOptions`          | `{}`        | Geolocate control configuration options          |
-| `debug`            | `boolean`                          | `false`     | Enable debug logging                             |
-| `autoCleanup`      | `boolean`                          | `true`      | Automatically cleanup resources on unmount       |
-| `onError`          | `(error: any) => void`             | `undefined` | Error handling callback                          |
-| `onGeolocate`      | `(data: GeolocateSuccess) => void` | `undefined` | Success callback for geolocation                 |
-| `onTrackingStart`  | `(data: GeolocateSuccess) => void` | `undefined` | Callback when user location tracking starts      |
-| `onTrackingEnd`    | `(data: GeolocateSuccess) => void` | `undefined` | Callback when user location tracking ends        |
-| `onOutOfMaxBounds` | `(data: GeolocateSuccess) => void` | `undefined` | Callback when user location is out of max bounds |
+| Prop               | Type                               | Default          | Description                                      |
+| ------------------ | ---------------------------------- | ---------------- | ------------------------------------------------ |
+| `position`         | `ControlPosition`                  | `'bottom-right'` | Position of the control on the map               |
+| `options`          | `GeolocateControlOptions`          | `{}`             | Geolocate control configuration options          |
+| `debug`            | `boolean`                          | `false`          | Enable debug logging                             |
+| `autoCleanup`      | `boolean`                          | `true`           | Automatically cleanup resources on unmount       |
+| `onError`          | `(error: any) => void`             | `undefined`      | Error handling callback                          |
+| `onGeolocate`      | `(data: GeolocateSuccess) => void` | `undefined`      | Success callback for geolocation                 |
+| `onTrackingStart`  | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location tracking starts      |
+| `onTrackingEnd`    | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location tracking ends        |
+| `onOutOfMaxBounds` | `(data: GeolocateSuccess) => void` | `undefined`      | Callback when user location is out of max bounds |
 
 ### Events
 

@@ -547,17 +547,21 @@ error rather than reaching `addLayer`.
 
 #### Returns
 
-| Property            | Type                                           | Description               |
-| ------------------- | ---------------------------------------------- | ------------------------- |
-| `layerId`           | `string`                                       | The layer's resolved id   |
-| `getLayer`          | `ComputedRef<LayerSpecification \| null>`      | Get layer specification   |
-| `setStyle`          | `(style?: FillLayerStyle) => void`             | Set layer style           |
-| `setBeforeId`       | `(beforeId?: string) => void`                  | Set layer insertion point |
-| `setFilter`         | `(filter?: FilterSpecification) => void`       | Set layer filter          |
-| `setZoomRange`      | `(minzoom?: number, maxzoom?: number) => void` | Set zoom range            |
-| `setPaintProperty`  | `(name, value, options?) => void`              | Set one paint property    |
-| `setLayoutProperty` | `(name, value, options?) => void`              | Set one layout property   |
-| `removeLayer`       | `() => void`                                   | Remove the layer          |
+| Property            | Type                                           | Description                           |
+| ------------------- | ---------------------------------------------- | ------------------------------------- |
+| `layerId`           | `string`                                       | The layer's resolved id               |
+| `getLayer`          | `ComputedRef<LayerSpecification \| null>`      | Get layer specification               |
+| `setStyle`          | `(style?: FillLayerStyle) => void`             | Set layer style                       |
+| `setBeforeId`       | `(beforeId?: string) => void`                  | Set layer insertion point             |
+| `setFilter`         | `(filter?: FilterSpecification) => void`       | Set layer filter                      |
+| `setZoomRange`      | `(minzoom?: number, maxzoom?: number) => void` | Set zoom range                        |
+| `setPaintProperty`  | `(name, value, options?) => void`              | Set one paint property                |
+| `setLayoutProperty` | `(name, value, options?) => void`              | Set one layout property               |
+| `removeLayer`       | `() => void`                                   | Remove the layer                      |
+| `layerStatus`       | `ComputedRef<LayerStatus>`                     | Current layer status                  |
+| `isLayerReady`      | `ComputedRef<boolean>`                         | Whether the layer exists on the map   |
+| `refreshLayer`      | `() => void`                                   | Re-add the layer after a style reload |
+| `updateLayer`       | `(spec) => void`                               | Replace the layer specification       |
 
 Plus the fill-specific setters `setColor`, `setOpacity`, `setOutlineColor`,
 `setPattern`, `setAntialias`, `setSortKey` and `setVisibility`, each taking the
@@ -715,15 +719,16 @@ Creates and manages MapLibre GL GeoJSON Sources with reactive data updates and c
 
 #### Returns
 
-| Property        | Type                                                 | Description             |
-| --------------- | ---------------------------------------------------- | ----------------------- |
-| `sourceId`      | `string`                                             | Source identifier       |
-| `getSource`     | `ShallowRef<GeoJSONSource \| null>`                  | Get source instance     |
-| `setData`       | `(data: GeoJSONSourceSpecification['data']) => void` | Update source data      |
-| `removeSource`  | `() => void`                                         | Remove source from map  |
-| `refreshSource` | `() => void`                                         | Refresh source          |
-| `sourceStatus`  | `ComputedRef<SourceStatus>`                          | Source status           |
-| `isSourceReady` | `ComputedRef<boolean>`                               | Whether source is ready |
+| Property        | Type                                                 | Description                       |
+| --------------- | ---------------------------------------------------- | --------------------------------- |
+| `sourceId`      | `string`                                             | Source identifier                 |
+| `getSource`     | `ShallowRef<GeoJSONSource \| null>`                  | Get source instance               |
+| `setData`       | `(data: GeoJSONSourceSpecification['data']) => void` | Update source data                |
+| `removeSource`  | `() => void`                                         | Remove source from map            |
+| `refreshSource` | `() => void`                                         | Refresh source                    |
+| `register`      | `(actions, map) => void`                             | Registration callback passthrough |
+| `sourceStatus`  | `ComputedRef<SourceStatus>`                          | Source status                     |
+| `isSourceReady` | `ComputedRef<boolean>`                               | Whether source is ready           |
 
 #### Example
 
