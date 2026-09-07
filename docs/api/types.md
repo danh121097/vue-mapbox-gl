@@ -154,11 +154,11 @@ Style configuration for fill layers.
 ```typescript
 interface FillLayerStyle {
   'fill-antialias'?: boolean;
-  'fill-color'?: string | Expression;
-  'fill-opacity'?: number | Expression;
-  'fill-outline-color'?: string | Expression;
-  'fill-pattern'?: string | Expression;
-  'fill-translate'?: [number, number] | Expression;
+  'fill-color'?: string | Expressions;
+  'fill-opacity'?: number | Expressions;
+  'fill-outline-color'?: string | Expressions;
+  'fill-pattern'?: string | Expressions;
+  'fill-translate'?: [number, number] | Expressions;
   'fill-translate-anchor'?: 'map' | 'viewport';
 }
 ```
@@ -169,16 +169,16 @@ Style configuration for circle layers.
 
 ```typescript
 interface CircleLayerStyle {
-  'circle-blur'?: number | Expression;
-  'circle-color'?: string | Expression;
-  'circle-opacity'?: number | Expression;
+  'circle-blur'?: number | Expressions;
+  'circle-color'?: string | Expressions;
+  'circle-opacity'?: number | Expressions;
   'circle-pitch-alignment'?: 'map' | 'viewport';
   'circle-pitch-scale'?: 'map' | 'viewport';
-  'circle-radius'?: number | Expression;
-  'circle-stroke-color'?: string | Expression;
-  'circle-stroke-opacity'?: number | Expression;
-  'circle-stroke-width'?: number | Expression;
-  'circle-translate'?: [number, number] | Expression;
+  'circle-radius'?: number | Expressions;
+  'circle-stroke-color'?: string | Expressions;
+  'circle-stroke-opacity'?: number | Expressions;
+  'circle-stroke-width'?: number | Expressions;
+  'circle-translate'?: [number, number] | Expressions;
   'circle-translate-anchor'?: 'map' | 'viewport';
 }
 ```
@@ -189,21 +189,21 @@ Style configuration for line layers.
 
 ```typescript
 interface LineLayerStyle {
-  'line-blur'?: number | Expression;
+  'line-blur'?: number | Expressions;
   'line-cap'?: 'butt' | 'round' | 'square';
-  'line-color'?: string | Expression;
-  'line-dasharray'?: number[] | Expression;
-  'line-gap-width'?: number | Expression;
-  'line-gradient'?: Expression;
+  'line-color'?: string | Expressions;
+  'line-dasharray'?: number[] | Expressions;
+  'line-gap-width'?: number | Expressions;
+  'line-gradient'?: Expressions;
   'line-join'?: 'bevel' | 'round' | 'miter';
-  'line-miter-limit'?: number | Expression;
-  'line-offset'?: number | Expression;
-  'line-opacity'?: number | Expression;
-  'line-pattern'?: string | Expression;
-  'line-round-limit'?: number | Expression;
-  'line-translate'?: [number, number] | Expression;
+  'line-miter-limit'?: number | Expressions;
+  'line-offset'?: number | Expressions;
+  'line-opacity'?: number | Expressions;
+  'line-pattern'?: string | Expressions;
+  'line-round-limit'?: number | Expressions;
+  'line-translate'?: [number, number] | Expressions;
   'line-translate-anchor'?: 'map' | 'viewport';
-  'line-width'?: number | Expression;
+  'line-width'?: number | Expressions;
 }
 ```
 
@@ -214,7 +214,7 @@ Style configuration for symbol layers.
 ```typescript
 interface SymbolLayerStyle {
   // Icon properties
-  'icon-allow-overlap'?: boolean | Expression;
+  'icon-allow-overlap'?: boolean | Expressions;
   'icon-anchor'?:
     | 'center'
     | 'left'
@@ -225,30 +225,30 @@ interface SymbolLayerStyle {
     | 'top-right'
     | 'bottom-left'
     | 'bottom-right'
-    | Expression;
-  'icon-color'?: string | Expression;
-  'icon-halo-blur'?: number | Expression;
-  'icon-halo-color'?: string | Expression;
-  'icon-halo-width'?: number | Expression;
-  'icon-ignore-placement'?: boolean | Expression;
-  'icon-image'?: string | Expression;
-  'icon-keep-upright'?: boolean | Expression;
-  'icon-offset'?: [number, number] | Expression;
-  'icon-opacity'?: number | Expression;
-  'icon-optional'?: boolean | Expression;
-  'icon-overlap'?: 'never' | 'always' | 'cooperative' | Expression;
-  'icon-padding'?: number | Expression;
-  'icon-pitch-alignment'?: 'map' | 'viewport' | 'auto' | Expression;
-  'icon-rotate'?: number | Expression;
-  'icon-rotation-alignment'?: 'map' | 'viewport' | 'auto' | Expression;
-  'icon-size'?: number | Expression;
-  'icon-text-fit'?: 'none' | 'width' | 'height' | 'both' | Expression;
-  'icon-text-fit-padding'?: [number, number, number, number] | Expression;
-  'icon-translate'?: [number, number] | Expression;
-  'icon-translate-anchor'?: 'map' | 'viewport' | Expression;
+    | Expressions;
+  'icon-color'?: string | Expressions;
+  'icon-halo-blur'?: number | Expressions;
+  'icon-halo-color'?: string | Expressions;
+  'icon-halo-width'?: number | Expressions;
+  'icon-ignore-placement'?: boolean | Expressions;
+  'icon-image'?: string | Expressions;
+  'icon-keep-upright'?: boolean | Expressions;
+  'icon-offset'?: [number, number] | Expressions;
+  'icon-opacity'?: number | Expressions;
+  'icon-optional'?: boolean | Expressions;
+  'icon-overlap'?: 'never' | 'always' | 'cooperative' | Expressions;
+  'icon-padding'?: number | Expressions;
+  'icon-pitch-alignment'?: 'map' | 'viewport' | 'auto' | Expressions;
+  'icon-rotate'?: number | Expressions;
+  'icon-rotation-alignment'?: 'map' | 'viewport' | 'auto' | Expressions;
+  'icon-size'?: number | Expressions;
+  'icon-text-fit'?: 'none' | 'width' | 'height' | 'both' | Expressions;
+  'icon-text-fit-padding'?: [number, number, number, number] | Expressions;
+  'icon-translate'?: [number, number] | Expressions;
+  'icon-translate-anchor'?: 'map' | 'viewport' | Expressions;
 
   // Text properties
-  'text-allow-overlap'?: boolean | Expression;
+  'text-allow-overlap'?: boolean | Expressions;
   'text-anchor'?:
     | 'center'
     | 'left'
@@ -259,33 +259,33 @@ interface SymbolLayerStyle {
     | 'top-right'
     | 'bottom-left'
     | 'bottom-right'
-    | Expression;
-  'text-color'?: string | Expression;
-  'text-field'?: string | Expression;
-  'text-font'?: string[] | Expression;
-  'text-halo-blur'?: number | Expression;
-  'text-halo-color'?: string | Expression;
-  'text-halo-width'?: number | Expression;
-  'text-ignore-placement'?: boolean | Expression;
-  'text-justify'?: 'auto' | 'left' | 'center' | 'right' | Expression;
-  'text-keep-upright'?: boolean | Expression;
-  'text-letter-spacing'?: number | Expression;
-  'text-line-height'?: number | Expression;
-  'text-max-angle'?: number | Expression;
-  'text-max-width'?: number | Expression;
-  'text-offset'?: [number, number] | Expression;
-  'text-opacity'?: number | Expression;
-  'text-optional'?: boolean | Expression;
-  'text-overlap'?: 'never' | 'always' | 'cooperative' | Expression;
-  'text-padding'?: number | Expression;
-  'text-pitch-alignment'?: 'map' | 'viewport' | 'auto' | Expression;
-  'text-radial-offset'?: number | Expression;
-  'text-rotate'?: number | Expression;
-  'text-rotation-alignment'?: 'map' | 'viewport' | 'auto' | Expression;
-  'text-size'?: number | Expression;
-  'text-transform'?: 'none' | 'uppercase' | 'lowercase' | Expression;
-  'text-translate'?: [number, number] | Expression;
-  'text-translate-anchor'?: 'map' | 'viewport' | Expression;
+    | Expressions;
+  'text-color'?: string | Expressions;
+  'text-field'?: string | Expressions;
+  'text-font'?: string[] | Expressions;
+  'text-halo-blur'?: number | Expressions;
+  'text-halo-color'?: string | Expressions;
+  'text-halo-width'?: number | Expressions;
+  'text-ignore-placement'?: boolean | Expressions;
+  'text-justify'?: 'auto' | 'left' | 'center' | 'right' | Expressions;
+  'text-keep-upright'?: boolean | Expressions;
+  'text-letter-spacing'?: number | Expressions;
+  'text-line-height'?: number | Expressions;
+  'text-max-angle'?: number | Expressions;
+  'text-max-width'?: number | Expressions;
+  'text-offset'?: [number, number] | Expressions;
+  'text-opacity'?: number | Expressions;
+  'text-optional'?: boolean | Expressions;
+  'text-overlap'?: 'never' | 'always' | 'cooperative' | Expressions;
+  'text-padding'?: number | Expressions;
+  'text-pitch-alignment'?: 'map' | 'viewport' | 'auto' | Expressions;
+  'text-radial-offset'?: number | Expressions;
+  'text-rotate'?: number | Expressions;
+  'text-rotation-alignment'?: 'map' | 'viewport' | 'auto' | Expressions;
+  'text-size'?: number | Expressions;
+  'text-transform'?: 'none' | 'uppercase' | 'lowercase' | Expressions;
+  'text-translate'?: [number, number] | Expressions;
+  'text-translate-anchor'?: 'map' | 'viewport' | Expressions;
   'text-variable-anchor'?:
     | (
         | 'center'
@@ -298,8 +298,8 @@ interface SymbolLayerStyle {
         | 'bottom-left'
         | 'bottom-right'
       )[]
-    | Expression;
-  'text-writing-mode'?: ('horizontal' | 'vertical')[] | Expression;
+    | Expressions;
+  'text-writing-mode'?: ('horizontal' | 'vertical')[] | Expressions;
 }
 ```
 
@@ -316,7 +316,7 @@ enum MapCreationStatus {
   Loading = 'loading',
   Loaded = 'loaded',
   Error = 'error',
-  Disposed = 'disposed',
+  Destroyed = 'destroyed',
 }
 ```
 
@@ -329,10 +329,7 @@ enum SourceStatus {
   NotCreated = 'not-created',
   Creating = 'creating',
   Created = 'created',
-  Loading = 'loading',
-  Loaded = 'loaded',
   Error = 'error',
-  Disposed = 'disposed',
 }
 ```
 
@@ -374,11 +371,14 @@ Union type for image data formats.
 
 ```typescript
 type ImageDatas =
-  | ImageData
   | HTMLImageElement
-  | HTMLCanvasElement
-  | HTMLVideoElement
-  | ImageBitmap;
+  | ImageBitmap
+  | ImageData
+  | {
+      width: number;
+      height: number;
+      data: Uint8Array | Uint8ClampedArray;
+    };
 ```
 
 ### Anchor
@@ -407,6 +407,7 @@ Success event data for geolocation.
 ```typescript
 interface GeolocateSuccess {
   coords: GeolocationCoordinates;
+  target: GeolocateControl;
   timestamp: number;
 }
 ```
@@ -420,8 +421,8 @@ interface GeolocateEventTypes {
   geolocate: GeolocateSuccess;
   error: GeolocationPositionError;
   outofmaxbounds: GeolocateSuccess;
-  trackingstart: GeolocateSuccess;
-  trackingend: GeolocateSuccess;
+  trackuserlocationstart: GeolocateSuccess;
+  trackuserlocationend: GeolocateSuccess;
 }
 ```
 

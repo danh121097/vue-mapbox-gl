@@ -623,6 +623,30 @@ row's `T` compiles as `any`, because no single default fits both a constrained
 generic and an unconstrained one, so `Ref<T>` proves the wrapper and not the
 element type.
 
+The types reference is checked the same way. `docs/api/types.md` transcribes
+`libs/types` by hand, and its fences used to compile only in the weakest sense:
+an undefined name reads as `Cannot find name`, which the allowlist tolerates, so
+the page could name types that no longer exist and pass. Each documented type is
+now compared with the exported one — mutual assignability for a shape, member
+names and values for an enum — and a type the package does not export fails on
+its heading. That first run found seven wrong: `SourceStatus` with three
+invented members, `MapCreationStatus` ending in `Disposed` instead of
+`Destroyed`, `GeolocateEventTypes` naming `trackingstart` for an event MapLibre
+calls `trackuserlocationstart`, `GeolocateSuccess` missing `target`, `ImageDatas`
+listing a canvas and a video it does not take, `MaybeRef` documented but not
+exported, and every layer style fence built on `Expression` when the export is
+`Expressions`.
+
+Links are resolved too: a target must name a file that exists, and an anchor
+must name a heading on that page. The reference had linked
+`/api/types#maplibremethods` for months to a page with no such heading, and
+VitePress renders a dead anchor as an ordinary link that lands at the top of the
+page.
+
+Which pages get the table and completeness checks is not a list to maintain: any
+page with a `Returns` heading gets them, because that heading is the page
+claiming to document a return.
+
 Three more things it cannot see: an extra attribute on a component is legal Vue
 (it falls through to the root element), so a misspelled prop compiles; a block
 whose fence language is not `ts`, `js` or `vue` is never looked at; and a name

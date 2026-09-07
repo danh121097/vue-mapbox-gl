@@ -25,6 +25,13 @@ export type Nullable<T> = T | null;
 
 export type Undefinedable<T> = T | undefined;
 
+/**
+ * Re-exported from Vue because every composable in this package takes its map,
+ * layer and source arguments as one. The types reference documents it as part
+ * of this package's surface, so it has to be importable from it.
+ */
+export type { MaybeRef } from 'vue';
+
 export interface CreateMaplibreActions {
   mapInstance: ComputedRef<Map | null>;
   mapCreationStatus: ComputedRef<MapCreationStatus>;

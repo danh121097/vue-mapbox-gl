@@ -4,6 +4,7 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Snippet } from './extract-doc-snippets';
+import type { DocumentedType } from './extract-doc-types';
 import type { ReturnTable } from './extract-doc-tables';
 
 /**
@@ -396,4 +397,148 @@ export function writeSnippetProject(
   );
 
   return byName;
+}
+
+/**
+ * Turns a documented type into a module that compares it with the real one.
+ *
+ * `docs/api/types.md` transcribes `libs/types` by hand, and a transcript
+ * drifts. Its fences compiled before this, but only in the weakest sense:
+ * `Cannot find name` is on the allowlist for hand-written examples, so a fence
+ * naming a type that no longer exists passed, and nothing ever compared a
+ * documented shape with the exported one.
+ *
+ * The fence is reproduced verbatim -- so a diagnostic inside it lands on the
+ * line the reader would open -- and the exported type is imported beside it
+ * under an alias. The two must be assignable to each other. A generic type is
+ * compared inside a function that repeats its parameter list, so `T` is a real
+ * type parameter and `Nullable<T>` cannot pass by collapsing to `any`.
+ */
+export function documentedTypeSnippet(
+  file: string,
+  type: DocumentedType,
+  /**
+   * What the built package exports. A name it does not export is left alone
+   * rather than imported: `HTMLCanvasElement` is a global, and importing it
+   * would report a missing export that is not missing. A name that is neither
+   * exported nor global then fails as `Cannot find name`, which is the right
+   * answer -- the reference is using a type a reader cannot get hold of.
+   */
+  exported: Set<string>,
+): Snippet {
+  // Names the fence declares itself are not imports; everything else it names
+  // has to resolve through the package's public surface, the same way a reader
+  // copying the snippet would resolve it.
+  const declared = new Set(
+    [
+      ...type.code.matchAll(/\b(?:type|interface|enum)\s+([A-Za-z_$][\w$]*)/g),
+    ].map((match) => match[1]!),
+  );
+  // Only the parameter names, not the types they are constrained to:
+  // `<Layer extends LayerSpecification>` declares `Layer` and *references*
+  // `LayerSpecification`, which still has to be imported.
+  const params = new Set(
+    (type.params ?? '')
+      .slice(1, -1)
+      .split(',')
+      .map((param) => param.trim().split(/[\s=]/)[0]!)
+      .filter(Boolean),
+  );
+  // An enum body is member names and literals, and a member name looks exactly
+  // like a type name; it references nothing to import.
+  const names = (type.kind === 'enum' ? [] : referencedTypes(type.code)).filter(
+    (name) => !declared.has(name) && !params.has(name),
+  );
+  const from = (source: Set<string> | null, module: string): string[] => {
+    const wanted = names
+      .filter((name) =>
+        source
+          ? source.has(name)
+          : !FROM_VUE.has(name) &&
+            !FROM_MAPLIBRE.has(name) &&
+            exported.has(name),
+      )
+      .sort();
+    return wanted.length
+      ? [`import type { ${wanted.join(', ')} } from '${module}';`]
+      : [];
+  };
+
+  const head = [
+    ...from(FROM_VUE, 'vue'),
+    ...from(FROM_MAPLIBRE, 'maplibre-gl'),
+    ...from(null, 'vue3-maplibre-gl'),
+    type.kind === 'enum'
+      ? `import { ${type.name} as _real } from 'vue3-maplibre-gl';`
+      : `import type { ${type.name} as _real } from 'vue3-maplibre-gl';`,
+  ];
+
+  const body = type.code.split('\n');
+
+  // An enum is a set of names and values, not a shape: two enums with the same
+  // members are still unassignable to each other, so they are compared member
+  // by member instead.
+  const tail =
+    type.kind === 'enum'
+      ? [
+          `type _Extra = Exclude<keyof typeof ${type.name}, keyof typeof _real>;`,
+          `type _Missing = Exclude<keyof typeof _real, keyof typeof ${type.name}>;`,
+          `type _Members = { __ok: true }[[_Extra | _Missing] extends [never]`,
+          `  ? '__ok'`,
+          `  : _Extra | _Missing];`,
+          `type _Shared = keyof typeof _real & keyof typeof ${type.name};`,
+          `type _Wrong = {`,
+          `  [K in _Shared]: \`\${(typeof ${type.name})[K]}\` extends \`\${(typeof _real)[K]}\``,
+          `    ? never`,
+          `    : K;`,
+          `}[_Shared];`,
+          `type _Values = { __ok: true }[[_Wrong] extends [never] ? '__ok' : _Wrong];`,
+          'export type { _Members, _Values };',
+        ]
+      : type.params
+        ? [
+            `function _compare${type.params}(): void {`,
+            `  const _to: _real${stripConstraints(type.params)} =`,
+            `    null as unknown as ${type.name}${stripConstraints(type.params)};`,
+            `  const _from: ${type.name}${stripConstraints(type.params)} =`,
+            `    null as unknown as _real${stripConstraints(type.params)};`,
+            `  void _to;`,
+            `  void _from;`,
+            `}`,
+            'export { _compare };',
+          ]
+        : [
+            `const _to: _real = null as unknown as ${type.name};`,
+            `const _from: ${type.name} = null as unknown as _real;`,
+            'export { _to, _from };',
+          ];
+
+  return {
+    file,
+    fenceLine: type.codeLine - 1,
+    lang: 'ts',
+    ext: '.ts',
+    label: `type-${type.name}`,
+    code: [...head, ...body, ...tail].join('\n'),
+    lineMap: [
+      ...head.map(() => type.headingLine),
+      ...body.map((_, index) => type.codeLine + index),
+      ...tail.map(() => type.headingLine),
+    ],
+  };
+}
+
+/** `<Layer extends LayerSpecification>` used as an argument: `<Layer>`. */
+function stripConstraints(params: string): string {
+  const inner = params
+    .slice(1, -1)
+    .split(',')
+    .map((param) =>
+      param
+        .split(/\s+extends\s+/)[0]!
+        .split('=')[0]!
+        .trim(),
+    )
+    .filter(Boolean);
+  return `<${inner.join(', ')}>`;
 }

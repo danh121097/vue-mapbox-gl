@@ -17,16 +17,26 @@
  * Usage: check-doc-snippets.ts [--keep]
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+} from 'node:fs';
 import { relative, resolve } from 'node:path';
 import { extractFromFile, type Snippet } from './extract-doc-snippets';
 import {
   extractTablesFromFile,
   listComposablesFromFile,
 } from './extract-doc-tables';
+import { extractDocumentedTypesFromFile } from './extract-doc-types';
+import { packageExports } from './package-exports';
+import { checkLinks } from './check-doc-links';
 import { diagnosticCode, isReported, summarize } from './reported-diagnostics';
 import {
   coverageSnippet,
+  documentedTypeSnippet,
   tableSnippet,
   writeSnippetProject,
 } from './snippet-project';
@@ -68,11 +78,15 @@ const pages = [
 ];
 
 /**
- * Pages whose Returns tables are compiled as well as their code blocks. The
- * API reference is the only page that lists return fields as a table; the guide
- * documents the same shapes as annotated assignments, which already compile.
+ * Pages whose Returns tables are compiled as well as their code blocks: any
+ * page that has a `Returns` heading at all, which is the page claiming to
+ * document a return. A hardcoded list would silently stop covering a second
+ * reference page the day someone adds one.
  */
-const TABLE_PAGES = [resolve(rootDir, 'docs/api/composables.md')];
+const RETURNS_HEADING = /^#{2,5}\s+Returns\s*$/m;
+const TABLE_PAGES = markdownFiles(resolve(rootDir, 'docs')).filter((path) =>
+  RETURNS_HEADING.test(readFileSync(path, 'utf8')),
+);
 
 let tableCount = 0;
 let coverageCount = 0;
@@ -126,6 +140,19 @@ for (const path of TABLE_PAGES) {
   }
 }
 
+// The types reference transcribes `libs/types` by hand. Each documented type
+// is compared with the exported one, because a transcript drifts and nothing
+// else here would notice.
+let typeCount = 0;
+const exported = packageExports(rootDir);
+for (const path of markdownFiles(resolve(rootDir, 'docs/api'))) {
+  const page = relative(rootDir, path);
+  for (const type of extractDocumentedTypesFromFile(path)) {
+    snippets.push(documentedTypeSnippet(page, type, exported));
+    typeCount++;
+  }
+}
+
 for (const path of pages) {
   const { snippets: found, skipped } = extractFromFile(path);
   for (const snippet of found) {
@@ -159,13 +186,14 @@ writeSnippetProject(
 ).forEach((snippet, name) => byGeneratedName.set(name, snippet));
 
 console.log(
-  `Checking ${snippets.length - tableCount - coverageCount} code blocks from ` +
-    `docs/ and the READMEs (${skippedCount} skipped), plus ${tableCount} ` +
-    `Returns tables from the API reference and the return completeness of ` +
+  `Checking ${snippets.length - tableCount - coverageCount - typeCount} code ` +
+    `blocks from docs/ and the READMEs (${skippedCount} skipped), plus ` +
+    `${tableCount} Returns tables, the return completeness of ` +
     `${coverageCount} composables` +
     (untabledCount
-      ? ` (${untabledCount} of which describe their return in prose).`
-      : '.'),
+      ? ` (${untabledCount} of which describe their return in prose)`
+      : '') +
+    `, and ${typeCount} documented types.`,
 );
 
 function compile(dir: string): string {
@@ -256,6 +284,9 @@ for (let i = 0; i < lines.length; i++) {
 
 // A generated snippet is compiled twice, so anything wrong for a reason other
 // than nullability is reported by both passes.
+// Links are prose, and prose is where the last two documentation bugs lived.
+reported.push(...checkLinks(pages, rootDir));
+
 const seenProblem = new Set<string>();
 const problems = reported.filter((problem) =>
   seenProblem.has(`${problem.location} ${problem.message}`)

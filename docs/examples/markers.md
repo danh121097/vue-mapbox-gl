@@ -493,4 +493,4 @@ function clearMarkers() {
 
 - [Marker Component](/api/components#marker)
 - [Popup Component](/api/components#popup)
-- [Marker Events](/api/types#marker-events)
+- [Event Handler Types](/api/types#event-handler-types)

@@ -292,4 +292,4 @@ function changeStyle() {
 
 - [Maplibre Component](/api/components#maplibre)
 - [useCreateMaplibre Composable](/api/composables#usecreatemaplibre)
-- [Map Events](/api/types#map-events)
+- [Event Handler Types](/api/types#event-handler-types)
