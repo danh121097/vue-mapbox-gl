@@ -2,66 +2,65 @@ import { describe, it, expect, vi } from 'vitest';
 import { ref } from 'vue';
 import { withSetup } from '../../../test-utils';
 import { createCameraAnimation } from '../createCameraAnimation';
+import { AnimationStatus } from '../cameraAnimationTypes';
+import { AnimatingMockMap, hasSettled } from './animating-mock-map';
 
-// Mock MapLibre Map
-function createMockMap() {
-  const listeners = new Map<string, Set<(...args: any[]) => void>>();
-  return {
-    on(event: string, handler: (...args: any[]) => void) {
-      if (!listeners.has(event)) listeners.set(event, new Set());
-      listeners.get(event)!.add(handler);
-    },
-    off(event: string, handler: (...args: any[]) => void) {
-      listeners.get(event)?.delete(handler);
-    },
-    once(event: string, handler: (...args: any[]) => void) {
-      const wrapped = (...args: any[]) => {
-        listeners.get(event)?.delete(wrapped);
-        handler(...args);
-      };
-      this.on(event, wrapped);
-    },
-    fire(event: string, ...args: any[]) {
-      // Copy to avoid mutation during iteration
-      const handlers = [...(listeners.get(event) || [])];
-      handlers.forEach((h) => h(...args));
-    },
-    flyTo: vi.fn(),
-    easeTo: vi.fn(),
-    jumpTo: vi.fn(),
-    zoomTo: vi.fn(),
-    stop: vi.fn(),
-    getCenter: vi.fn(() => ({ lng: 0, lat: 0 })),
-    getZoom: vi.fn(() => 10),
-    getBearing: vi.fn(() => 0),
-    getPitch: vi.fn(() => 0),
-  };
+function setup(map = new AnimatingMockMap()) {
+  const animation = withSetup(() =>
+    createCameraAnimation({ map: ref(map as any) }),
+  );
+  return { map, ...animation };
 }
 
 describe('createCameraAnimation', () => {
-  it('resolves when completion event fires', async () => {
-    const map = createMockMap();
-
-    const { executeAnimation } = withSetup(() =>
-      createCameraAnimation({ map: ref(map as any) }),
-    );
+  it('resolves when its own completion event fires', async () => {
+    const { map, executeAnimation, animationStatus } = setup();
 
     const promise = executeAnimation('flyTo', [{ center: [0, 0] }], 'moveend');
-    expect(map.flyTo).toHaveBeenCalledWith({ center: [0, 0] });
+    // The map method receives an `eventData` token as its trailing argument.
+    expect(map.flyTo).toHaveBeenCalledWith(
+      { center: [0, 0] },
+      expect.objectContaining({ vmlAnimationId: expect.any(Number) }),
+    );
+    expect(animationStatus.value).toBe(AnimationStatus.Running);
 
-    // Simulate animation completion
-    map.fire('moveend');
+    map.complete();
     await expect(promise).resolves.toBeUndefined();
+    expect(animationStatus.value).toBe(AnimationStatus.Completed);
+    expect(map.listenerCount('moveend')).toBe(0);
+  });
+
+  it('ignores a completion event that does not carry its token', async () => {
+    const { map, executeAnimation, isAnimating } = setup();
+
+    const promise = executeAnimation('flyTo', [{}], 'moveend');
+    map.fire('moveend', { type: 'moveend' });
+    map.fire('moveend', { type: 'moveend', vmlAnimationId: -1 });
+
+    expect(await hasSettled(promise)).toBe(false);
+    expect(isAnimating.value).toBe(true);
+  });
+
+  it('does not resolve the second of two overlapping animations when the first is interrupted', async () => {
+    const { map, executeAnimation, isAnimating } = setup();
+
+    const first = executeAnimation('flyTo', [{ zoom: 5 }], 'moveend');
+    // Starting the second ease stops the first, which fires the first's
+    // `moveend` synchronously inside this call.
+    const second = executeAnimation('flyTo', [{ zoom: 8 }], 'moveend');
+
+    await expect(first).resolves.toBeUndefined();
+    expect(await hasSettled(second)).toBe(false);
+    expect(isAnimating.value).toBe(true);
+
+    map.complete();
+    await expect(second).resolves.toBeUndefined();
+    expect(isAnimating.value).toBe(false);
   });
 
   it('resolves immediately for instant operations (no completionEvent)', async () => {
-    const map = createMockMap();
+    const { map, executeAnimation } = setup();
 
-    const { executeAnimation } = withSetup(() =>
-      createCameraAnimation({ map: ref(map as any) }),
-    );
-
-    // jumpTo — no completion event (RT-14)
     await expect(
       executeAnimation('jumpTo', [{ center: [0, 0] }]),
     ).resolves.toBeUndefined();
@@ -78,49 +77,58 @@ describe('createCameraAnimation', () => {
     );
   });
 
-  it('rejects on timeout and calls map.stop() (RT-6)', async () => {
+  it('rejects on timeout, stops the map and detaches its listener', async () => {
     vi.useFakeTimers();
-    const map = createMockMap();
+    try {
+      const { map, executeAnimation, animationStatus } = setup();
 
-    const { executeAnimation } = withSetup(() =>
-      createCameraAnimation({ map: ref(map as any) }),
-    );
+      const promise = executeAnimation('flyTo', [{}], 'moveend', 100);
+      vi.advanceTimersByTime(150);
 
-    const promise = executeAnimation('flyTo', [{}], 'moveend', 100);
-
-    // Advance past timeout
-    vi.advanceTimersByTime(150);
-
-    await expect(promise).rejects.toThrow('Animation timed out after 100ms');
-    expect(map.stop).toHaveBeenCalled();
-
-    vi.useRealTimers();
+      await expect(promise).rejects.toThrow('Animation timed out after 100ms');
+      expect(map.stop).toHaveBeenCalled();
+      expect(animationStatus.value).toBe(AnimationStatus.Error);
+      expect(map.listenerCount('moveend')).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it('rejects when map fires error event', async () => {
-    const map = createMockMap();
-
-    const { executeAnimation } = withSetup(() =>
-      createCameraAnimation({ map: ref(map as any) }),
-    );
+  it('is unaffected by unrelated map error events', async () => {
+    const { map, executeAnimation, animationStatus } = setup();
 
     const promise = executeAnimation('flyTo', [{}], 'moveend');
-    map.fire('error', new Error('Map error'));
+    // e.g. a tile fetch failing while the camera is still moving
+    map.fire('error', { type: 'error', error: new Error('404 tile') });
 
-    await expect(promise).rejects.toBeInstanceOf(Error);
+    expect(await hasSettled(promise)).toBe(false);
+    expect(animationStatus.value).toBe(AnimationStatus.Running);
+    expect(map.listenerCount('error')).toBe(0);
+
+    map.complete();
+    await expect(promise).resolves.toBeUndefined();
+    expect(animationStatus.value).toBe(AnimationStatus.Completed);
+  });
+
+  it('rejects and detaches when the map method throws', async () => {
+    const { map, executeAnimation, animationStatus } = setup();
+    map.flyTo.mockImplementationOnce(() => {
+      throw new Error('boom');
+    });
+
+    await expect(executeAnimation('flyTo', [{}], 'moveend')).rejects.toThrow(
+      'boom',
+    );
+    expect(animationStatus.value).toBe(AnimationStatus.Error);
+    expect(map.listenerCount('moveend')).toBe(0);
   });
 
   it('getCurrentCamera returns camera state', () => {
-    const map = createMockMap();
+    const { getCurrentCamera } = setup();
 
-    const { getCurrentCamera } = withSetup(() =>
-      createCameraAnimation({ map: ref(map as any) }),
-    );
-
-    const camera = getCurrentCamera();
-    expect(camera).toEqual({
+    expect(getCurrentCamera()).toEqual({
       center: { lng: 0, lat: 0 },
-      zoom: 10,
+      zoom: 1,
       bearing: 0,
       pitch: 0,
     });
@@ -135,11 +143,7 @@ describe('createCameraAnimation', () => {
   });
 
   it('stopAnimation calls map.stop()', () => {
-    const map = createMockMap();
-
-    const { stopAnimation } = withSetup(() =>
-      createCameraAnimation({ map: ref(map as any) }),
-    );
+    const { map, stopAnimation } = setup();
 
     stopAnimation();
     expect(map.stop).toHaveBeenCalled();

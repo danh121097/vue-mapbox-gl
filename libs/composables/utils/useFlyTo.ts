@@ -1,4 +1,4 @@
-import { watchEffect, ref, computed, unref } from 'vue';
+import { watch, ref, computed, unref } from 'vue';
 import { useLogger } from '@libs/composables';
 import { createCameraAnimation } from './createCameraAnimation';
 import type { Nullable, Undefinedable } from '@libs/types';
@@ -146,19 +146,25 @@ export function useFlyTo(props: FlyToProps): FlyToActions {
     flyStatus.value = FlyStatus.Completed;
   }
 
-  const stopWatchEffect = watchEffect(() => {
-    const map = mapInstance.value;
-    if (map && flyOptions.value && flyStatus.value === FlyStatus.NotStarted) {
-      flyTo(flyOptions.value).catch((error) => {
-        logError('Error in watchEffect flyTo:', error);
-      });
-    }
-  });
+  // Auto-fly once a map arrives. Watching the map instance rather than
+  // running an effect keeps `flyStatus` — which `flyTo` writes — out of the
+  // dependency set.
+  const stopAutoFly = watch(
+    mapInstance,
+    (map) => {
+      if (map && flyOptions.value && flyStatus.value === FlyStatus.NotStarted) {
+        flyTo(flyOptions.value).catch((error) => {
+          logError('Error in auto flyTo:', error);
+        });
+      }
+    },
+    { immediate: true },
+  );
 
   function cleanup(): void {
     try {
       stopFlying();
-      stopWatchEffect();
+      stopAutoFly();
       flyOptions.value = undefined;
       flyStatus.value = FlyStatus.NotStarted;
     } catch (error) {

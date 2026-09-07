@@ -1,4 +1,4 @@
-import { watchEffect, ref, computed, unref } from 'vue';
+import { watch, ref, computed, unref } from 'vue';
 import { useLogger } from '@libs/composables';
 import { createCameraAnimation } from './createCameraAnimation';
 import type { Nullable, Undefinedable } from '@libs/types';
@@ -139,18 +139,24 @@ export function useEaseTo(props: EaseToProps): EaseToActions {
     easeStatus.value = EaseStatus.Completed;
   }
 
-  watchEffect(() => {
-    const map = mapInstance.value;
-    if (
-      map &&
-      easeOptions.value &&
-      easeStatus.value === EaseStatus.NotStarted
-    ) {
-      easeTo(easeOptions.value).catch((error) => {
-        logError('Error in watchEffect easeTo:', error);
-      });
-    }
-  });
+  // Auto-ease once a map arrives. Watching the map instance rather than
+  // running an effect keeps `easeStatus` — which `easeTo` writes — out of the
+  // dependency set.
+  watch(
+    mapInstance,
+    (map) => {
+      if (
+        map &&
+        easeOptions.value &&
+        easeStatus.value === EaseStatus.NotStarted
+      ) {
+        easeTo(easeOptions.value).catch((error) => {
+          logError('Error in auto easeTo:', error);
+        });
+      }
+    },
+    { immediate: true },
+  );
 
   return {
     easeTo,

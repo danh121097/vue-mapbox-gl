@@ -18,7 +18,12 @@ export interface CameraAnimationConfig {
 }
 
 export interface CameraAnimationResult {
-  /** Execute an animation on the map, resolving when the completion event fires */
+  /**
+   * Execute an animation on the map, resolving when the completion event fires.
+   * With a completion event, `args` must fill every parameter before the map
+   * method's `eventData` (pass `undefined` for omitted options) — the factory
+   * appends a token there and only settles on events that carry it.
+   */
   executeAnimation: (
     method: string,
     args: any[],

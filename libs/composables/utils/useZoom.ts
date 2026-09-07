@@ -125,19 +125,13 @@ export function useZoomTo(
     const finalOptions = options || animationOptions.value;
     zoomStatus.value = ZoomStatus.Zooming;
 
-    if (!finalOptions) {
-      // Immediate zoom without animation
-      return executeAnimation('zoomTo', [zoomVal])
-        .then(() => {
-          zoomStatus.value = ZoomStatus.Completed;
-        })
-        .catch((error) => {
-          zoomStatus.value = ZoomStatus.Error;
-          throw error;
-        });
-    }
-
-    return executeAnimation('zoomTo', [zoomVal, finalOptions], 'zoomend')
+    // Settle on `moveend`, which every ease fires; `zoomend` only fires when
+    // the zoom actually changed, so zooming to the current level would never
+    // resolve. Without options MapLibre is not instant — it still eases over
+    // its default duration — so that path is awaited too. `finalOptions` may
+    // be undefined: it must still occupy the options slot so the completion
+    // token lands in `eventData`.
+    return executeAnimation('zoomTo', [zoomVal, finalOptions], 'moveend')
       .then(() => {
         zoomStatus.value = ZoomStatus.Completed;
       })
@@ -234,18 +228,8 @@ export function useZoomIn(
     const finalOptions = options || animationOptions.value;
     zoomStatus.value = ZoomStatus.Zooming;
 
-    if (!finalOptions) {
-      return executeAnimation('zoomIn', [])
-        .then(() => {
-          zoomStatus.value = ZoomStatus.Completed;
-        })
-        .catch((error) => {
-          zoomStatus.value = ZoomStatus.Error;
-          throw error;
-        });
-    }
-
-    return executeAnimation('zoomIn', [finalOptions], 'zoomend')
+    // Awaited on `moveend` with or without options — see `useZoomTo`.
+    return executeAnimation('zoomIn', [finalOptions], 'moveend')
       .then(() => {
         zoomStatus.value = ZoomStatus.Completed;
       })
@@ -336,18 +320,8 @@ export function useZoomOut(
     const finalOptions = options || animationOptions.value;
     zoomStatus.value = ZoomStatus.Zooming;
 
-    if (!finalOptions) {
-      return executeAnimation('zoomOut', [])
-        .then(() => {
-          zoomStatus.value = ZoomStatus.Completed;
-        })
-        .catch((error) => {
-          zoomStatus.value = ZoomStatus.Error;
-          throw error;
-        });
-    }
-
-    return executeAnimation('zoomOut', [finalOptions], 'zoomend')
+    // Awaited on `moveend` with or without options — see `useZoomTo`.
+    return executeAnimation('zoomOut', [finalOptions], 'moveend')
       .then(() => {
         zoomStatus.value = ZoomStatus.Completed;
       })

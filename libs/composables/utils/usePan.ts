@@ -1,4 +1,4 @@
-import { watchEffect, ref, computed, unref, onUnmounted } from 'vue';
+import { watch, ref, computed, unref, onUnmounted } from 'vue';
 import { useLogger } from '@libs/composables';
 import { createCameraAnimation } from './createCameraAnimation';
 import type { Nullable, Undefinedable } from '@libs/types';
@@ -134,17 +134,9 @@ export function usePanBy(
     const finalOptions = options || animationOptions.value;
     panStatus.value = PanStatus.Panning;
 
-    if (!finalOptions) {
-      return executeAnimation('panBy', [offsetVal])
-        .then(() => {
-          panStatus.value = PanStatus.Completed;
-        })
-        .catch((error) => {
-          panStatus.value = PanStatus.Error;
-          throw error;
-        });
-    }
-
+    // Without options MapLibre still eases over its default duration, so the
+    // call is awaited either way. `finalOptions` may be undefined: it must
+    // still occupy the options slot so the completion token lands in `eventData`.
     return executeAnimation('panBy', [offsetVal, finalOptions], 'moveend')
       .then(() => {
         panStatus.value = PanStatus.Completed;
@@ -160,19 +152,25 @@ export function usePanBy(
     panStatus.value = PanStatus.Completed;
   }
 
-  watchEffect(() => {
-    const map = mapInstance.value;
-    if (
-      map &&
-      offset.value &&
-      props.autoPan !== false &&
-      panStatus.value === PanStatus.NotStarted
-    ) {
-      panBy(offset.value, animationOptions.value).catch((e) =>
-        logError('Error in watchEffect panBy:', e),
-      );
-    }
-  });
+  // Auto-pan once a map arrives. Watching the map instance rather than
+  // running an effect keeps `panStatus` — which `panBy` writes — out of the
+  // dependency set.
+  watch(
+    mapInstance,
+    (map) => {
+      if (
+        map &&
+        offset.value &&
+        props.autoPan !== false &&
+        panStatus.value === PanStatus.NotStarted
+      ) {
+        panBy(offset.value, animationOptions.value).catch((e) =>
+          logError('Error in auto panBy:', e),
+        );
+      }
+    },
+    { immediate: true },
+  );
 
   onUnmounted(() => {
     panStatus.value = PanStatus.Completed;
@@ -246,17 +244,9 @@ export function usePanTo(
     const finalOptions = options || animationOptions.value;
     panStatus.value = PanStatus.Panning;
 
-    if (!finalOptions) {
-      return executeAnimation('panTo', [lnglatVal])
-        .then(() => {
-          panStatus.value = PanStatus.Completed;
-        })
-        .catch((error) => {
-          panStatus.value = PanStatus.Error;
-          throw error;
-        });
-    }
-
+    // Without options MapLibre still eases over its default duration, so the
+    // call is awaited either way. `finalOptions` may be undefined: it must
+    // still occupy the options slot so the completion token lands in `eventData`.
     return executeAnimation('panTo', [lnglatVal, finalOptions], 'moveend')
       .then(() => {
         panStatus.value = PanStatus.Completed;
@@ -272,19 +262,23 @@ export function usePanTo(
     panStatus.value = PanStatus.Completed;
   }
 
-  watchEffect(() => {
-    const map = mapInstance.value;
-    if (
-      map &&
-      lnglat.value &&
-      props.autoPan !== false &&
-      panStatus.value === PanStatus.NotStarted
-    ) {
-      panTo(lnglat.value, animationOptions.value).catch((e) =>
-        logError('Error in watchEffect panTo:', e),
-      );
-    }
-  });
+  // Auto-pan once a map arrives — see the note in `usePanBy`.
+  watch(
+    mapInstance,
+    (map) => {
+      if (
+        map &&
+        lnglat.value &&
+        props.autoPan !== false &&
+        panStatus.value === PanStatus.NotStarted
+      ) {
+        panTo(lnglat.value, animationOptions.value).catch((e) =>
+          logError('Error in auto panTo:', e),
+        );
+      }
+    },
+    { immediate: true },
+  );
 
   onUnmounted(() => {
     panStatus.value = PanStatus.Completed;

@@ -242,6 +242,29 @@ export function useFitScreenCoordinates(
     status.value = FitScreenCoordinatesStatus.NotSet;
   }
 
+  /**
+   * Re-applies the stored coordinates to a replacement map. Bypasses
+   * `validateOperation` on purpose: a camera move only needs the transform,
+   * and `isStyleLoaded()` stays false through the first `styledata` while
+   * sources are still pending, so gating on it here would reject the very
+   * event this waits for.
+   */
+  function reapplyToMap(map: Map): void {
+    try {
+      const finalBearing = bearing.value ?? getCurrentBearing() ?? 0;
+      map.fitScreenCoordinates(
+        p0.value!,
+        p1.value!,
+        finalBearing,
+        options.value,
+      );
+      status.value = FitScreenCoordinatesStatus.Set;
+    } catch (error) {
+      status.value = FitScreenCoordinatesStatus.Error;
+      logError('Error fitting screen coordinates on map change:', error);
+    }
+  }
+
   // Re-apply the coordinates when the map is replaced. `p0`/`p1` are only
   // written after a successful fit against a live map, so nothing is ever
   // pending for the first map — this is the replacement path only.
@@ -256,36 +279,15 @@ export function useFitScreenCoordinates(
       if (!map || !p0.value || !p1.value) return;
       if (status.value === FitScreenCoordinatesStatus.Setting) return;
 
-      try {
-        if (!map.isStyleLoaded()) {
-          // Wait for style to load before fitting
-          const onStyleLoad = () => {
-            fitScreenCoordinates(
-              p0.value!,
-              p1.value!,
-              options.value,
-              bearing.value,
-            );
-          };
-          map.once('styledata', onStyleLoad);
-          onCleanUp(() => map.off('styledata', onStyleLoad));
-          return;
-        }
-
-        // Use current bearing if none set
-        const finalBearing = bearing.value ?? getCurrentBearing() ?? 0;
-
-        map.fitScreenCoordinates(
-          p0.value,
-          p1.value,
-          finalBearing,
-          options.value,
-        );
-        status.value = FitScreenCoordinatesStatus.Set;
-      } catch (error) {
-        status.value = FitScreenCoordinatesStatus.Error;
-        logError('Error fitting screen coordinates on map change:', error);
+      if (map.isStyleLoaded()) {
+        reapplyToMap(map);
+        return;
       }
+
+      // No style yet — the first `styledata` means the map is usable.
+      const onStyleData = () => reapplyToMap(map);
+      map.once('styledata', onStyleData);
+      onCleanUp(() => map.off('styledata', onStyleData));
     },
     { immediate: true },
   );

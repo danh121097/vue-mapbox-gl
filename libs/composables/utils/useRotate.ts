@@ -136,17 +136,9 @@ function createSimpleRotation(
     const finalOptions = options || animationOptions.value;
     rotationStatus.value = RotationStatus.Rotating;
 
-    if (!finalOptions) {
-      return executeAnimation(method, [])
-        .then(() => {
-          rotationStatus.value = RotationStatus.Completed;
-        })
-        .catch((error) => {
-          rotationStatus.value = RotationStatus.Error;
-          throw error;
-        });
-    }
-
+    // Without options MapLibre still eases over its default duration, so the
+    // call is awaited either way. `finalOptions` may be undefined: it must
+    // still occupy the options slot so the completion token lands in `eventData`.
     return executeAnimation(method, [finalOptions], 'moveend')
       .then(() => {
         rotationStatus.value = RotationStatus.Completed;
@@ -248,18 +240,11 @@ export function useRotateTo(
     const finalOptions = options || animationOptions.value;
     rotationStatus.value = RotationStatus.Rotating;
 
-    if (!finalOptions) {
-      return executeAnimation('rotateTo', [bearingVal])
-        .then(() => {
-          rotationStatus.value = RotationStatus.Completed;
-        })
-        .catch((error) => {
-          rotationStatus.value = RotationStatus.Error;
-          throw error;
-        });
-    }
-
-    return executeAnimation('rotateTo', [bearingVal, finalOptions], 'rotateend')
+    // Settle on `moveend`, which every ease fires; `rotateend` only fires when
+    // the bearing actually changed, so rotating to the current bearing would
+    // never resolve. Without options MapLibre still eases over its default
+    // duration, so that path is awaited too — see `createSimpleRotation`.
+    return executeAnimation('rotateTo', [bearingVal, finalOptions], 'moveend')
       .then(() => {
         rotationStatus.value = RotationStatus.Completed;
       })

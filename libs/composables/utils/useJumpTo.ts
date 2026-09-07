@@ -1,4 +1,4 @@
-import { watchEffect, ref, computed, unref, onUnmounted } from 'vue';
+import { watch, ref, computed, unref, onUnmounted } from 'vue';
 import { useLogger } from '@libs/composables';
 import { createCameraAnimation } from './createCameraAnimation';
 import type { Nullable, Undefinedable } from '@libs/types';
@@ -75,7 +75,7 @@ export function useJumpTo(
   const mapInstance = computed(() => unref(props.map));
   const isJumping = computed(() => jumpStatus.value === JumpStatus.Jumping);
 
-  // Instant operation — no completion event, resolves via Promise.resolve() (RT-14)
+  // Instant operation — no completion event, resolves as soon as the call returns
   const { executeAnimation, getCurrentCamera } = createCameraAnimation({
     map: props.map,
     debug: props.debug,
@@ -158,17 +158,23 @@ export function useJumpTo(
     jumpTo({ ...options, pitch });
   }
 
-  watchEffect(() => {
-    const map = mapInstance.value;
-    if (
-      map &&
-      jumpOptions.value &&
-      props.autoJump !== false &&
-      jumpStatus.value === JumpStatus.NotStarted
-    ) {
-      jumpTo(jumpOptions.value);
-    }
-  });
+  // Auto-jump once a map arrives. Watching the map instance rather than
+  // running an effect keeps `jumpStatus` — which `jumpTo` writes — out of the
+  // dependency set.
+  watch(
+    mapInstance,
+    (map) => {
+      if (
+        map &&
+        jumpOptions.value &&
+        props.autoJump !== false &&
+        jumpStatus.value === JumpStatus.NotStarted
+      ) {
+        jumpTo(jumpOptions.value);
+      }
+    },
+    { immediate: true },
+  );
 
   onUnmounted(() => {
     jumpStatus.value = JumpStatus.Completed;
