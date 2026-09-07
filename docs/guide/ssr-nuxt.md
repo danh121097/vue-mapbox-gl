@@ -187,13 +187,13 @@ GeolocateControls;
 
 Optionally add a prefix to avoid conflicts:
 
-<!-- snippet-skip: fragment of nuxt.config.ts, not a module -->
-
 ```typescript
 // nuxt.config.ts
-maplibre: {
-  prefix: 'map',
-}
+export default defineNuxtConfig({
+  maplibre: {
+    prefix: 'map',
+  },
+});
 ```
 
 Then use with prefix:
@@ -250,8 +250,6 @@ export default defineNuxtConfig({
 
 ### 3. Wrap Components in ClientOnly
 
-<!-- snippet-skip: the script body is elided as `// ... rest of component` -->
-
 ```vue
 <template>
   <!-- Critical: Wrap map components in ClientOnly -->
@@ -266,17 +264,19 @@ export default defineNuxtConfig({
 
 <script setup>
 import { ref } from 'vue';
-import {
-  Maplibre,
-  GeoJsonSource,
-  FillLayer,
-  useMaplibre,
-  useFlyTo,
-} from 'vue3-maplibre-gl';
+import { Maplibre, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import 'vue3-maplibre-gl/dist/style.css';
 
-// ... rest of component
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const geoData = ref({ type: 'FeatureCollection', features: [] });
+
+const fillStyle = ref({ 'fill-color': '#088', 'fill-opacity': 0.8 });
 </script>
 ```
 
@@ -390,12 +390,13 @@ export default defineNuxtConfig({
 
 **Fix**: Configure Nuxt
 
-<!-- snippet-skip: fragment of nuxt.config.ts, not a module -->
-
 ```typescript
-build: {
-  transpile: ['vue3-maplibre-gl'],
-}
+// nuxt.config.ts
+export default defineNuxtConfig({
+  build: {
+    transpile: ['vue3-maplibre-gl'],
+  },
+});
 ```
 
 ## Performance Tips

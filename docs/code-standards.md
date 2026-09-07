@@ -13,15 +13,21 @@ This document defines the code standards, conventions, and best practices used i
 - **Generics**: Use generics for reusable, type-safe code (especially factory functions)
 - **Type Imports**: Use `type` imports for type-only declarations
 
-<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
-
 ```typescript
-// Good
+// Good - a `type` import is erased at build time
 import type { Map, LayerSpecification } from 'maplibre-gl';
-export interface CreateLayerActions<T extends LayerSpecification> { ... }
 
-// Avoid
-import { Map } from 'maplibre-gl';  // Only for type, use type import
+export interface CreateLayerActions<T extends LayerSpecification> {
+  layerSpec: T | null;
+  mapInstance: Map | null;
+}
+
+// Avoid - a value import used only as a type keeps the module in the bundle
+import { Marker } from 'maplibre-gl';
+
+export interface MarkerActions {
+  markerInstance: Marker | null;
+}
 ```
 
 ### Naming Conventions
@@ -410,14 +416,22 @@ const mapInstance = ref(mapLibreInstance); // Unnecessary tracking
 
 ### Computed Properties
 
-<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
-
 ```typescript
-// Good - Reuse computed results
+import { computed, ref } from 'vue';
+
+const mapCreationStatus = ref('idle');
+
+// Good - one computed, reused wherever readiness is needed
 const isMapReady = computed(() => mapCreationStatus.value === 'loaded');
 
-// Avoid - Redundant computations
-if (mapCreationStatus.value === 'loaded') { ... }  // Hard to optimize
+function render() {
+  if (isMapReady.value) console.log('draw');
+}
+
+// Avoid - the same comparison spelled out at every call site
+function renderAgain() {
+  if (mapCreationStatus.value === 'loaded') console.log('draw');
+}
 ```
 
 ### Watchers & Effects
@@ -495,17 +509,22 @@ stylesheet is imported by the app.
 
 ### Comment Guidelines
 
-<!-- snippet-skip: a bare `if` and `return` outside any function, to contrast two comment styles -->
-
 ```typescript
-// Explain WHY, not WHAT
-// Good
-// Prevent duplicate event listeners via idempotent check
-if (status.value === 'attached') return;
+import { ref } from 'vue';
 
-// Bad
-// Check if status is attached
-if (status.value === 'attached') return;
+const status = ref('not-attached');
+
+// Explain WHY, not WHAT
+
+function attachGood() {
+  // Prevent duplicate event listeners via idempotent check
+  if (status.value === 'attached') return;
+}
+
+function attachBad() {
+  // Check if status is attached
+  if (status.value === 'attached') return;
+}
 ```
 
 ### Code blocks are compiled
@@ -523,16 +542,18 @@ assignability failures caused by inference widening example data
 abridged example expects the surrounding application to own. `build/docs-snippets/reported-diagnostics.ts`
 lists every code and the reason it is or is not reported.
 
-A block that cannot compile — a return shape written as a bare object literal, a
-body elided to `{ ... }`, a `// v5` line kept deliberately wrong — is opted out
-with an HTML comment on the line above its fence:
+A block that genuinely cannot compile — a `return` lifted out of the function it
+came from, a `// v5` line kept deliberately wrong — is opted out with an HTML
+comment on the line above its fence:
 
 ```md
-<!-- snippet-skip: documents a return shape, not runnable code -->
+<!-- snippet-skip: quotes the v5 API on purpose -->
 ```
 
 The reason is required. Those blocks are the only documentation nothing
-verifies, so the list of them is worth keeping short and worth reading.
+verifies, so the list of them is worth keeping short and worth reading: it is
+currently two blocks, both in the v5 migration guide, and everything else in
+`docs/` compiles.
 
 Two things it cannot see: an extra attribute on a component is legal Vue
 (it falls through to the root element), so a misspelled prop compiles; and a

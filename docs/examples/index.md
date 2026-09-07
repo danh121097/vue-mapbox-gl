@@ -308,11 +308,23 @@ You can copy any example code and paste it into your Vue 3 project. All examples
    ```
 
 5. **Use reactive data** for real-time updates
-   <!-- snippet-skip: elided data (`{...}`) in an illustrative fragment -->
+
    ```typescript
-   const geoData = ref({...});
-   watch(() => externalData, () => {
-     geoData.value = transformedData;
+   import { ref, watch } from 'vue';
+   import type { FeatureCollection } from 'geojson';
+
+   const externalData = ref<FeatureCollection>({
+     type: 'FeatureCollection',
+     features: [],
+   });
+
+   const geoData = ref<FeatureCollection>({
+     type: 'FeatureCollection',
+     features: [],
+   });
+
+   watch(externalData, (next) => {
+     geoData.value = next;
    });
    ```
 

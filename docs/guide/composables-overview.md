@@ -37,25 +37,48 @@ Create and manage a MapLibre GL instance with full lifecycle support.
 
 **Returns**:
 
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
 ```typescript
-{
-  mapInstance: ComputedRef<Map | null>,
-  mapCreationStatus: ComputedRef<MapCreationStatus>,
-  isMapReady: ComputedRef<boolean>,
-  isMapLoading: ComputedRef<boolean>,
-  hasMapError: ComputedRef<boolean>,
-  getCurrentCamera: () => CameraOptions | null,
-  getCurrentStyle: () => StyleSpecification | undefined,
-  // Camera setters (reactive)
-  setStyle, setCenter, setZoom, setBearing, setPitch,
-  setMinZoom, setMaxZoom, setMinPitch, setMaxPitch,
-  setMaxBounds, setRenderWorldCopies,
-  // Lifecycle
-  initMap, removeMap, destroyMap
-}
+import { ref } from 'vue';
+import type { ComputedRef } from 'vue';
+import {
+  useCreateMaplibre,
+  MapCreationStatus,
+  type CameraOptions,
+  type LngLatBoundsLike,
+  type LngLatLike,
+  type Map,
+  type StyleSpecification,
+} from 'vue3-maplibre-gl';
+
+const container = ref<HTMLElement | null>(null);
+
+const map: {
+  mapInstance: ComputedRef<Map | null>;
+  mapCreationStatus: ComputedRef<MapCreationStatus>;
+  isMapReady: ComputedRef<boolean>;
+  isMapLoading: ComputedRef<boolean>;
+  hasMapError: ComputedRef<boolean>;
+  getCurrentCamera: () => CameraOptions | null;
+  getCurrentStyle: () => StyleSpecification | string | null;
+  setStyle: (style: StyleSpecification | string) => void;
+  setCenter: (center: LngLatLike) => void;
+  setZoom: (zoom: number) => void;
+  setBearing: (bearing: number) => void;
+  setPitch: (pitch: number) => void;
+  setMinZoom: (zoom: number) => void;
+  setMaxZoom: (zoom: number) => void;
+  setMinPitch: (pitch: number) => void;
+  setMaxPitch: (pitch: number) => void;
+  setMaxBounds: (bounds: LngLatBoundsLike) => void;
+  setRenderWorldCopies: (renderWorldCopies: boolean) => void;
+  initMap: () => void;
+  removeMap: () => void;
+  destroyMap: () => void;
+} = useCreateMaplibre(container, 'https://demotiles.maplibre.org/style.json');
 ```
+
+`register`, `onLoad` and `onError` are props, not return fields. Everything
+except the three lifecycle methods is also passed to `register`.
 
 `register`, `onLoad` and `onError` are props, not return fields. Everything
 except the three lifecycle methods is also passed to `register`.
@@ -168,27 +191,49 @@ Create and manage fill (polygon) layers with typed paint/layout properties.
 
 **Returns**:
 
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
 ```typescript
-{
-  layerId: string,
-  getLayer: ComputedRef<Layer | null>,
-  setStyle: (style?: FillLayerStyle) => void,
-  setPaintProperty: (name, value, options?) => void,
-  setLayoutProperty: (name, value, options?) => void,
-  setFilter: (filter?: FilterSpecification) => void,
-  setBeforeId: (beforeId?: string) => void,
-  setZoomRange: (minzoom?: number, maxzoom?: number) => void,
-  setOpacity: (opacity: number, options?) => void,
-  setColor: (color: string, options?) => void,
-  setOutlineColor: (color: string, options?) => void,
-  setPattern: (pattern: string, options?) => void,
-  setAntialias: (antialias: boolean, options?) => void,
-  setSortKey: (sortKey: number, options?) => void,
-  setVisibility: (visibility: 'visible' | 'none', options?) => void,
-  removeLayer: () => void
-}
+import { ref } from 'vue';
+import type { ComputedRef } from 'vue';
+import {
+  useCreateFillLayer,
+  type LayerSpecification,
+  type FillLayerStyle,
+  type FilterSpecification,
+  type Map,
+  type StyleSetterOptions,
+} from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
+
+const layer: {
+  layerId: string;
+  getLayer: ComputedRef<LayerSpecification | null>;
+  setStyle: (style?: FillLayerStyle) => void;
+  setPaintProperty: (
+    name: string,
+    value: any,
+    options?: StyleSetterOptions,
+  ) => void;
+  setLayoutProperty: (
+    name: string,
+    value: any,
+    options?: StyleSetterOptions,
+  ) => void;
+  setFilter: (filter?: FilterSpecification) => void;
+  setBeforeId: (beforeId?: string) => void;
+  setZoomRange: (minzoom?: number, maxzoom?: number) => void;
+  setOpacity: (opacity: number, options?: StyleSetterOptions) => void;
+  setColor: (color: string, options?: StyleSetterOptions) => void;
+  setOutlineColor: (color: string, options?: StyleSetterOptions) => void;
+  setPattern: (pattern: string, options?: StyleSetterOptions) => void;
+  setAntialias: (antialias: boolean, options?: StyleSetterOptions) => void;
+  setSortKey: (sortKey: number, options?: StyleSetterOptions) => void;
+  setVisibility: (
+    visibility: 'visible' | 'none',
+    options?: StyleSetterOptions,
+  ) => void;
+  removeLayer: () => void;
+} = useCreateFillLayer({ map: mapInstance, source: 'my-source' });
 ```
 
 **Example**:
@@ -260,19 +305,34 @@ Create and manage GeoJSON data sources with reactive updates.
 
 **Returns**:
 
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
 ```typescript
-{
-  sourceId: string,
-  getSource: () => GeoJSONSource | undefined,
-  setData: (data: GeoJSON.Feature[] | GeoJSON.FeatureCollection) => void,
-  removeSource: () => void,
-  refreshSource: () => void,
-  sourceStatus: ComputedRef<SourceStatus>,
-  isSourceReady: ComputedRef<boolean>
-}
+import { ref } from 'vue';
+import type { ComputedRef, ShallowRef } from 'vue';
+import {
+  useCreateGeoJsonSource,
+  SourceStatus,
+  type GeoJSONSource,
+  type GeoJSONSourceSpecification,
+  type Map,
+} from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
+
+const source: {
+  sourceId: string;
+  getSource: ShallowRef<GeoJSONSource | null>;
+  setData: (data: GeoJSONSourceSpecification['data']) => void;
+  removeSource: () => void;
+  refreshSource: () => void;
+  sourceStatus: ComputedRef<SourceStatus>;
+  isSourceReady: ComputedRef<boolean>;
+} = useCreateGeoJsonSource({
+  map: mapInstance,
+  data: { type: 'FeatureCollection', features: [] },
+});
 ```
+
+`getSource` is a `ShallowRef`, not a getter function: read it with `.value`.
 
 **Example**:
 
@@ -324,15 +384,27 @@ optional `once` / `debug`. There is no positional
 
 **Returns**:
 
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
 ```typescript
-{
-  removeListener: () => void,
-  attachListener: () => void,
-  isListenerAttached: ComputedRef<boolean>,
-  listenerStatus: ComputedRef<EventListenerStatus>
-}
+import { ref } from 'vue';
+import type { ComputedRef } from 'vue';
+import {
+  useMapEventListener,
+  EventListenerStatus,
+  type Map,
+} from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
+
+const listener: {
+  removeListener: () => void;
+  attachListener: () => void;
+  isListenerAttached: ComputedRef<boolean>;
+  listenerStatus: ComputedRef<EventListenerStatus>;
+} = useMapEventListener({
+  map: mapInstance,
+  event: 'click',
+  on: (e) => console.log(e.lngLat),
+});
 ```
 
 **Example**:
@@ -398,18 +470,44 @@ Smooth flight animation to a new location.
 
 **Returns**:
 
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
 ```typescript
-{
-  flyTo: (options?: FlyToOptions) => Promise<void>,
-  flyToCenter / flyToZoom / flyToBearing / flyToPitch: (value, options?) => Promise<void>,
-  stopFlying: () => void,
-  getCurrentCamera: () => CameraOptions | null,
-  flyStatus: ComputedRef<FlyStatus>,
-  isFlying: ComputedRef<boolean>,
-  cleanup: () => void
-}
+import { ref } from 'vue';
+import type { ComputedRef } from 'vue';
+import {
+  useFlyTo,
+  FlyStatus,
+  type CameraOptions,
+  type FlyToOptions,
+  type LngLatLike,
+  type Map,
+} from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
+
+const fly: {
+  flyTo: (options?: FlyToOptions) => Promise<void>;
+  flyToCenter: (
+    center: LngLatLike,
+    options?: Omit<FlyToOptions, 'center'>,
+  ) => Promise<void>;
+  flyToZoom: (
+    zoom: number,
+    options?: Omit<FlyToOptions, 'zoom'>,
+  ) => Promise<void>;
+  flyToBearing: (
+    bearing: number,
+    options?: Omit<FlyToOptions, 'bearing'>,
+  ) => Promise<void>;
+  flyToPitch: (
+    pitch: number,
+    options?: Omit<FlyToOptions, 'pitch'>,
+  ) => Promise<void>;
+  stopFlying: () => void;
+  getCurrentCamera: () => CameraOptions | null;
+  flyStatus: ComputedRef<FlyStatus>;
+  isFlying: ComputedRef<boolean>;
+  cleanup: () => void;
+} = useFlyTo({ map: mapInstance });
 ```
 
 **Completes on**: `moveend` event or timeout (optional)
@@ -524,16 +622,24 @@ Programmatic access to geolocation control.
 
 **Returns**:
 
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
 ```typescript
-{
-  geolocateControl: ShallowRef<GeolocateControl | null>,
-  isControlAdded: ShallowRef<boolean>,
-  addControl: () => void,
-  removeControl: () => void,
-  trigger: () => void
-}
+import { ref } from 'vue';
+import type { ShallowRef } from 'vue';
+import {
+  useGeolocateControl,
+  type GeolocateControl,
+  type Map,
+} from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
+
+const control: {
+  geolocateControl: ShallowRef<GeolocateControl | null>;
+  isControlAdded: ShallowRef<boolean>;
+  addControl: () => void;
+  removeControl: () => void;
+  trigger: () => void;
+} = useGeolocateControl({ map: mapInstance });
 ```
 
 Tracking is configured through `options.trackUserLocation`, which MapLibre's own

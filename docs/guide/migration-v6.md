@@ -95,13 +95,11 @@ The object handed to a component's `register` prop or `@register` event comes st
 | `<GeoJsonSource>`                                              | `useCreateGeoJsonSource` | `sourceStatus`, `isSourceReady`, plus `isSourceRegistered`, `lastDataUpdate`, `isDataValid` |
 | `<FillLayer>`, `<LineLayer>`, `<CircleLayer>`, `<SymbolLayer>` | `useCreateLayer`         | `layerStatus`, `isLayerReady`                                                               |
 
-<!-- snippet-skip: template fragment, not a whole component -->
-
-```ts
-// v5
+```html
+<!-- v5 -->
 <Maplibre :register="(actions) => { if (actions.isMapReady) … }" />
 
-// v6
+<!-- v6 -->
 <Maplibre :register="(actions) => { if (actions.isMapReady.value) … }" />
 ```
 

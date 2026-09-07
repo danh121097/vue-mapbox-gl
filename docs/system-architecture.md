@@ -30,29 +30,37 @@ The library uses factory functions to eliminate code duplication across similar 
 
 **Solution**: Single factory with adapter pattern for different event targets.
 
-<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
+**Factory**: `createEventListenerComposable<TTarget>(config: EventListenerConfig<TTarget>): EventListenerActions`
+in [`libs/composables/event/createEventListenerComposable.ts`](../libs/composables/event/createEventListenerComposable.ts).
+It is internal. Each public listener composable supplies an adapter that knows
+how to attach to its own kind of target:
 
 ```typescript
-// Factory Definition
-export function createEventListenerComposable<TTarget>(
-  config: EventListenerConfig<TTarget>
-): EventListenerActions { ... }
+import { ref } from 'vue';
+import {
+  useMapEventListener,
+  useLayerEventListener,
+  type Map,
+} from 'vue3-maplibre-gl';
 
-// Usage - Map Events
-const { isListenerAttached } = createEventListenerComposable({
-  target: mapInstance,
-  event: 'click',
-  on: handleMapClick,
-  adapter: MapAdapter, // Provides on/off for map
-})
+const mapInstance = ref<Map | null>(null);
 
-// Usage - Layer Events
-const { isListenerAttached } = createEventListenerComposable({
-  target: mapInstance,
+// Map events - the adapter attaches the handler to the map itself.
+const { isListenerAttached } = useMapEventListener({
+  map: mapInstance,
   event: 'click',
-  on: handleLayerClick,
-  adapter: LayerAdapter, // Provides on/off for layer
-})
+  on: (e) => console.log(e.lngLat),
+});
+
+// Layer events - the same factory, with an adapter that scopes to one layer.
+useLayerEventListener({
+  map: mapInstance,
+  layer: 'cities-layer',
+  event: 'click',
+  on: (e) => console.log(e.features),
+});
+
+console.log(isListenerAttached.value);
 ```
 
 **Benefits**:
@@ -68,20 +76,22 @@ const { isListenerAttached } = createEventListenerComposable({
 
 **Solution**: Single factory that executes map methods and wraps them in promises.
 
-<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
+**Factory**: `createCameraAnimation(config: CameraAnimationConfig): CameraAnimationResult`
+in [`libs/composables/utils/createCameraAnimation.ts`](../libs/composables/utils/createCameraAnimation.ts).
+It is internal; every camera composable is a thin call into it, and what a
+consumer sees is the promise it wraps around the map method:
 
 ```typescript
-// Factory Definition
-export function createCameraAnimation(
-  config: CameraAnimationConfig
-): CameraAnimationResult { ... }
+import { ref } from 'vue';
+import { useFlyTo, type Map } from 'vue3-maplibre-gl';
 
-// Usage - Flying to Location
-const { flyTo } = useFlyTo({ map: mapInstance });
+const mapInstance = ref<Map | null>(null);
+
+const { flyTo, isFlying } = useFlyTo({ map: mapInstance });
+
+// Resolves on the map's `moveend`, so the await really means "arrived".
 await flyTo({ center: [0, 0], zoom: 10 });
-
-// Under the hood uses:
-executeAnimation('flyTo', [{center, zoom}], 'moveend')
+console.log(isFlying.value); // false
 ```
 
 **Benefits**:
@@ -97,18 +107,26 @@ executeAnimation('flyTo', [{center, zoom}], 'moveend')
 
 **Solution**: Single factory with generic type preservation.
 
-<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
+**Factory**: `createPropertySetter<T>(setFn, propertyName, logError)` in
+[`libs/composables/layers/createLayerPropertySetters.ts`](../libs/composables/layers/createLayerPropertySetters.ts).
+It is internal, so it does not appear on the public surface — what a consumer
+sees is the preserved type on the setters each layer composable returns:
 
 ```typescript
-// Factory Definition
-export function createPropertySetter<T extends LayerSpecification>(
-  config: PropertySetterConfig<T>
-): PropertySetterActions<T> { ... }
+import { ref } from 'vue';
+import { useCreateFillLayer, type Map } from 'vue3-maplibre-gl';
 
-// Type Preservation
-const { setStyle } = useCreateFillLayer({ map: mapInstance, source: sourceId });
-// setPaint type = (paint: FillPaint) => void
-// NOT (paint: any) => void
+const mapInstance = ref<Map | null>(null);
+
+const { setStyle, setColor, setOpacity } = useCreateFillLayer({
+  map: mapInstance,
+  source: 'cities-source',
+});
+
+// setColor and setOpacity keep their own value types; neither is `(value: any) => void`.
+setColor('#088');
+setOpacity(0.8);
+setStyle({ 'fill-opacity': 0.8 });
 ```
 
 **Benefits**:
@@ -326,32 +344,24 @@ onMounted(() => {
 
 **Purpose**: Create and manage a MapLibre instance.
 
-**Returns**:
-
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
-```typescript
-{
-  mapInstance: ComputedRef<Map | null>,
-  mapCreationStatus: ComputedRef<MapCreationStatus>,
-  isMapReady: ComputedRef<boolean>,
-  isMapLoading: ComputedRef<boolean>,
-  hasMapError: ComputedRef<boolean>,
-  setStyle, setCenter, setZoom, ... // Camera setters
-}
-```
+**Returns**: [`useCreateMaplibre`](./api/composables.md#usecreatemaplibre) in the API reference. That page holds the only copy; this one used to keep a second, and it drifted.
 
 **Usage Pattern**:
 
 ```typescript
-const mapContainer = ref<HTMLElement>();
+import { ref, watch } from 'vue';
+import { useCreateMaplibre } from 'vue3-maplibre-gl';
+
+const mapContainer = ref<HTMLElement | null>(null);
+const styleRef = ref('https://demotiles.maplibre.org/style.json');
+
 const { mapInstance, isMapReady, setCenter, setZoom } = useCreateMaplibre(
   mapContainer,
   styleRef,
   {
     center: [0, 0],
     zoom: 6,
-    onLoad: (map) => console.log('Map ready'),
+    onLoad: () => console.log('Map ready'),
   },
 );
 
@@ -364,23 +374,14 @@ watch(isMapReady, () => {
 
 **Purpose**: Access the map context in child components.
 
-**Returns**:
-
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
-```typescript
-{
-  mapInstance: ComputedRef<Map | null>,
-  mapStatus: ComputedRef<MapCreationStatus>,
-  isMapReady: ComputedRef<boolean>,
-  ...
-}
-```
+**Returns**: [`useMaplibre`](./api/composables.md#usemaplibre) in the API reference. That page holds the only copy; this one used to keep a second, and it drifted.
 
 **Usage Pattern**:
 
 ```typescript
 // In any component nested under Maplibre
+import { useMaplibre } from 'vue3-maplibre-gl';
+
 const { mapInstance, isMapReady } = useMaplibre();
 
 // Safe because useMaplibre validates context exists
@@ -392,21 +393,15 @@ All animation composables follow the same pattern via the factory:
 
 #### `useFlyTo(props)`
 
-**Returns**:
-
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
-```typescript
-{
-  flyTo: (target: CameraOptions) => Promise<void>,
-  isAnimating: boolean,
-  animationStatus: AnimationStatus
-}
-```
+**Returns**: [`useFlyTo`](./api/composables.md#useflyto) in the API reference. That page holds the only copy; this one used to keep a second, and it drifted.
 
 **Usage Pattern**:
 
 ```typescript
+import { ref } from 'vue';
+import { useFlyTo, type Map } from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
 const { flyTo, isFlying } = useFlyTo({ map: mapInstance });
 
 try {
@@ -438,22 +433,20 @@ Every event-listener composable takes a single props object — `map`, `event`,
 the `on` handler, and optional `once` / `debug`. There is no positional
 `(event, handler, options)` form.
 
-**Returns**:
-
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
-```typescript
-{
-  removeListener: () => void,
-  attachListener: () => void,
-  isListenerAttached: ComputedRef<boolean>,
-  listenerStatus: ComputedRef<EventListenerStatus>
-}
-```
+**Returns**: [`useMapEventListener`](./api/composables.md#usemapeventlistener) in the API reference. That page holds the only copy; this one used to keep a second, and it drifted.
 
 **Usage Pattern**:
 
 ```typescript
+import { ref } from 'vue';
+import {
+  useMapEventListener,
+  type Map,
+  type MapMouseEvent,
+} from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
+
 const handleClick = (e: MapMouseEvent) => {
   console.log('Map clicked at', e.lngLat);
 };
@@ -506,81 +499,62 @@ const { isListenerAttached, layerId } = useLayerEventListener({
 
 #### `useCreateGeoJsonSource(props)`
 
-**Returns**:
-
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
-```typescript
-{
-  sourceInstance: ShallowRef<GeoJSONSource | null>,
-  setData: (data: GeoJSON.Feature[]) => void,
-  updateFeature: (id: any, newProperties: any) => void,
-  getFeatures: () => Feature[] | undefined
-}
-```
+**Returns**: [`useCreateGeoJsonSource`](./api/composables.md#usecreategeojsonsource) in the API reference. That page holds the only copy; this one used to keep a second, and it drifted.
 
 **Usage Pattern**:
 
 ```typescript
-const { sourceInstance, setData } = useCreateGeoJsonSource(
-  mapInstance,
-  'cities',
-  citiesData,
-);
+import { ref, watch } from 'vue';
+import { useCreateGeoJsonSource, type Map } from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
+const region = ref('north');
+
+const { getSource, setData } = useCreateGeoJsonSource({
+  map: mapInstance,
+  id: 'cities',
+  data: { type: 'FeatureCollection', features: [] },
+});
 
 // Update data reactively
-watch(
-  () => filters.region,
-  (newRegion) => {
-    const filtered = allCities.filter((c) => c.region === newRegion);
-    setData(filtered);
-  },
-);
+watch(region, () => {
+  setData({ type: 'FeatureCollection', features: [] });
+});
 ```
 
 ### Layer Composables
 
 #### `useCreateFillLayer(props)`
 
-**Returns**:
+**Returns**: [`useCreateFillLayer`](./api/composables.md#usecreatefilllayer) in the API reference. That page holds the only copy; this one used to keep a second, and it drifted.
 
-<!-- snippet-skip: documents a return shape, not runnable code -->
-
-```typescript
-{
-  layerInstance: ShallowRef<Layer | null>,
-  setPaint: (paint: FillPaint) => void,
-  setLayout: (layout: FillLayout) => void,
-  setFilter: (filter: FilterSpecification) => void,
-  setOpacity: (opacity: number) => void,
-  remove: () => void
-}
-```
-
-**Type Safety**: `setPaint` only accepts `FillPaint` types (compile-time validation)
+**Type Safety**: `setStyle` only accepts `FillLayerStyle` properties (compile-time validation)
 
 **Usage Pattern**:
 
 ```typescript
-const { setPaint, setFilter } = useCreateFillLayer(
-  mapInstance,
-  'cities-source',
-  'cities-layer',
-);
+import { ref, watch } from 'vue';
+import { useCreateFillLayer, type Map } from 'vue3-maplibre-gl';
+
+const mapInstance = ref<Map | null>(null);
+const selectedRegion = ref('north');
+
+const { setStyle, setFilter } = useCreateFillLayer({
+  map: mapInstance,
+  source: 'cities-source',
+  id: 'cities-layer',
+});
 
 // Type-safe property updates
-setPaint({
+setStyle({
   'fill-color': '#088',
   'fill-opacity': 0.8,
 });
 
 // Reactive filter updates
-watch(
-  () => selectedRegion.value,
-  (region) => {
-    setFilter(['==', 'region', region]);
-  },
-);
+watch(selectedRegion, (region) => {
+  setFilter(['==', 'region', region]);
+});
 ```
 
 #### Other Layer Composables
@@ -703,8 +677,6 @@ export default defineNuxtConfig({
 
 Then use components without imports:
 
-<!-- snippet-skip: shows Nuxt auto-import, so the block deliberately declares and imports nothing -->
-
 ```vue
 <template>
   <ClientOnly>
@@ -715,6 +687,15 @@ Then use components without imports:
     </Maplibre>
   </ClientOnly>
 </template>
+
+<script setup>
+// No component imports: the Nuxt module registers them globally.
+import { ref } from 'vue';
+
+const mapOptions = ref({ style: 'https://demotiles.maplibre.org/style.json' });
+const data = ref({ type: 'FeatureCollection', features: [] });
+const fillStyle = ref({ 'fill-color': '#088' });
+</script>
 ```
 
 ## Error Handling
