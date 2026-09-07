@@ -37,6 +37,8 @@ Create and manage a MapLibre GL instance with full lifecycle support.
 
 **Returns**:
 
+<!-- snippet-skip: documents a return shape, not runnable code -->
+
 ```typescript
 {
   mapInstance: ComputedRef<Map | null>,
@@ -99,6 +101,15 @@ does not throw.
 
 ```vue
 <script setup>
+import { ref } from 'vue';
+import { Maplibre, useMaplibre } from 'vue3-maplibre-gl';
+
+const options = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
 const { register: registerMap, isMapReady, setZoom } = useMaplibre();
 
 const zoomToFit = () => {
@@ -156,6 +167,8 @@ Create and manage fill (polygon) layers with typed paint/layout properties.
 (compile-time validation).
 
 **Returns**:
+
+<!-- snippet-skip: documents a return shape, not runnable code -->
 
 ```typescript
 {
@@ -247,6 +260,8 @@ Create and manage GeoJSON data sources with reactive updates.
 
 **Returns**:
 
+<!-- snippet-skip: documents a return shape, not runnable code -->
+
 ```typescript
 {
   sourceId: string,
@@ -308,6 +323,8 @@ optional `once` / `debug`. There is no positional
 **Handler Type**: `(e: MapMouseEvent) => void` (or appropriate event type)
 
 **Returns**:
+
+<!-- snippet-skip: documents a return shape, not runnable code -->
 
 ```typescript
 {
@@ -380,6 +397,8 @@ All camera animations use the **factory pattern** with promise-wrapping for `asy
 Smooth flight animation to a new location.
 
 **Returns**:
+
+<!-- snippet-skip: documents a return shape, not runnable code -->
 
 ```typescript
 {
@@ -504,6 +523,8 @@ Snap to nearest north angle (0°, 90°, 180°, 270°).
 Programmatic access to geolocation control.
 
 **Returns**:
+
+<!-- snippet-skip: documents a return shape, not runnable code -->
 
 ```typescript
 {

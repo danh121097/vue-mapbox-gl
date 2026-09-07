@@ -54,7 +54,7 @@ Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 | **LineLayer**         | Line rendering      | Complex stroke patterns, elevation support                  |
 | **SymbolLayer**       | Text/icon rendering | Dynamic labels, icon placement, text sizing                 |
 | **Marker**            | Map markers         | Draggable markers, custom popups, event handlers            |
-| **PopUp**             | Popup overlays      | Auto-positioning, interactive content, responsive           |
+| **Popup**             | Popup overlays      | Auto-positioning, interactive content, responsive           |
 | **Image**             | Static images       | Custom image layers, dynamic source loading                 |
 | **GeolocateControls** | User location       | Geolocation tracking, permission handling, status feedback  |
 
@@ -173,7 +173,7 @@ Maplibre (Root Provider)
 │   ├── LineLayer (Consumer)
 │   └── SymbolLayer (Consumer)
 ├── Marker (Independent)
-├── PopUp (Independent)
+├── Popup (Independent)
 ├── Image (Independent)
 └── GeolocateControls (Independent)
 ```

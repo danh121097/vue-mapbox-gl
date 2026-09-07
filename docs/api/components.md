@@ -187,6 +187,12 @@ A component for adding GeoJSON data sources to the map. This component provides 
 import { ref } from 'vue';
 import { Maplibre, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
 
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
 const geoJsonData = ref({
   type: 'FeatureCollection',
   features: [
@@ -269,6 +275,17 @@ A component for rendering filled polygons from a data source. Supports all MapLi
 import { ref } from 'vue';
 import { Maplibre, GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
 
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const polygonData = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
+
 const fillStyle = ref({
   'fill-color': [
     'case',
@@ -324,6 +341,17 @@ Same events as FillLayer (click, mousemove, etc.)
 <script setup>
 import { ref } from 'vue';
 import { Maplibre, GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
+
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const pointData = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
 
 const circleStyle = ref({
   'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, 2, 15, 10],
@@ -387,6 +415,17 @@ Same events as FillLayer (click, mousemove, etc.)
 import { ref } from 'vue';
 import { Maplibre, GeoJsonSource, LineLayer } from 'vue3-maplibre-gl';
 
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const lineData = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
+
 const lineStyle = ref({
   'line-color': '#007cbf',
   'line-width': ['interpolate', ['linear'], ['zoom'], 5, 1, 15, 8],
@@ -437,6 +476,17 @@ Same events as FillLayer (click, mousemove, etc.)
 <script setup>
 import { ref } from 'vue';
 import { Maplibre, GeoJsonSource, SymbolLayer } from 'vue3-maplibre-gl';
+
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const pointData = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
 
 const symbolStyle = ref({
   'text-field': ['get', 'name'],
@@ -505,6 +555,12 @@ A component for adding HTML markers to the map. Supports custom HTML content, dr
 import { ref } from 'vue';
 import { Maplibre, Marker } from 'vue3-maplibre-gl';
 
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
 const markerPosition = ref([0, 0]);
 
 function onMarkerDragEnd(event) {
@@ -521,7 +577,7 @@ function onMarkerDragEnd(event) {
 </style>
 ```
 
-## PopUp
+## Popup
 
 A component for displaying popup windows on the map. Supports custom HTML content, positioning, and comprehensive event handling.
 
@@ -553,18 +609,24 @@ A component for displaying popup windows on the map. Supports custom HTML conten
 ```vue
 <template>
   <Maplibre :options="mapOptions">
-    <PopUp :lng-lat="popupPosition" :close-button="true" @close="onPopupClose">
+    <Popup :lng-lat="popupPosition" :close-button="true" @close="onPopupClose">
       <div class="popup-content">
         <h3>Hello World!</h3>
         <p>This is a popup at {{ popupPosition }}.</p>
       </div>
-    </PopUp>
+    </Popup>
   </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Maplibre, PopUp } from 'vue3-maplibre-gl';
+import { Maplibre, Popup } from 'vue3-maplibre-gl';
+
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
 
 const popupPosition = ref([0, 0]);
 
@@ -624,6 +686,17 @@ A component for managing and loading images for use in MapLibre GL styles. Suppo
 <script setup>
 import { ref } from 'vue';
 import { Maplibre, Image, GeoJsonSource, SymbolLayer } from 'vue3-maplibre-gl';
+
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const pointData = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
 
 const mapImages = ref([
   {
@@ -691,12 +764,17 @@ the shorter names.
 import { ref } from 'vue';
 import { Maplibre, GeolocateControls } from 'vue3-maplibre-gl';
 
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
 const geolocateOptions = ref({
   positionOptions: {
     enableHighAccuracy: true,
   },
   trackUserLocation: true,
-  showUserHeading: true,
 });
 
 function onGeolocate(data) {

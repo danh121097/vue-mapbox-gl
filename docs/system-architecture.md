@@ -30,6 +30,8 @@ The library uses factory functions to eliminate code duplication across similar 
 
 **Solution**: Single factory with adapter pattern for different event targets.
 
+<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
+
 ```typescript
 // Factory Definition
 export function createEventListenerComposable<TTarget>(
@@ -66,6 +68,8 @@ const { isListenerAttached } = createEventListenerComposable({
 
 **Solution**: Single factory that executes map methods and wraps them in promises.
 
+<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
+
 ```typescript
 // Factory Definition
 export function createCameraAnimation(
@@ -92,6 +96,8 @@ executeAnimation('flyTo', [{center, zoom}], 'moveend')
 **Problem Solved**: Four layer components (Fill, Circle, Line, Symbol) had similar property update logic.
 
 **Solution**: Single factory with generic type preservation.
+
+<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
 
 ```typescript
 // Factory Definition
@@ -289,7 +295,7 @@ watch(
 </script>
 ```
 
-### Control Components (Marker, PopUp, GeolocateControls)
+### Control Components (Marker, Popup, GeolocateControls)
 
 **Responsibilities**:
 
@@ -300,9 +306,9 @@ watch(
 **Pattern**:
 
 ```vue
-<script setup>
+<script setup lang="ts">
 const mapInstance = inject(MapProvideKey);
-const markerInstance = (ref < Marker) | (null > null);
+const markerInstance = ref<Marker | null>(null);
 
 onMounted(() => {
   markerInstance.value = new Marker(options)
@@ -321,6 +327,8 @@ onMounted(() => {
 **Purpose**: Create and manage a MapLibre instance.
 
 **Returns**:
+
+<!-- snippet-skip: documents a return shape, not runnable code -->
 
 ```typescript
 {
@@ -358,6 +366,8 @@ watch(isMapReady, () => {
 
 **Returns**:
 
+<!-- snippet-skip: documents a return shape, not runnable code -->
+
 ```typescript
 {
   mapInstance: ComputedRef<Map | null>,
@@ -383,6 +393,8 @@ All animation composables follow the same pattern via the factory:
 #### `useFlyTo(props)`
 
 **Returns**:
+
+<!-- snippet-skip: documents a return shape, not runnable code -->
 
 ```typescript
 {
@@ -427,6 +439,8 @@ the `on` handler, and optional `once` / `debug`. There is no positional
 `(event, handler, options)` form.
 
 **Returns**:
+
+<!-- snippet-skip: documents a return shape, not runnable code -->
 
 ```typescript
 {
@@ -494,6 +508,8 @@ const { isListenerAttached, layerId } = useLayerEventListener({
 
 **Returns**:
 
+<!-- snippet-skip: documents a return shape, not runnable code -->
+
 ```typescript
 {
   sourceInstance: ShallowRef<GeoJSONSource | null>,
@@ -527,6 +543,8 @@ watch(
 #### `useCreateFillLayer(props)`
 
 **Returns**:
+
+<!-- snippet-skip: documents a return shape, not runnable code -->
 
 ```typescript
 {
@@ -684,6 +702,8 @@ export default defineNuxtConfig({
 ```
 
 Then use components without imports:
+
+<!-- snippet-skip: shows Nuxt auto-import, so the block deliberately declares and imports nothing -->
 
 ```vue
 <template>

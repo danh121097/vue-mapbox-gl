@@ -16,7 +16,7 @@ snippet importing one from `vue3-maplibre-gl`, it is wrong.
   <Maplibre :options="mapOptions" style="height: 400px">
     <GeolocateControls
       position="top-right"
-      :options="{ trackUserLocation: true, showUserHeading: true }"
+      :options="{ trackUserLocation: true }"
       @geolocate="onGeolocate"
       @error="onGeolocateError"
     />

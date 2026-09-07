@@ -126,7 +126,14 @@ lifecycle methods: `initMap`, `removeMap` and `destroyMap` belong to
 
 ```vue
 <script setup>
+import { ref, watch } from 'vue';
 import { Maplibre, useMaplibre } from 'vue3-maplibre-gl';
+
+const options = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
 
 const {
   register: registerMap,
@@ -854,7 +861,6 @@ const { geolocateControl, isControlAdded, trigger } = useGeolocateControl({
       enableHighAccuracy: true,
     },
     trackUserLocation: true,
-    showUserHeading: true,
   },
   debug: true,
 });

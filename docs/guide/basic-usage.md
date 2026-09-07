@@ -101,18 +101,18 @@ Add interactive markers and popups to your map:
       <div class="custom-marker">📍</div>
     </Marker>
 
-    <PopUp :lnglat="popupLocation" :show="showPopup" @close="showPopup = false">
+    <Popup :lnglat="popupLocation" :show="showPopup" @close="showPopup = false">
       <div class="popup-content">
         <h3>Hello World!</h3>
         <p>This is a popup at {{ popupLocation }}</p>
       </div>
-    </PopUp>
+    </Popup>
   </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Maplibre, Marker, PopUp } from 'vue3-maplibre-gl';
+import { Maplibre, Marker, Popup } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',

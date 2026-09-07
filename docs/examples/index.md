@@ -117,7 +117,7 @@ Add interactive markers to your map with advanced features.
 **Key Components**:
 
 - `<Marker />` - Marker component
-- `<PopUp />` - Popup overlays
+- `<Popup />` - Popup overlays
 
 ### 🎨 [Layers](/examples/layers)
 
@@ -308,6 +308,7 @@ You can copy any example code and paste it into your Vue 3 project. All examples
    ```
 
 5. **Use reactive data** for real-time updates
+   <!-- snippet-skip: elided data (`{...}`) in an illustrative fragment -->
    ```typescript
    const geoData = ref({...});
    watch(() => externalData, () => {

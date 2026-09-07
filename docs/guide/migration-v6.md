@@ -6,6 +6,8 @@ v6 fixes a defect that made most composable state **frozen at setup time**. The 
 
 Composables built correct reactive state internally, then unwrapped it once in the return object:
 
+<!-- snippet-skip: a `return` lifted out of the v5 composable it quotes -->
+
 ```ts
 // v5 — libs/composables/map/useCreateMarker.ts
 return {
@@ -93,6 +95,8 @@ The object handed to a component's `register` prop or `@register` event comes st
 | `<GeoJsonSource>`                                              | `useCreateGeoJsonSource` | `sourceStatus`, `isSourceReady`, plus `isSourceRegistered`, `lastDataUpdate`, `isDataValid` |
 | `<FillLayer>`, `<LineLayer>`, `<CircleLayer>`, `<SymbolLayer>` | `useCreateLayer`         | `layerStatus`, `isLayerReady`                                                               |
 
+<!-- snippet-skip: template fragment, not a whole component -->
+
 ```ts
 // v5
 <Maplibre :register="(actions) => { if (actions.isMapReady) … }" />
@@ -165,6 +169,8 @@ The Nuxt module handles this for you: `maplibre: { css: true }` (the default) no
 The package root re-exported MapLibre's entire runtime — the `maplibregl` namespace plus `Map`, `NavigationControl`, `addProtocol` and some fifty more. A namespace re-export references every upstream export, so importing a single component from the root pinned the whole MapLibre runtime into the module graph.
 
 Those runtime values now live on `vue3-maplibre-gl/maplibre`:
+
+<!-- snippet-skip: the `// v5` line imports from the root on purpose, which is the point of the block -->
 
 ```ts
 // v5

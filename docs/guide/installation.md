@@ -84,7 +84,7 @@ import {
   FillLayer,
   CircleLayer,
   Marker,
-  PopUp,
+  Popup,
 } from 'vue3-maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import 'vue3-maplibre-gl/dist/style.css';
@@ -109,7 +109,7 @@ import {
 
   // Interactive Components
   Marker,
-  PopUp,
+  Popup,
 
   // Utility Components
   Image,

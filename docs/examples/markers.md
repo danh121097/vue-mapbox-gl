@@ -199,7 +199,7 @@ Combine markers with popups for rich interactions:
         </div>
       </Marker>
 
-      <PopUp
+      <Popup
         v-if="selectedLocation?.id === location.id"
         :lnglat="location.coordinates"
         :show="!!selectedLocation"
@@ -213,14 +213,14 @@ Combine markers with popups for rich interactions:
             <button @click="saveLocation(location)">Save</button>
           </div>
         </div>
-      </PopUp>
+      </Popup>
     </template>
   </Maplibre>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Maplibre, Marker, PopUp } from 'vue3-maplibre-gl';
+import { Maplibre, Marker, Popup } from 'vue3-maplibre-gl';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',
@@ -492,5 +492,5 @@ function clearMarkers() {
 ## Related APIs
 
 - [Marker Component](/api/components#marker)
-- [PopUp Component](/api/components#popup)
+- [Popup Component](/api/components#popup)
 - [Marker Events](/api/types#marker-events)

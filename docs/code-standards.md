@@ -13,6 +13,8 @@ This document defines the code standards, conventions, and best practices used i
 - **Generics**: Use generics for reusable, type-safe code (especially factory functions)
 - **Type Imports**: Use `type` imports for type-only declarations
 
+<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
+
 ```typescript
 // Good
 import type { Map, LayerSpecification } from 'maplibre-gl';
@@ -408,6 +410,8 @@ const mapInstance = ref(mapLibreInstance); // Unnecessary tracking
 
 ### Computed Properties
 
+<!-- snippet-skip: bodies are elided as `{ ... }` to contrast two styles -->
+
 ```typescript
 // Good - Reuse computed results
 const isMapReady = computed(() => mapCreationStatus.value === 'loaded');
@@ -491,6 +495,8 @@ stylesheet is imported by the app.
 
 ### Comment Guidelines
 
+<!-- snippet-skip: a bare `if` and `return` outside any function, to contrast two comment styles -->
+
 ```typescript
 // Explain WHY, not WHAT
 // Good
@@ -501,6 +507,36 @@ if (status.value === 'attached') return;
 // Check if status is attached
 if (status.value === 'attached') return;
 ```
+
+### Code blocks are compiled
+
+`bun run docs:check` writes every TypeScript, JavaScript and Vue block in
+`docs/` and both READMEs out as a real module and compiles it with `vue-tsc`
+against `dist/`, resolving `vue3-maplibre-gl` the way an installed consumer's
+bundler would. It runs in CI right after the build.
+
+It reports one class of problem: **a name that does not exist** — an import the
+package does not export, a property that is not on the type it is read from, an
+option that is not in the options type. It deliberately does not report
+assignability failures caused by inference widening example data
+(`center: [0, 0]` in a `ref()` infers `number[]`, not `LngLatLike`), or names an
+abridged example expects the surrounding application to own. `build/docs-snippets/reported-diagnostics.ts`
+lists every code and the reason it is or is not reported.
+
+A block that cannot compile — a return shape written as a bare object literal, a
+body elided to `{ ... }`, a `// v5` line kept deliberately wrong — is opted out
+with an HTML comment on the line above its fence:
+
+```md
+<!-- snippet-skip: documents a return shape, not runnable code -->
+```
+
+The reason is required. Those blocks are the only documentation nothing
+verifies, so the list of them is worth keeping short and worth reading.
+
+Two things it cannot see: an extra attribute on a component is legal Vue
+(it falls through to the root element), so a misspelled prop compiles; and a
+block whose fence language is not `ts`, `js` or `vue` is never looked at.
 
 ## Git & Commits
 

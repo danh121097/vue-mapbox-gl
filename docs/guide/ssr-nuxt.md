@@ -177,7 +177,7 @@ useGeolocateControl;
 (FillLayer, CircleLayer, LineLayer, SymbolLayer);
 
 // Overlays
-(Marker, PopUp, Image);
+(Marker, Popup, Image);
 
 // Controls
 GeolocateControls;
@@ -186,6 +186,8 @@ GeolocateControls;
 ### Using Composable Prefix
 
 Optionally add a prefix to avoid conflicts:
+
+<!-- snippet-skip: fragment of nuxt.config.ts, not a module -->
 
 ```typescript
 // nuxt.config.ts
@@ -248,6 +250,8 @@ export default defineNuxtConfig({
 
 ### 3. Wrap Components in ClientOnly
 
+<!-- snippet-skip: the script body is elided as `// ... rest of component` -->
+
 ```vue
 <template>
   <!-- Critical: Wrap map components in ClientOnly -->
@@ -286,6 +290,7 @@ All components check `isBrowser` before creating map instances:
 
 ```typescript
 import { isBrowser } from 'vue3-maplibre-gl';
+import { Map } from 'vue3-maplibre-gl/maplibre';
 
 if (isBrowser) {
   // Safe to create MapLibre instance
@@ -384,6 +389,8 @@ export default defineNuxtConfig({
 **Cause**: Not transpiled for SSR
 
 **Fix**: Configure Nuxt
+
+<!-- snippet-skip: fragment of nuxt.config.ts, not a module -->
 
 ```typescript
 build: {

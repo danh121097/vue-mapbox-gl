@@ -11,7 +11,7 @@ A powerful, feature-rich Vue 3 component library that provides an intuitive, rea
 ## ✨ Features
 
 - 🗺️ **Interactive Maps** - High-performance vector maps with WebGL rendering
-- 🧩 **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, GeolocateControls
+- 🧩 **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, Popup, Image, GeolocateControls
 - 🔧 **38 Composables** - Complete map management, animations, events, and utilities
 - 🎯 **Full TypeScript Support** - Comprehensive type definitions and interfaces
 - ⚡ **High Performance** - Optimized rendering with automatic resource cleanup
@@ -62,12 +62,12 @@ pnpm add vue3-maplibre-gl maplibre-gl
     </Marker>
 
     <!-- Popup -->
-    <PopUp :lnglat="[0, 0]" :show="true">
+    <Popup :lnglat="[0, 0]" :show="true">
       <div class="popup-content">
         <h3>Welcome to Vue3 MapLibre GL!</h3>
         <p>Interactive maps made easy with Vue 3</p>
       </div>
-    </PopUp>
+    </Popup>
 
     <!-- Geolocation Control -->
     <GeolocateControls position="top-right" />
@@ -82,7 +82,7 @@ import {
   FillLayer,
   CircleLayer,
   Marker,
-  PopUp,
+  Popup,
   GeolocateControls,
 } from 'vue3-maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -146,7 +146,7 @@ Vue3 MapLibre GL provides 10+ reactive Vue components:
 | **LineLayer**         | Render linear features like routes and boundaries             |
 | **SymbolLayer**       | Display icons and text labels                                 |
 | **Marker**            | HTML markers with drag support and custom content             |
-| **PopUp**             | Interactive popup windows with custom HTML                    |
+| **Popup**             | Interactive popup windows with custom HTML                    |
 | **Image**             | Manage and load images for map styles                         |
 | **GeolocateControls** | User location tracking with comprehensive events              |
 
@@ -199,12 +199,12 @@ import {
   Maplibre,
   GeoJsonSource,
   FillLayer,
-  type MaplibreProps,
+  type MapOptions,
   type FillLayerStyle,
   type GeoJSONSourceSpecification,
 } from 'vue3-maplibre-gl';
 
-const mapOptions = ref<MaplibreProps['options']>({
+const mapOptions = ref<Partial<MapOptions>>({
   style: 'https://demotiles.maplibre.org/style.json',
   center: [0, 0],
   zoom: 2,

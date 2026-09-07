@@ -6,7 +6,7 @@ Vue3 MapLibre GL is a comprehensive Vue 3 component library that provides an int
 
 Vue3 MapLibre GL offers:
 
-- **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, and GeolocateControls
+- **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, Popup, Image, and GeolocateControls
 - **38 Composables** - For map management, layers, sources, controls, events, and utilities
 - **Full TypeScript Support** - Comprehensive type definitions and interfaces
 - **Reactive Data Binding** - Seamless integration with Vue 3's reactivity system
@@ -123,12 +123,12 @@ Here's a more comprehensive example showcasing multiple components:
       </Marker>
 
       <!-- Popup -->
-      <PopUp :lnglat="popupPosition" :show="showPopup">
+      <Popup :lnglat="popupPosition" :show="showPopup">
         <div class="popup-content">
           <h3>Welcome!</h3>
           <p>This is an interactive map built with Vue 3</p>
         </div>
-      </PopUp>
+      </Popup>
 
       <!-- Geolocation Control -->
       <GeolocateControls position="top-right" @geolocate="onGeolocate" />
@@ -144,7 +144,7 @@ import {
   FillLayer,
   CircleLayer,
   Marker,
-  PopUp,
+  Popup,
   GeolocateControls,
 } from 'vue3-maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -260,7 +260,7 @@ useMapEventListener({
 - **Maplibre** - Main map container with comprehensive event handling
 - **GeoJsonSource** - Reactive data source for GeoJSON data
 - **Layer Components** - FillLayer, CircleLayer, LineLayer, SymbolLayer
-- **Interactive Elements** - Marker, PopUp with custom content
+- **Interactive Elements** - Marker, Popup with custom content
 - **Controls** - GeolocateControls for user location
 - **Utilities** - Image management for map styles
 

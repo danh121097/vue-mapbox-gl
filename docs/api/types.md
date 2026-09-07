@@ -454,6 +454,16 @@ type LayerClickHandler = (
 import { GeoJsonSource, CircleLayer } from 'vue3-maplibre-gl';
 import type { LayerClickHandler } from 'vue3-maplibre-gl';
 
+const points = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
+
+const circleStyle = ref({
+  'circle-radius': 6,
+  'circle-color': '#007cbf',
+});
+
 const onLayerClick: LayerClickHandler = (e) => {
   console.log('Clicked feature:', e.features?.[0]);
 };
@@ -480,6 +490,16 @@ type LayerMouseHandler = (
 <script setup lang="ts">
 import { GeoJsonSource, FillLayer } from 'vue3-maplibre-gl';
 import type { LayerMouseHandler } from 'vue3-maplibre-gl';
+
+const regions = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
+
+const fillStyle = ref({
+  'fill-color': '#41B883',
+  'fill-opacity': 0.6,
+});
 
 const onLayerHover: LayerMouseHandler = (e) => {
   console.log('Hovering feature:', e.features?.[0]);

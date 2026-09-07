@@ -224,7 +224,7 @@ Measured, not estimated. Re-measure before quoting these anywhere public.
 - **Props**: `lnglat`, `draggable`, `popup`, `register`, `debug`
 - **Events**: `dragstart`, `drag`, `dragend`
 
-### 8. PopUp
+### 8. Popup
 
 - **File**: `libs/components/Popup.vue`
 - **Purpose**: Display popup overlays

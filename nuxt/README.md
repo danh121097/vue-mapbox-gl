@@ -99,7 +99,7 @@ const circleStyle = ref({ 'circle-radius': 6, 'circle-color': '#007cbf' });
 | `LineLayer`         | Line features       |
 | `SymbolLayer`       | Icons and text      |
 | `Marker`            | HTML markers        |
-| `PopUp`             | Popup windows       |
+| `Popup`             | Popup windows       |
 | `Image`             | Map images          |
 | `GeolocateControls` | Geolocation         |
 

@@ -149,6 +149,22 @@ const advancedMapOptions = ref({
 <script setup>
 import { ref } from 'vue';
 
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
+
+const geoJsonData = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
+
+const fillStyle = ref({
+  'fill-color': '#41B883',
+  'fill-opacity': 0.6,
+});
+
 const sourceOptions = ref({
   // Clustering
   cluster: true,
@@ -218,6 +234,11 @@ function onSourceError(error) {
 
 <script setup>
 import { ref } from 'vue';
+
+const data = ref({
+  type: 'FeatureCollection',
+  features: [],
+});
 
 // Layer styles with expressions
 const fillStyle = ref({
@@ -305,6 +326,12 @@ const showLabels = ref(true);
 <script setup>
 import { ref } from 'vue';
 import { MaplibrePopup } from 'vue3-maplibre-gl/maplibre';
+
+const mapOptions = ref({
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [0, 0],
+  zoom: 2,
+});
 
 const markerPosition = ref([0, 0]);
 

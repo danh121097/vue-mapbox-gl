@@ -19,7 +19,7 @@ features:
     details: High-performance vector maps with WebGL rendering via MapLibre GL JS. Reactive data binding out of the box.
   - icon: 🧩
     title: 10 Components
-    details: Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, PopUp, Image, GeolocateControls.
+    details: Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, Popup, Image, GeolocateControls.
   - icon: 🔧
     title: 38 Composables
     details: Map management, camera animations (flyTo, easeTo, jumpTo), event listeners, layer management, and utilities.
