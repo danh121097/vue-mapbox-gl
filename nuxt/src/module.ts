@@ -18,8 +18,12 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'maplibre',
     description:
       'Nuxt module for vue3-maplibre-gl with auto-import, SSR support, and full TypeScript',
+    // `docs` is what nuxt.com/modules reads out of the published
+    // dist/module.json to link the listing at the documentation site; without
+    // it the listing falls back to the GitHub repository.
+    docs: 'https://vue-maplibre-gl.pages.dev/',
     links: {
-      documentation: 'https://github.com/danh121097/vue-maplibre-gl',
+      documentation: 'https://vue-maplibre-gl.pages.dev/',
       repository: 'https://github.com/danh121097/vue-maplibre-gl',
     },
     compatibility: {
