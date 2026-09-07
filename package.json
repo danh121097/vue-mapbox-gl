@@ -82,6 +82,7 @@
     "prepublishOnly": "bun run format:check && bun run lint:check && bun run type-check && bun run test:coverage && bun run build",
     "publish:vue": "bun run build && npm publish --access public",
     "publish:nuxt": "bun run build/assert-nuxt-dependency-published.ts && cd nuxt && bun install && bun run build && npm --prefix nuxt publish --access public",
+    "changelog": "bun run build/update-changelog.ts",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"

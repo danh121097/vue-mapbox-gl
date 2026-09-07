@@ -151,36 +151,11 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Setup Bun
-        if: steps.check.outputs.exists == 'false'
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      # Generate the new version's section from conventional commits and inject it
-      # under the "# Changelog" title, preserving all curated history below.
-      # Pushed with GITHUB_TOKEN so it does not re-trigger CI (plus [skip ci]).
-      - name: Update changelog
-        if: steps.check.outputs.exists == 'false'
-        run: |
-          bunx git-cliff@latest --unreleased --tag "${{ steps.version.outputs.version }}" --config cliff.toml > /tmp/section.md
-          if [ ! -s /tmp/section.md ]; then
-            echo "No unreleased commits — skipping changelog update."
-            exit 0
-          fi
-          awk 'NR==FNR{sec=sec $0 ORS; next} /^# Changelog/&&!d{print; print ""; printf "%s", sec; d=1; next} 1' \
-            /tmp/section.md docs/changelog.md > /tmp/changelog.md
-          mv /tmp/changelog.md docs/changelog.md
-          if git diff --quiet docs/changelog.md; then
-            echo "Changelog already up to date."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/changelog.md
-          git commit -m "📚docs(changelog): ${{ steps.version.outputs.version }} [skip ci]"
-          git push
-
+      # The changelog is written locally by `bun run changelog` and lands in the
+      # same commit as the version bump. CI does not write to the repository:
+      # `master` requires pull requests, so a push from github-actions[bot] is
+      # rejected with GH006 — which used to fail this job before it could tag
+      # or release anything.
       - name: Create GitHub Release
         if: steps.check.outputs.exists == 'false'
         uses: softprops/action-gh-release@v3

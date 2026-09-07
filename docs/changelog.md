@@ -1,5 +1,113 @@
 # Changelog
 
+## v6.0.0
+
+### ⚙️ CI
+
+- Merge deploy-docs + release into single CI/CD workflow
+
+- Assert the published output contract
+
+### ✨ Features
+
+- Auto-update changelog on each release via git-cliff
+
+### 🐛 Bug Fixes
+
+- Stop 'project already exists' error noise in deploy-docs
+
+- Return reactive containers instead of dead snapshots
+
+- Stop destroying the component before it mounts
+
+- Own image lifecycle in an effect scope
+
+- Hand register read-only refs
+
+- Push both stylesheets and declare the real dependencies
+
+- Attach listeners when the target arrives after the composable
+
+- Keep the map usable after a post-load runtime error
+
+- Settle each animation on its own event, not the next one
+
+- Auto-import every composable the package exports
+
+### 💎 Styles
+
+- Polish footer, link MIT License + Harry Nguyen site
+
+- Use dynamic current year in footer copyright
+
+- Update title and description in VitePress config
+
+- Format the tree and gate format:check in CI
+
+### 📚 Documentation
+
+- Include Cloudflare in Nuxt SSR deployment examples
+
+- Document all missing composables and event-handler types
+
+- Add the v5 to v6 migration guide
+
+- Import MapLibre's stylesheet and runtime from their own paths
+
+- Record the phase 3 reactivity and API changes
+
+- Correct composable signatures that contradicted the code
+
+- Fix the signatures the first reconciliation pass missed
+
+- Complete the layer tables and fix the geolocate event names
+
+- Document the error, options and camera behaviour changes
+
+- Rewrite against the repository's actual state
+
+### 📦 Refactor
+
+- Remove the two unused computed helpers
+
+- Remove unreachable states and dead guards
+
+### 🚀 Performance
+
+- Emit preserved modules and unpin the MapLibre runtime
+
+- Drop deep watching from eight prop watchers
+
+- Stop map watchers from triggering themselves
+
+### 🚨 Tests
+
+- Cover the reactivity contract and image lifecycle
+
+- Cover listener hygiene, lifecycle, and gate coverage
+
+- Model MapLibre's layer-scoped listener overload in the mock
+
+- Raise the ratchet to the coverage the new tests reach
+
+### 🛠 Build
+
+- Bump actions to Node24 majors to clear deprecation warnings
+
+- Keep test declarations out of the package
+
+- Ship the version in package.json
+
+- Drop nanoid, a devDependency imported at runtime
+
+- Stop shipping orphan chunks and unresolvable Nuxt imports
+
+- Point the module's docs link at the documentation site
+
+- Set nuxt-maplibre-gl to 2.0.0 and stop guessing the bump
+
+- Make maplibre-gl a peer dependency
+
 ## v5.0.0
 
 Major internal refactor — zero breaking API changes.
