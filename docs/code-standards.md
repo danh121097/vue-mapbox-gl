@@ -557,9 +557,24 @@ before/after where only the "after" needs to be true belongs in prose plus one
 compiled fence, and a fence labelled `ts` that holds template markup should be
 labelled `html`.
 
-Two things it cannot see: an extra attribute on a component is legal Vue
-(it falls through to the root element), so a misspelled prop compiles; and a
-block whose fence language is not `ts`, `js` or `vue` is never looked at.
+The API reference lists each composable's return fields as a markdown table,
+which is prose to a compiler — nothing stops a row naming a field that does not
+exist, and rows like that have reached `master`. So every `Returns` table in
+`docs/api/composables.md` is compiled too: one `type _ = Returned['field']` per
+row, against the composable its section names. A row that names nothing real
+fails on the row's own line.
+
+The table check is one-directional. It proves every documented field exists, not
+that every existing field is documented, because several composables spread a
+shared actions object and their tables abridge it on purpose. It also cannot
+reach a section that describes its return in a sentence instead of a table; the
+check names those on every run so the gap stays visible.
+
+Three things it cannot see: an extra attribute on a component is legal Vue
+(it falls through to the root element), so a misspelled prop compiles; a block
+whose fence language is not `ts`, `js` or `vue` is never looked at; and a name
+in ordinary prose or in a heading is not a name in a code block, so it is not
+checked at all.
 
 ## Git & Commits
 

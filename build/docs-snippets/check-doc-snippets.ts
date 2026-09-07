@@ -20,8 +20,12 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 import { extractFromFile, type Snippet } from './extract-doc-snippets';
+import {
+  extractTablesFromFile,
+  listComposablesFromFile,
+} from './extract-doc-tables';
 import { diagnosticCode, isReported, summarize } from './reported-diagnostics';
-import { writeSnippetProject } from './snippet-project';
+import { tableSnippet, writeSnippetProject } from './snippet-project';
 
 const rootDir = resolve(import.meta.dirname, '../..');
 const workDir = resolve(rootDir, '.doc-snippets');
@@ -58,6 +62,30 @@ const pages = [
   resolve(rootDir, 'nuxt/README.md'),
 ];
 
+/**
+ * Pages whose Returns tables are compiled as well as their code blocks. The
+ * API reference is the only page that lists return fields as a table; the guide
+ * documents the same shapes as annotated assignments, which already compile.
+ */
+const TABLE_PAGES = [resolve(rootDir, 'docs/api/composables.md')];
+
+let tableCount = 0;
+/** Composables the reference documents in prose, which no table check reaches. */
+const untabled: string[] = [];
+for (const path of TABLE_PAGES) {
+  const tables = extractTablesFromFile(path);
+  const checked = new Set(tables.map((table) => table.composable));
+  for (const name of listComposablesFromFile(path)) {
+    if (!checked.has(name)) untabled.push(name);
+  }
+  for (const table of tables) {
+    snippets.push(
+      tableSnippet({ ...table, file: relative(rootDir, table.file) }),
+    );
+    tableCount++;
+  }
+}
+
 for (const path of pages) {
   const { snippets: found, skipped } = extractFromFile(path);
   for (const snippet of found) {
@@ -77,7 +105,9 @@ mkdirSync(workDir, { recursive: true });
 const byGeneratedName = writeSnippetProject(workDir, snippets);
 
 console.log(
-  `Checking ${snippets.length} code blocks from docs/ and the READMEs (${skippedCount} skipped).`,
+  `Checking ${snippets.length - tableCount} code blocks from docs/ and the ` +
+    `READMEs (${skippedCount} skipped), plus ${tableCount} Returns tables ` +
+    `from the API reference.`,
 );
 
 let output = '';
@@ -145,16 +175,35 @@ for (let i = 0; i < lines.length; i++) {
     reported.push({ location: match[1]!, message: summarize(full) });
     continue;
   }
+  // A generated table check carries its own map; a lifted fence does not need
+  // one, because its line N is the fence line plus N.
+  const generatedLine = Number(match[2]);
+  const markdownLine =
+    snippet.lineMap?.[generatedLine - 1] ?? snippet.fenceLine + generatedLine;
   reported.push({
-    location: `${snippet.file}:${snippet.fenceLine + Number(match[2])}:${match[3]}`,
+    location: `${snippet.file}:${markdownLine}:${match[3]}`,
     message: summarize(full),
   });
 }
 
 if (!keep) rmSync(workDir, { recursive: true, force: true });
 
+/**
+ * A composable whose Returns is written as a sentence rather than a table is
+ * not checked by anything. Printing them keeps that a known gap instead of an
+ * assumed one — the counts above otherwise read as full coverage.
+ */
+function reportCoverage(): void {
+  if (!untabled.length) return;
+  console.log(
+    `\n${untabled.length} composable(s) document their return in prose, so no ` +
+      `table check covers them:\n  ${untabled.join(', ')}`,
+  );
+}
+
 if (!reported.length) {
   console.log('Every checked block names only things that exist in dist/.');
+  reportCoverage();
   if (skipReasons.length) console.log(`\nSkipped:\n${skipReasons.join('\n')}`);
   process.exit(0);
 }

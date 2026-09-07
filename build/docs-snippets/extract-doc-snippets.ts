@@ -30,6 +30,18 @@ export interface Snippet {
   /** Extension the block should be written with. */
   ext: '.ts' | '.vue';
   code: string;
+  /**
+   * Generated line (1-based) to markdown line, for snippets this tool wrote
+   * rather than lifted. A fenced block needs none: nothing is prepended when it
+   * is written out, so its line N is always `fenceLine + N`.
+   */
+  lineMap?: number[];
+  /**
+   * Extra segment for the generated filename. Two generated snippets can share
+   * a file and a line — one heading documents several composables — and a
+   * filename collision would silently drop all but the last.
+   */
+  label?: string;
 }
 
 export interface SkippedSnippet {
