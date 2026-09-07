@@ -131,9 +131,15 @@ const AMBIENT = new Set([
 
 /**
  * A single capital is a type parameter of the composable being documented, not
- * a type to import. It is declared as `any` in the generated module: a row like
- * `Ref<T>` then checks its wrapper without pinning the element type, which is
- * the most the table can promise anyway.
+ * a type to import. It is declared as `any`, so a row like `Ref<T>` checks its
+ * wrapper but not its element type.
+ *
+ * `unknown` would check the element type too, and does match how
+ * `DocumentedReturn` instantiates an unconstrained parameter — but not a
+ * constrained one. `useDebounce<T extends (...args: any[]) => any>` documents
+ * `() => ReturnType<T> | undefined`, and `unknown` does not satisfy that
+ * constraint. There is no one default that fits both, and `any` is the one that
+ * fails open rather than failing wrongly.
  */
 const GENERIC_RE = /^[A-Z]$/;
 
@@ -175,12 +181,13 @@ function referencedTypes(expression: string): string[] {
  * (`Ref` where the code returns a `ComputedRef`) and a `void` documented for
  * something that returns a promise.
  *
- * The check is one-directional at the table level: it proves every documented
- * field exists, not that every existing field is documented. Composables that
- * spread a shared actions object abridge their tables on purpose, and
- * `noFieldsSnippet` covers the sections with no table at all.
+ * This check is one-directional: it proves every documented field exists, not
+ * that every existing field is documented. `coverageSnippet` runs the other
+ * direction once per composable, over every row that applies to it -- a section
+ * documenting two composables at once has a shared table and a labelled one
+ * each, and neither alone is the full list for either composable.
  */
-export function tableSnippet(table: ReturnTable): Snippet {
+export function tableSnippet(table: ReturnTable, nth = 1): Snippet {
   const names = new Set(
     table.fields.flatMap((field) =>
       field.type ? referencedTypes(field.type) : [],
@@ -239,45 +246,83 @@ export function tableSnippet(table: ReturnTable): Snippet {
     fenceLine: table.headingLine,
     lang: 'ts',
     ext: '.ts',
-    label: `table-${table.composable}`,
-    code: [...head, ...rows, 'export {};'].join('\n'),
-    lineMap: [
-      ...head.map(() => table.headingLine),
-      ...rowLines,
-      table.headingLine,
-    ],
+    label: `table-${table.composable}-${nth}`,
+    code: [...head, ...rows].join('\n'),
+    lineMap: [...head.map(() => table.headingLine), ...rowLines],
   };
 }
 
+export interface Coverage {
+  file: string;
+  composable: string;
+  /** 1-based line the failure should point at: the `Returns` heading, or the section's. */
+  line: number;
+  /** Every field name documented for this composable, across all its tables. */
+  documented: string[];
+  /** Types or composables the section says the return spreads in. */
+  spreads: string[];
+}
+
 /**
- * Asserts a composable with no Returns table has no return fields to document.
+ * The other direction: a field the composable returns that no row documents.
  *
- * Without this, a section that describes its return in a sentence is simply
- * unchecked, and the only signal is a note nobody has to read. Indexing a
- * one-property object with the return's keys turns "this composable has fields
- * the reference never lists" into a failure that names each of them. A return
- * that is a function or void has no keys, so the index resolves and it passes.
+ * Without it a table can be a true but partial list, and a section that
+ * describes its return in a sentence is unchecked entirely -- the only signal
+ * being a note nobody has to read. Indexing a one-property object with the
+ * leftover keys turns "the reference never lists these" into a failure that
+ * names each of them; a return that is a function or void has no keys, so the
+ * index resolves and it passes.
+ *
+ * A section may declare a spread source (`<!-- returns-spread: X -->`) for a
+ * return that folds in another documented shape. That abridgement stays a
+ * checked claim: only members of `X` are forgiven, so a field belonging to
+ * neither the table nor `X` still fails.
  */
-export function noFieldsSnippet(
-  file: string,
-  composable: string,
-  headingLine: number,
-): Snippet {
-  const keys = `keyof DocumentedReturn<typeof ${composable}>`;
+export function coverageSnippet(coverage: Coverage): Snippet {
+  const { composable, documented, spreads } = coverage;
+  const composableSpreads = spreads.filter((name) => name.startsWith('use'));
+  const typeSpreads = spreads.filter((name) => !name.startsWith('use'));
+
+  const covered = [
+    ...documented.map((name) => `'${name}'`),
+    ...typeSpreads.map((name) => `keyof ${name}`),
+    ...composableSpreads.map(
+      (name) => `keyof DocumentedReturn<typeof ${name}>`,
+    ),
+    // A tuple return is documented by index, and should not be asked to
+    // document `length`, `map` and the rest of the array surface. The
+    // numeric-literal keys survive this, which are the real rows.
+    ...(documented.some((name) => /^\d+$/.test(name))
+      ? ['keyof unknown[]']
+      : []),
+  ];
+
+  const values = [composable, ...composableSpreads].sort();
+  const code = [
+    ...(typeSpreads.length
+      ? [
+          `import type { ${typeSpreads.sort().join(', ')} } from 'vue3-maplibre-gl';`,
+        ]
+      : []),
+    `import { ${values.join(', ')} } from 'vue3-maplibre-gl';`,
+    `type Extra = Exclude<`,
+    `  keyof DocumentedReturn<typeof ${composable}>,`,
+    covered.length ? `  ${covered.join(' | ')}` : '  never',
+    `>;`,
+    `type Undocumented = { __all: true }[[Extra] extends [never]`,
+    `  ? '__all'`,
+    `  : Extra];`,
+    'export type { Undocumented };',
+  ];
+
   return {
-    file,
-    fenceLine: headingLine,
+    file: coverage.file,
+    fenceLine: coverage.line,
     lang: 'ts',
     ext: '.ts',
     label: `undocumented-${composable}`,
-    code: [
-      `import { ${composable} } from 'vue3-maplibre-gl';`,
-      `type Undocumented = { __none: true }[${keys} extends never`,
-      `  ? '__none'`,
-      `  : ${keys}];`,
-      'export type { Undocumented };',
-    ].join('\n'),
-    lineMap: [headingLine, headingLine, headingLine, headingLine, headingLine],
+    code: code.join('\n'),
+    lineMap: code.map(() => coverage.line),
   };
 }
 
@@ -309,6 +354,13 @@ function asModule(code: string): string {
 export function writeSnippetProject(
   workDir: string,
   snippets: Snippet[],
+  /**
+   * Compiler options to merge over the defaults. The generated Returns checks
+   * are compiled a second time with `strictNullChecks` on, because with it off
+   * `Foo | null` and `Foo` are the same type -- so a row promising a nullable
+   * accessor, or omitting the `| null` the code really returns, would pass.
+   */
+  overrides: Record<string, unknown> = {},
 ): Map<string, Snippet> {
   const byName = new Map<string, Snippet>();
 
@@ -334,7 +386,10 @@ export function writeSnippetProject(
   writeFileSync(
     resolve(workDir, 'tsconfig.json'),
     `${JSON.stringify(
-      { compilerOptions: COMPILER_OPTIONS, include: ['**/*.ts', '**/*.vue'] },
+      {
+        compilerOptions: { ...COMPILER_OPTIONS, ...overrides },
+        include: ['**/*.ts', '**/*.vue'],
+      },
       null,
       2,
     )}\n`,

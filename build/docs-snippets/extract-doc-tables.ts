@@ -40,6 +40,20 @@ const FIELD_CELL_RE = /^\|\s*`([A-Za-z_$][\w$]*|\d+)`\s*\|/;
 const TYPE_CELL_RE = /^`(.+)`$/;
 
 /**
+ * Declares that a Returns section deliberately abridges: the composable also
+ * spreads in everything from another type or composable, and those members are
+ * documented there rather than repeated as rows here.
+ *
+ *     <!-- returns-spread: MaplibreMethods -->
+ *     <!-- returns-spread: useMapEventListener -->
+ *
+ * Without it the completeness check would demand a row for all 47 map methods
+ * `useMaplibre` passes through. With it, the abridgement is a claim the
+ * compiler holds to: a field outside the named source still fails.
+ */
+const SPREAD_RE = /^<!--\s*returns-spread:\s*([A-Za-z_$][\w$]*)\s*-->$/;
+
+/**
  * Splits a table row into cells on unescaped pipes. A `\|` inside a cell is a
  * union, not a column boundary -- `ComputedRef<Map \| null>` is one cell.
  */
@@ -90,6 +104,8 @@ export interface ReturnTable {
   /** 1-based line of the `Returns` heading, used for the import's diagnostics. */
   headingLine: number;
   fields: TableField[];
+  /** Types or composables the section says this return spreads in. */
+  spreads: string[];
 }
 
 export function extractReturnTables(
@@ -117,6 +133,8 @@ export function extractReturnTables(
     // Which composables the next table describes. A bold label overrides it for
     // one table; otherwise the table describes everything the section names.
     let owners = composables;
+    const spreads: string[] = [];
+    const sectionTables: ReturnTable[] = [];
 
     // Read to the end of the section. A `Returns` block is usually one table,
     // but it can be a label-and-table pair per composable, and it can be prose
@@ -126,6 +144,12 @@ export function extractReturnTables(
     for (; j < lines.length && !/^#{2,5}\s/.test(lines[j]!); j++) {
       const text = lines[j]!.trim();
       if (!text) continue;
+
+      const spread = SPREAD_RE.exec(text);
+      if (spread) {
+        spreads.push(spread[1]!);
+        continue;
+      }
 
       const label = TABLE_LABEL_RE.exec(text);
       if (label) {
@@ -162,12 +186,21 @@ export function extractReturnTables(
 
       if (fields.length) {
         for (const composable of owners) {
-          tables.push({ file, composable, headingLine, fields });
+          sectionTables.push({
+            file,
+            composable,
+            headingLine,
+            fields,
+            spreads,
+          });
         }
       }
       owners = composables;
       j = k - 1;
     }
+    // `spreads` is filled as the section is read and shared by reference, so a
+    // marker below a table still applies to it.
+    tables.push(...sectionTables);
     i = j - 1;
   }
 

@@ -194,6 +194,46 @@ A tuple \`[debouncedRef, immediateRef, flush, cancel]\`:
     expect(found[0]!.fields.map((f) => f.name)).toEqual(['0', '1']);
   });
 
+  it("reads a spread marker as the section's abridgement", () => {
+    const found = tables(`### useMaplibre
+
+#### Returns
+
+| Property | Type |
+| -------- | ---- |
+| \`register\` | \`() => void\` |
+
+It also spreads in every method of \`MaplibreMethods\`.
+
+<!-- returns-spread: MaplibreMethods -->
+`);
+
+    expect(found[0]!.spreads).toEqual(['MaplibreMethods']);
+  });
+
+  it('does not carry a spread marker into the next section', () => {
+    const found = tables(`### useMaplibre
+
+#### Returns
+
+<!-- returns-spread: MaplibreMethods -->
+
+| Property | Type |
+| -------- | ---- |
+| \`register\` | \`() => void\` |
+
+### useFlyTo
+
+#### Returns
+
+| Property | Type |
+| -------- | ---- |
+| \`flyTo\` | \`() => void\` |
+`);
+
+    expect(found.map((t) => t.spreads)).toEqual([['MaplibreMethods'], []]);
+  });
+
   it('reads only Returns tables, not Parameters ones', () => {
     const found = tables(`### useFlyTo
 

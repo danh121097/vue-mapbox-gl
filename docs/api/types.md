@@ -39,6 +39,66 @@ interface CreateMaplibreActions {
 }
 ```
 
+### MaplibreMethods
+
+Everything [`CreateMaplibreActions`](#createmaplibreactions) has, plus the map's
+accessors and the remaining setters. [`useMaplibre`](/api/composables#usemaplibre)
+spreads this in, so the composable's return carries each of these; every one of
+them no-ops while no map is registered, which is why the accessors return
+`undefined` rather than throwing.
+
+```typescript
+type MaplibreMethods = CreateMaplibreActions & {
+  getContainer: () => HTMLElement | undefined;
+  getCanvasContainer: () => HTMLElement | undefined;
+  getCanvas: () => HTMLCanvasElement | undefined;
+  getStyle: () => StyleSpecification | undefined;
+  getBounds: () => LngLatBoundsLike | undefined;
+  getCenter: () => LngLatLike | undefined;
+  getZoom: () => number | undefined;
+  getBearing: () => number | undefined;
+  getPadding: () => PaddingOptions | undefined;
+  getPitch: () => number | undefined;
+  getMinZoom: () => number | undefined;
+  getMaxZoom: () => number | undefined;
+  getMinPitch: () => number | undefined;
+  getMaxPitch: () => number | undefined;
+  getFilter: (layerId: string) => void | FilterSpecification;
+  getLayer: (layerId: string) => any | undefined;
+  getPaintProperty: (layerId: string, name: string) => any | undefined;
+  getLayoutProperty: (layerId: string, name: string) => any | undefined;
+  getSource: (sourceId: string) => any | undefined;
+  triggerRepaint: () => void;
+  project: (lnglat: LngLatLike) => Point | undefined;
+  unproject: (point: Point) => LngLat | undefined;
+  queryRenderedFeatures: (
+    point: PointLike | [PointLike, PointLike],
+    options?: QueryRenderedFeaturesOptions,
+  ) => any[] | undefined;
+  querySourceFeatures: (
+    sourceID: string,
+    options?: QuerySourceFeatureOptions,
+  ) => any[] | undefined;
+  queryTerrainElevation: (lnglat: LngLatLike) => number | null | undefined;
+  isStyleLoaded: () => boolean | void;
+  isMoving: () => boolean | undefined;
+  isZooming: () => boolean | undefined;
+  isRotating: () => boolean | undefined;
+  isEasing: () => boolean | undefined;
+  resize: () => void;
+  remove: () => void;
+  setFeatureState: (
+    options: FeatureIdentifier,
+    state: Record<string, any>,
+  ) => void;
+  removeFeatureState: (options: FeatureIdentifier, key: string) => void;
+  getFeatureState: (
+    options: FeatureIdentifier,
+  ) => Record<string, any> | undefined;
+  setPadding: (padding: PaddingOptions) => void;
+};
+```
+
 ### CreateGeoJsonSourceActions
 
 Actions interface for GeoJSON source management.

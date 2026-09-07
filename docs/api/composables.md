@@ -118,6 +118,8 @@ It also spreads in every accessor and setter of [`MaplibreMethods`](/api/types#m
 — `getCenter`, `getZoom`, `queryRenderedFeatures`, `setStyle`, `flyTo` and the
 rest — each of which no-ops while no map is registered.
 
+<!-- returns-spread: MaplibreMethods -->
+
 The status field is `mapStatus`, not `mapCreationStatus`, and there are no
 lifecycle methods: `initMap`, `removeMap` and `destroyMap` belong to
 `useCreateMaplibre`, which owns the map.
@@ -1029,6 +1031,8 @@ handler prop is `on`, not `handler`.
 
 Everything [`useMapEventListener`](#usemapeventlistener) returns, plus:
 
+<!-- returns-spread: useMapEventListener -->
+
 | Property  | Type                          | Description                          |
 | --------- | ----------------------------- | ------------------------------------ |
 | `layerId` | `ComputedRef<string \| null>` | The resolved id of the watched layer |
@@ -1195,14 +1199,28 @@ function usePanTo(props: PanToProps): PanToActions;
 
 #### Returns
 
-| Property                                  | Type                                  | Description                                            |
-| ----------------------------------------- | ------------------------------------- | ------------------------------------------------------ |
-| `panBy` / `panTo`                         | `(target, options?) => Promise<void>` | Executes the pan, resolves on `moveend`                |
-| `stopPanning`                             | `() => void`                          | Stops the in-progress pan                              |
-| `getCurrentCamera`                        | `() => CameraOptions \| null`         | Current `{ center, zoom, bearing, pitch }`             |
-| `validatePanOffset` / `validatePanTarget` | `(value) => boolean`                  | Validates the offset/coordinate shape                  |
-| `panStatus`                               | `ComputedRef<PanStatus>`              | `'not-started' \| 'panning' \| 'completed' \| 'error'` |
-| `isPanning`                               | `ComputedRef<boolean>`                | Whether a pan is in progress                           |
+Both return the same four fields:
+
+| Property           | Type                          | Description                                            |
+| ------------------ | ----------------------------- | ------------------------------------------------------ |
+| `stopPanning`      | `() => void`                  | Stops the in-progress pan                              |
+| `getCurrentCamera` | `() => CameraOptions \| null` | Current `{ center, zoom, bearing, pitch }`             |
+| `panStatus`        | `ComputedRef<PanStatus>`      | `'not-started' \| 'panning' \| 'completed' \| 'error'` |
+| `isPanning`        | `ComputedRef<boolean>`        | Whether a pan is in progress                           |
+
+**`usePanBy`**
+
+| Property            | Type                                                               | Description                             |
+| ------------------- | ------------------------------------------------------------------ | --------------------------------------- |
+| `panBy`             | `(offset: PointLike, options?: AnimationOptions) => Promise<void>` | Executes the pan, resolves on `moveend` |
+| `validatePanOffset` | `(offset: PointLike) => boolean`                                   | Validates the offset shape              |
+
+**`usePanTo`**
+
+| Property            | Type                                                                | Description                             |
+| ------------------- | ------------------------------------------------------------------- | --------------------------------------- |
+| `panTo`             | `(lnglat: LngLatLike, options?: AnimationOptions) => Promise<void>` | Executes the pan, resolves on `moveend` |
+| `validatePanTarget` | `(lnglat: LngLatLike) => boolean`                                   | Validates the coordinate shape          |
 
 #### Example
 
@@ -1248,16 +1266,43 @@ function useResetNorthPitch(
 
 #### Returns
 
-| Property                                                      | Type                                  | Description                                             |
-| ------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------- |
-| `rotateTo` / `snapToNorth` / `resetNorth` / `resetNorthPitch` | `(value?, options?) => Promise<void>` | Executes the rotation                                   |
-| `stopRotating`                                                | `() => void`                          | Stops the in-progress rotation                          |
-| `getCurrentBearing`                                           | `() => number \| null`                | Current bearing                                         |
-| `getCurrentPitch` (`useResetNorthPitch` only)                 | `() => number \| null`                | Current pitch                                           |
-| `getCurrentCamera`                                            | `() => CameraOptions \| null`         | Current camera state                                    |
-| `validateBearing` (`useRotateTo` only)                        | `(bearing: number) => boolean`        | Validates a bearing value                               |
-| `rotationStatus`                                              | `ComputedRef<RotationStatus>`         | `'not-started' \| 'rotating' \| 'completed' \| 'error'` |
-| `isRotating`                                                  | `ComputedRef<boolean>`                | Whether a rotation is in progress                       |
+All four return these:
+
+| Property            | Type                          | Description                                             |
+| ------------------- | ----------------------------- | ------------------------------------------------------- |
+| `stopRotating`      | `() => void`                  | Stops the in-progress rotation                          |
+| `getCurrentBearing` | `() => number \| null`        | Current bearing                                         |
+| `getCurrentCamera`  | `() => CameraOptions \| null` | Current camera state                                    |
+| `rotationStatus`    | `ComputedRef<RotationStatus>` | `'not-started' \| 'rotating' \| 'completed' \| 'error'` |
+| `isRotating`        | `ComputedRef<boolean>`        | Whether a rotation is in progress                       |
+
+Plus, per composable, the method that runs the rotation:
+
+**`useRotateTo`**
+
+| Property          | Type                                                             | Description               |
+| ----------------- | ---------------------------------------------------------------- | ------------------------- |
+| `rotateTo`        | `(bearing: number, options?: AnimationOptions) => Promise<void>` | Rotates to a bearing      |
+| `validateBearing` | `(bearing: number) => boolean`                                   | Validates a bearing value |
+
+**`useResetNorth`**
+
+| Property     | Type                                            | Description           |
+| ------------ | ----------------------------------------------- | --------------------- |
+| `resetNorth` | `(options?: AnimationOptions) => Promise<void>` | Rotates back to north |
+
+**`useResetNorthPitch`**
+
+| Property          | Type                                            | Description                   |
+| ----------------- | ----------------------------------------------- | ----------------------------- |
+| `resetNorthPitch` | `(options?: AnimationOptions) => Promise<void>` | Resets both bearing and pitch |
+| `getCurrentPitch` | `() => number \| null`                          | Current pitch                 |
+
+**`useSnapToNorth`**
+
+| Property      | Type                                            | Description                      |
+| ------------- | ----------------------------------------------- | -------------------------------- |
+| `snapToNorth` | `(options?: AnimationOptions) => Promise<void>` | Snaps to north when close enough |
 
 #### Example
 
@@ -1300,15 +1345,34 @@ function useZoomTo(props: ZoomToProps): ZoomToActions;
 
 #### Returns
 
-| Property                               | Type                                  | Description                                            |
-| -------------------------------------- | ------------------------------------- | ------------------------------------------------------ |
-| `zoomIn` / `zoomOut` / `zoomTo`        | `(value?, options?) => Promise<void>` | Executes the zoom, resolves on `zoomend`               |
-| `stopZooming`                          | `() => void`                          | Stops the in-progress zoom                             |
-| `getCurrentZoom`                       | `() => number \| null`                | Current zoom level                                     |
-| `getCurrentCamera`                     | `() => CameraOptions \| null`         | Current camera state                                   |
-| `validateZoomLevel` (`useZoomTo` only) | `(zoom: number) => boolean`           | Validates a zoom value (0-24)                          |
-| `zoomStatus`                           | `ComputedRef<ZoomStatus>`             | `'not-started' \| 'zooming' \| 'completed' \| 'error'` |
-| `isZooming`                            | `ComputedRef<boolean>`                | Whether a zoom is in progress                          |
+| Property           | Type                          | Description                                            |
+| ------------------ | ----------------------------- | ------------------------------------------------------ |
+| `stopZooming`      | `() => void`                  | Stops the in-progress zoom                             |
+| `getCurrentZoom`   | `() => number \| null`        | Current zoom level                                     |
+| `getCurrentCamera` | `() => CameraOptions \| null` | Current camera state                                   |
+| `zoomStatus`       | `ComputedRef<ZoomStatus>`     | `'not-started' \| 'zooming' \| 'completed' \| 'error'` |
+| `isZooming`        | `ComputedRef<boolean>`        | Whether a zoom is in progress                          |
+
+Plus, per composable, the method that runs the zoom:
+
+**`useZoomIn`**
+
+| Property | Type                                            | Description                               |
+| -------- | ----------------------------------------------- | ----------------------------------------- |
+| `zoomIn` | `(options?: AnimationOptions) => Promise<void>` | Zooms in one level, resolves on `zoomend` |
+
+**`useZoomOut`**
+
+| Property  | Type                                            | Description                                |
+| --------- | ----------------------------------------------- | ------------------------------------------ |
+| `zoomOut` | `(options?: AnimationOptions) => Promise<void>` | Zooms out one level, resolves on `zoomend` |
+
+**`useZoomTo`**
+
+| Property            | Type                                                          | Description                             |
+| ------------------- | ------------------------------------------------------------- | --------------------------------------- |
+| `zoomTo`            | `(zoom: number, options?: AnimationOptions) => Promise<void>` | Zooms to a level, resolves on `zoomend` |
+| `validateZoomLevel` | `(zoom: number) => boolean`                                   | Validates a zoom value (0-24)           |
 
 #### Example
 

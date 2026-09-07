@@ -89,11 +89,11 @@ export function summarize(message: string): string {
   // The undocumented-field probe indexes a one-property object, so its failure
   // reads as a missing property on `{ __none: true }`. Say what it means.
   const undocumented =
-    /Property '([^']+)' does not exist on type '\{ __none: true; \}'/.exec(
+    /Property '([^']+)' does not exist on type '\{ __(?:none|all): true; \}'/.exec(
       message,
     );
   if (undocumented) {
-    return `error: '${undocumented[1]}' is returned, but this composable's Returns is prose - give it a table row`;
+    return `error: '${undocumented[1]}' is returned but no Returns row documents it`;
   }
 
   const excessProp =

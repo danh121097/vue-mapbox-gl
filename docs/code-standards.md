@@ -564,12 +564,35 @@ exist, and rows like that have reached `master`. So every `Returns` table in
 row, against the composable its section names. A row that names nothing real
 fails on the row's own line.
 
+The other direction is checked as well, once per composable: a field the
+composable returns that no row documents fails with a line naming it. That runs
+over the union of the rows that apply — a section documenting several
+composables at once has a shared table and a bold-labelled one each
+(`**\`usePanBy\`\*\*`), and neither alone is the full list for either — so the
+labelled tables are what make those sections checkable rather than decorative.
+
 A section is allowed to describe its return in a sentence instead — but only if
-there is nothing to tabulate. Those sections get the opposite check: the return
-must have no named fields at all, so `useDebouncedWatch` (which returns a stop
-function) passes, and a composable returning an object of ten fields fails with
-a line naming each one. Prose is for returns with no shape, not for returns
-whose shape is inconvenient to type out.
+there is nothing to tabulate. That is the same completeness check with an empty
+list of rows: `useDebouncedWatch` (which returns a stop function) passes, and a
+composable returning an object of ten fields fails with a line naming each one.
+Prose is for returns with no shape, not for returns whose shape is inconvenient
+to type out.
+
+A return that folds in another documented shape may say so instead of repeating
+it, with a marker naming the source:
+
+```markdown
+<!-- returns-spread: MaplibreMethods -->
+<!-- returns-spread: useMapEventListener -->
+```
+
+A type name resolves through the package's public surface; a `use…` name
+resolves through that composable's return. Either way the abridgement stays a
+claim the compiler holds to — only members of the named source are forgiven, so
+a field belonging to neither the table nor the source still fails, and a source
+that is misspelled or not exported fails outright. `useMaplibre` spreads in all
+47 accessors and setters of `MaplibreMethods`; that is the case the marker
+exists for, not a general way to quiet the check.
 
 The `Type` column is checked too: the documented type and the real one must
 each be assignable to the other. Mutual assignability rather than identity,
@@ -588,11 +611,19 @@ exists to tolerate hand-written examples, which lean on inference and on names
 the surrounding application owns; a generated assertion has no such excuse, and
 filtering one would let a mismatched type pass as an assignability failure.
 
-What the table check still does not prove is that a field the composable
-returns is one the table lists — that direction is the prose check above, and
-it only runs where there is no table.
+The generated checks are also compiled a second time with `strictNullChecks`
+on. The main project runs with `strict` off so hand-written examples are not
+drowned in diagnostics about their own placeholders — but with it off,
+`Foo | null` and `Foo` are the same type, which is exactly the mistake a
+`Returns` table is likeliest to make. Generated assertions have no placeholders
+to protect, so they get the stricter pass; hand-written blocks do not.
 
-Three things it cannot see: an extra attribute on a component is legal Vue
+One thing the `Type` column still cannot check is the inside of a generic. A
+row's `T` compiles as `any`, because no single default fits both a constrained
+generic and an unconstrained one, so `Ref<T>` proves the wrapper and not the
+element type.
+
+Three more things it cannot see: an extra attribute on a component is legal Vue
 (it falls through to the root element), so a misspelled prop compiles; a block
 whose fence language is not `ts`, `js` or `vue` is never looked at; and a name
 in ordinary prose or in a heading is not a name in a code block, so it is not

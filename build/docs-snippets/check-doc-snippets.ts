@@ -26,13 +26,14 @@ import {
 } from './extract-doc-tables';
 import { diagnosticCode, isReported, summarize } from './reported-diagnostics';
 import {
-  noFieldsSnippet,
+  coverageSnippet,
   tableSnippet,
   writeSnippetProject,
 } from './snippet-project';
 
 const rootDir = resolve(import.meta.dirname, '../..');
 const workDir = resolve(rootDir, '.doc-snippets');
+const strictDir = resolve(rootDir, '.doc-snippets-strict');
 const keep = process.argv.includes('--keep');
 
 if (!existsSync(resolve(rootDir, 'dist/index.d.ts'))) {
@@ -74,23 +75,54 @@ const pages = [
 const TABLE_PAGES = [resolve(rootDir, 'docs/api/composables.md')];
 
 let tableCount = 0;
+let coverageCount = 0;
 let untabledCount = 0;
 for (const path of TABLE_PAGES) {
   const page = relative(rootDir, path);
   const tables = extractTablesFromFile(path);
-  const checked = new Set(tables.map((table) => table.composable));
 
+  // A section can hold more than one table for the same composable -- a shared
+  // one and a labelled one -- and they share a `Returns` heading line, so the
+  // filename needs the ordinal to stay unique.
+  const seen = new Map<string, number>();
   for (const table of tables) {
-    snippets.push(tableSnippet({ ...table, file: page }));
+    const nth = (seen.get(table.composable) ?? 0) + 1;
+    seen.set(table.composable, nth);
+    snippets.push(tableSnippet({ ...table, file: page }, nth));
     tableCount++;
   }
 
-  // A section that describes its return in a sentence gets the weaker check:
-  // not that its fields are right, but that it has none to get wrong.
+  // Completeness is per composable, not per table: a section documenting two
+  // composables at once has a shared table and a labelled one each, so neither
+  // table alone is the full list for either composable. A composable with no
+  // table at all -- its return described in a sentence -- lands here with an
+  // empty list, which is the same check saying it has no fields to get wrong.
+  const rowsFor = new Map<string, string[]>();
+  const spreadsFor = new Map<string, string[]>();
+  const lineFor = new Map<string, number>();
+  for (const table of tables) {
+    const documented = rowsFor.get(table.composable) ?? [];
+    documented.push(...table.fields.map((field) => field.name));
+    rowsFor.set(table.composable, documented);
+    spreadsFor.set(table.composable, table.spreads);
+    lineFor.set(
+      table.composable,
+      Math.min(lineFor.get(table.composable) ?? Infinity, table.headingLine),
+    );
+  }
+
   for (const { name, line } of listComposablesFromFile(path)) {
-    if (checked.has(name)) continue;
-    snippets.push(noFieldsSnippet(page, name, line));
-    untabledCount++;
+    coverageCount++;
+    if (!rowsFor.has(name)) untabledCount++;
+    snippets.push(
+      coverageSnippet({
+        file: page,
+        composable: name,
+        line: lineFor.get(name) ?? line,
+        documented: [...new Set(rowsFor.get(name) ?? [])],
+        spreads: spreadsFor.get(name) ?? [],
+      }),
+    );
   }
 }
 
@@ -112,35 +144,54 @@ mkdirSync(workDir, { recursive: true });
 
 const byGeneratedName = writeSnippetProject(workDir, snippets);
 
+// The generated Returns checks get a second, stricter pass. The main project
+// runs with `strict` off so hand-written examples are not drowned in
+// diagnostics about their own placeholders -- but that also collapses
+// `Foo | null` into `Foo`, which is exactly the mistake a Returns table is
+// likeliest to make. Generated assertions have no placeholders to protect, so
+// they are compiled again with `strictNullChecks` on.
+rmSync(strictDir, { recursive: true, force: true });
+mkdirSync(strictDir, { recursive: true });
+writeSnippetProject(
+  strictDir,
+  snippets.filter((snippet) => snippet.lineMap),
+  { strictNullChecks: true },
+).forEach((snippet, name) => byGeneratedName.set(name, snippet));
+
 console.log(
-  `Checking ${snippets.length - tableCount - untabledCount} code blocks from ` +
+  `Checking ${snippets.length - tableCount - coverageCount} code blocks from ` +
     `docs/ and the READMEs (${skippedCount} skipped), plus ${tableCount} ` +
-    `Returns tables from the API reference` +
+    `Returns tables from the API reference and the return completeness of ` +
+    `${coverageCount} composables` +
     (untabledCount
-      ? ` and ${untabledCount} composable(s) whose return is described in prose.`
+      ? ` (${untabledCount} of which describe their return in prose).`
       : '.'),
 );
 
-let output = '';
-try {
-  execFileSync(
-    'bunx',
-    [
-      'vue-tsc',
-      '--noEmit',
-      '--pretty',
-      'false',
-      '-p',
-      resolve(workDir, 'tsconfig.json'),
-    ],
-    { cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
-  );
-} catch (error) {
-  // vue-tsc exits non-zero when it reports anything; the diagnostics are on
-  // stdout, and the filter below decides which of them matter.
-  const err = error as { stdout?: string; stderr?: string };
-  output = `${err.stdout ?? ''}${err.stderr ?? ''}`;
+function compile(dir: string): string {
+  try {
+    execFileSync(
+      'bunx',
+      [
+        'vue-tsc',
+        '--noEmit',
+        '--pretty',
+        'false',
+        '-p',
+        resolve(dir, 'tsconfig.json'),
+      ],
+      { cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
+    );
+    return '';
+  } catch (error) {
+    // vue-tsc exits non-zero when it reports anything; the diagnostics are on
+    // stdout, and the filter below decides which of them matter.
+    const err = error as { stdout?: string; stderr?: string };
+    return `${err.stdout ?? ''}${err.stderr ?? ''}`;
+  }
 }
+
+const output = `${compile(workDir)}\n${compile(strictDir)}`;
 
 /**
  * Rewrites `.doc-snippets/guide-basic-usage-42.vue(7,3): error TS2345: ...`
@@ -203,7 +254,21 @@ for (let i = 0; i < lines.length; i++) {
   });
 }
 
-if (!keep) rmSync(workDir, { recursive: true, force: true });
+// A generated snippet is compiled twice, so anything wrong for a reason other
+// than nullability is reported by both passes.
+const seenProblem = new Set<string>();
+const problems = reported.filter((problem) =>
+  seenProblem.has(`${problem.location} ${problem.message}`)
+    ? false
+    : seenProblem.add(`${problem.location} ${problem.message}`) && true,
+);
+reported.length = 0;
+reported.push(...problems);
+
+if (!keep) {
+  rmSync(workDir, { recursive: true, force: true });
+  rmSync(strictDir, { recursive: true, force: true });
+}
 
 if (!reported.length) {
   console.log('Every checked block names only things that exist in dist/.');
