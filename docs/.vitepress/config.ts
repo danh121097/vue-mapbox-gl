@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress';
 export default defineConfig({
   title: 'Vue 3 MapLibre GL',
   description:
-    'Interactive maps for Vue 3 — 10 components and 50+ composables for MapLibre GL JS, fully typed with TypeScript.',
+    'Interactive maps for Vue 3 — 10 components and 38 composables for MapLibre GL JS, fully typed with TypeScript.',
   base: '/',
   ignoreDeadLinks: false,
   srcExclude: [
@@ -27,7 +27,7 @@ export default defineConfig({
       {
         property: 'og:description',
         content:
-          'Interactive maps for Vue 3 — 10 components and 50+ composables for MapLibre GL JS, fully typed with TypeScript.',
+          'Interactive maps for Vue 3 — 10 components and 38 composables for MapLibre GL JS, fully typed with TypeScript.',
       },
     ],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
