@@ -5,8 +5,8 @@
 **vue3-maplibre-gl** is a comprehensive Vue 3 component library for MapLibre GL JS with 10 components, 38 composables, full TypeScript support, and Nuxt integration.
 
 **Repository**: [danh121097/vue-maplibre-gl](https://github.com/danh121097/vue-maplibre-gl)
-**Main Package**: `vue3-maplibre-gl@6.0.1` (npm)
-**Nuxt Module**: `nuxt-maplibre-gl@2.0.0` (npm)
+**Main Package**: `vue3-maplibre-gl@6.0.3` (npm)
+**Nuxt Module**: `nuxt-maplibre-gl@2.0.1` (npm)
 
 ## Directory Structure
 
