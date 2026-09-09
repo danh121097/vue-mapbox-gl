@@ -1342,7 +1342,7 @@
 
     "vue-sfc-transformer": ["vue-sfc-transformer@0.1.17", "", { "dependencies": { "@babel/parser": "^7.27.0" }, "peerDependencies": { "@vue/compiler-core": "^3.5.13", "esbuild": "*", "vue": "^3.5.13" } }, "sha512-0mpkDTWm1ybtp/Mp3vhrXP4r8yxcGF+quxGyJfrHDl2tl5naQjK3xkIGaVR5BtR5KG1LWJbdCrqn7I6f460j9A=="],
 
-    "vue3-maplibre-gl": ["vue3-maplibre-gl@6.0.1", "", { "peerDependencies": { "maplibre-gl": "^5.6.1", "vue": "^3.0.0" } }, "sha512-cXGyfRjwDHK2JN1FlOMgzy+3bqsJSKXv+q5OG37t0aco6IK3BvwkNliNa71INcRxh39NRv6Q/v+wHLU304cj/g=="],
+    "vue3-maplibre-gl": ["vue3-maplibre-gl@6.0.3", "", { "peerDependencies": { "maplibre-gl": "^5.6.1", "vue": "^3.0.0" } }, "sha512-mvnsSTsMc5t+PeC8lCY0QCI3QjcPt3OBF7/8BmkgXd+963QbKGzK4ARrJ6g7YnqumKeTDFFCtPOrFqr/WZ0E5A=="],
 
     "webidl-conversions": ["webidl-conversions@3.0.1", "", {}, "sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ=="],
 
