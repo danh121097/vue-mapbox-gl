@@ -39,7 +39,7 @@ Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 | **Correctness**   | v6 fixed reactive status, camera promise settlement, listener attachment ordering, and post-load error recovery  |
 | **SSR Support**   | Full Nuxt SSR/SSG compatibility with browser guards                                                              |
 | **Nuxt Module**   | nuxt-maplibre-gl v2.0.1, auto-importing all 38 composables                                                       |
-| **Testing**       | 107 tests across 19 files, with a coverage ratchet in CI                                                         |
+| **Testing**       | 222 tests across 32 files, with a coverage ratchet in CI                                                         |
 | **Documentation** | VitePress docs with API reference, guides, and examples                                                          |
 
 ## Feature Set
@@ -238,7 +238,7 @@ components and composables it imports rather than the figure above.
 ### Code Quality
 
 - **Framework**: TypeScript with strict mode
-- **Testing**: vitest, 107 tests across 19 files, with a coverage ratchet
+- **Testing**: vitest, 222 tests across 32 files, with a coverage ratchet
 - **Linting**: ESLint with Vue 3 plugin
 - **Formatting**: Prettier with consistent style
 
