@@ -15,6 +15,23 @@ export interface LinkProblem {
   message: string;
 }
 
+/**
+ * Documentation URLs this project no longer serves, and what replaced them.
+ *
+ * External links are not fetched here — that would make the check depend on the
+ * network — but a *known* dead host is checkable offline, and this one was live
+ * on the npm page for both packages: every "Documentation" link in the README
+ * pointed at a GitHub Pages site that returns 404, while the docs deploy to
+ * Cloudflare Pages. Nothing noticed, because the resolver below skips every
+ * external target.
+ */
+const STALE_DOC_URLS: { prefix: string; replacement: string }[] = [
+  {
+    prefix: 'https://danh121097.github.io/vue-maplibre-gl',
+    replacement: 'https://vue-maplibre-gl.pages.dev',
+  },
+];
+
 /** Links this check has no way to resolve, and does not claim to. */
 function isExternal(target: string): boolean {
   return (
@@ -65,6 +82,19 @@ export function checkLinks(pages: string[], rootDir: string): LinkProblem[] {
     const here = relative(rootDir, file);
 
     for (const { target, line } of extractLinks(source)) {
+      const stale = STALE_DOC_URLS.find((entry) =>
+        target.startsWith(entry.prefix),
+      );
+      if (stale) {
+        problems.push({
+          location: `${here}:${line}`,
+          message:
+            `error: link target '${target}' points at a documentation site ` +
+            `this project no longer publishes; use ${stale.replacement}`,
+        });
+        continue;
+      }
+
       if (isExternal(target)) continue;
 
       const [path, anchor] = target.split('#') as [string, string?];
