@@ -1,6 +1,6 @@
 # Vue3 MapLibre GL
 
-[![npm](https://img.shields.io/npm/v/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Downloads](https://img.shields.io/npm/dt/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-maplibre-gl?style=flat-square)](https://github.com/danh121097/vue-maplibre-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-maplibre-gl)](https://github.com/danh121097/vue-maplibre-gl/blob/main/LICENSE)
+[![npm](https://img.shields.io/npm/v/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Downloads](https://img.shields.io/npm/dt/vue3-maplibre-gl)](https://www.npmjs.com/package/vue3-maplibre-gl) [![Stars](https://img.shields.io/github/stars/danh121097/vue-maplibre-gl?style=flat-square)](https://github.com/danh121097/vue-maplibre-gl/stargazers) [![License](https://img.shields.io/npm/l/vue3-maplibre-gl)](https://github.com/danh121097/vue-maplibre-gl/blob/master/LICENSE)
 
 > **The most comprehensive Vue 3 library for MapLibre GL JS** - Build interactive maps with 10 components and 38 composables
 
@@ -282,6 +282,10 @@ const marker = new maplibregl.Marker();
 ## 🌟 Advanced Example with Composables
 
 ```vue
+<template>
+  <div ref="mapContainer" style="height: 500px" />
+</template>
+
 <script setup>
 import { ref } from 'vue';
 import {
@@ -291,6 +295,7 @@ import {
   useCreateGeoJsonSource,
 } from 'vue3-maplibre-gl';
 
+// The map initializes itself as soon as this ref resolves to an element.
 const mapContainer = ref();
 const mapStyle = ref('https://demotiles.maplibre.org/style.json');
 
