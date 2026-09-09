@@ -1,5 +1,27 @@
 # Changelog
 
+## v6.0.4
+
+### 🐛 Bug Fixes
+
+- Ship the navbar logo and correct the test counts
+
+- Repair the dead CDN and MapLibre API links
+
+- Drop the private tile server and widen the count check
+
+### 📚 Documentation
+
+- Correct stale version references across the docs
+
+### 🚨 Tests
+
+- Cover the "N tests across M files" spelling
+
+### 🛠 Build
+
+- Pin prettier to an exact 3.6.2
+
 ## v6.0.3
 
 ### 📚 Documentation
