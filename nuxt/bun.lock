@@ -7,7 +7,7 @@
       "dependencies": {
         "@nuxt/kit": "^3.15.0",
         "maplibre-gl": "^5.6.1",
-        "vue3-maplibre-gl": "^6.0.4",
+        "vue3-maplibre-gl": "^6.0.0",
       },
       "devDependencies": {
         "@nuxt/module-builder": "^1.0.2",
