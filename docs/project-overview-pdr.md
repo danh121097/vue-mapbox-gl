@@ -14,7 +14,7 @@ Empower Vue 3 developers to build high-performance, interactive maps with minima
 - **Framework integration** - First-class Nuxt support with SSR out of the box
 - **Zero performance compromise** - Optimized bundle size, memory management, and rendering
 
-## Current Release: v6.0.3
+## Current Release: v6.0.4
 
 ### Release Summary
 
@@ -23,8 +23,8 @@ now return refs instead of values unwrapped once at setup, so a consumer reading
 a status sees it change. `maplibre-gl` moved to `peerDependencies`, and the
 package stopped shipping MapLibre's stylesheet. **v6.0.1** corrects the manifest
 of v6.0.0, which was built before the peer change landed; v6.0.0 is deprecated
-on npm. **v6.0.2** and **v6.0.3** are documentation and CI releases and change
-no API.
+on npm. **v6.0.2**, **v6.0.3** and **v6.0.4** are documentation and CI releases and
+change no API; v6.0.4 ships a `dist/` byte-identical to v6.0.3.
 
 Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 
@@ -38,8 +38,8 @@ Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 | **TypeScript**    | Comprehensive type definitions with event handler types                                                          |
 | **Correctness**   | v6 fixed reactive status, camera promise settlement, listener attachment ordering, and post-load error recovery  |
 | **SSR Support**   | Full Nuxt SSR/SSG compatibility with browser guards                                                              |
-| **Nuxt Module**   | nuxt-maplibre-gl v2.0.1, auto-importing all 38 composables                                                       |
-| **Testing**       | 223 tests across 32 files, with a coverage ratchet in CI                                                         |
+| **Nuxt Module**   | nuxt-maplibre-gl v2.0.2, auto-importing all 38 composables                                                       |
+| **Testing**       | 224 tests across 32 files, with a coverage ratchet in CI                                                         |
 | **Documentation** | VitePress docs with API reference, guides, and examples                                                          |
 
 ## Feature Set
@@ -238,7 +238,7 @@ components and composables it imports rather than the figure above.
 ### Code Quality
 
 - **Framework**: TypeScript with strict mode
-- **Testing**: vitest, 223 tests across 32 files, with a coverage ratchet
+- **Testing**: vitest, 224 tests across 32 files, with a coverage ratchet
 - **Linting**: ESLint with Vue 3 plugin
 - **Formatting**: Prettier with consistent style
 
