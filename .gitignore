@@ -45,7 +45,6 @@ nuxt/dist
 nuxt/node_modules
 nuxt/playground/.nuxt
 nuxt/playground/.output
-nuxt/bun.lock
 
 # Claude
 .claude/
