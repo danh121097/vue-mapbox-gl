@@ -11,9 +11,10 @@ document that is wrong a month later.
 
 ## Current state
 
-**v6.0.1 is the published latest.** v6.0.0 was published and then deprecated: it was
-built before `maplibre-gl` moved to `peerDependencies`, so its manifest still
-declared the runtime as a direct dependency.
+**v6.0.3 is the published latest.** v6.0.0 was published and then deprecated: it
+was built before `maplibre-gl` moved to `peerDependencies`, so its manifest still
+declared the runtime as a direct dependency. v6.0.1 corrected that manifest;
+v6.0.2 and v6.0.3 changed only docs and CI.
 
 |             |                                                           |
 | ----------- | --------------------------------------------------------- |
@@ -21,7 +22,7 @@ declared the runtime as a direct dependency.
 | Composables | 38, all exported from the package root                    |
 | Tests       | 107 across 19 files                                       |
 | Coverage    | 41% statements / 36% branches / 39% functions / 42% lines |
-| Nuxt module | `nuxt-maplibre-gl` 2.0.0, published                       |
+| Nuxt module | `nuxt-maplibre-gl` 2.0.1, published                       |
 
 Coverage is enforced as a ratchet in `vitest.config.ts`: every threshold is the
 number a file actually reached, so a change that lowers it fails CI. The global
