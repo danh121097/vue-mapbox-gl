@@ -91,6 +91,9 @@ jobs:
   # Build the VitePress docs and deploy to Cloudflare Pages.
   deploy-docs:
     needs: test
+    # Only on a real push to master. Without this the job also runs on
+    # `pull_request`, so any PR would deploy over production docs.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -134,6 +137,9 @@ jobs:
   # Depends only on test — a failed docs deploy must not block the release.
   release:
     needs: test
+    # Only on a real push to master. Without this the job also runs on
+    # `pull_request`, so any PR would tag and release from its own head.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
       contents: write
