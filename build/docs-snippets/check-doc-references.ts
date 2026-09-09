@@ -38,7 +38,7 @@ const DIST_RE = /vue3-maplibre-gl(?:@[^/\s]+)?\/(dist\/[A-Za-z0-9._/-]+)/g;
 
 /**
  * The size of the test suite, as the overview states it, in either spelling:
- * "32 test files", or "222 tests across 32 files". The number that was there
+ * "32 test files", or "223 tests across 32 files". The number that was there
  * said 107 across 19 files while the suite had grown to 32 — and the second
  * spelling was the one the check did not read, which is how it stayed wrong.
  * Only the file count is asserted:
@@ -133,7 +133,7 @@ export function checkReferences(
           ...[...line.matchAll(TEST_FILE_COUNT_RE)].map(
             (match): [string, string, number, string] => [
               // Either spelling of the same claim: "32 test files", or the
-              // "222 tests across 32 files" form the roadmap uses, which went
+              // "223 tests across 32 files" form the roadmap uses, which went
               // unchecked and sat at a stale 19 for a whole major.
               (match[1] ?? match[2])!,
               'test files',

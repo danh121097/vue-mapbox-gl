@@ -75,6 +75,17 @@ describe('checkReferences', () => {
     ]);
   });
 
+  it('reads the "N tests across M files" spelling too', () => {
+    // The spelling the maintainer docs actually use, and the one the check
+    // originally missed: four pages sat at "107 tests across 19 files" while
+    // the suite had grown to 32, and the gate reported nothing.
+    expect(problems('222 tests across 2 files', 2)).toEqual([]);
+    expect(problems('107 tests across 19 files', 2)).toEqual([
+      'error: the docs say 19 test files, the repository has 2',
+    ]);
+    expect(problems('40 assertions across 2 files', 2)).toEqual([]);
+  });
+
   it('leaves a count that is not a total claim alone', () => {
     // "3 composables share one factory" is a fact about three of them.
     expect(problems('3 composables share one factory.')).toEqual([]);
