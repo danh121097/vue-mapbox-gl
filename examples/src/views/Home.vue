@@ -13,7 +13,9 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 const options = computed<MapOptions>(() => ({
   container: 'map',
-  style: 'https://worldwidemaps.sqkii.com/api/maps/test/style.json',
+  // OpenFreeMap: a free, keyless, public style, so this demo runs with no
+  // account and no API key.
+  style: 'https://tiles.openfreemap.org/styles/liberty',
   center: [103.8198, 1.3521],
   zoom: 12,
   minZoom: 9,
