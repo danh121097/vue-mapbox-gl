@@ -1,5 +1,85 @@
 # Changelog
 
+## v6.0.2
+
+### ⚙️ CI
+
+- Run deploy-docs and release only on master pushes
+
+### ✨ Features
+
+- Compile every docs code block against the built package
+
+### 🐛 Bug Fixes
+
+- Infer the handler's event type from the event name
+
+- Stop coalescing minzoom and maxzoom past their defaults
+
+- Stop a unit test from reading build output the Test step lacks
+
+### 💎 Styles
+
+- Format the maintainer docs Prettier had never seen
+
+### 📚 Documentation
+
+- Show the one-package install where it actually works
+
+- Use one install command everywhere
+
+- Give every page the same four install tabs and counts
+
+- Track the five maintainer docs and reconcile them to v6
+
+- Correct the standards and architecture docs against source
+
+- Remove documented APIs that do not exist
+
+- Correct component defaults and complete the event tables
+
+- Correct the names the compiler found wrong
+
+- Compile the 24 blocks that were opted out of the check
+
+- Compile the last two skipped blocks
+
+- Table every return the reference described in prose
+
+- Name the callback props GeolocateControls actually has
+
+- Point both npm pages at docs that exist
+
+### 🚨 Tests
+
+- Compile the Returns tables in the API reference
+
+- Check the Type column of every Returns row
+
+- Check that every returned field has a Returns row
+
+- Compare the types reference with the real types
+
+- Check prose names, component attributes and instructions
+
+- Let prose opt out of the name check with a reason
+
+- Check a generic row against a real type parameter
+
+- Compile the Parameters, Props and Events tables
+
+- Compile the Slots, Default and prop/emit-name claims
+
+- Reach the ten Parameters tables no pattern matched
+
+- Count what every doc check actually reaches
+
+- Check the advertised size of the test suite
+
+### 🛠 Build
+
+- Refresh the lockfile against the published vue3-maplibre-gl
+
 ## v6.0.1
 
 Republish of v6.0.0. The v6.0.0 tarball on npm was built before `maplibre-gl`
