@@ -45,13 +45,13 @@
   "scripts": {
     "dev:prepare": "nuxt-module-build build --stub && nuxi prepare playground",
     "dev": "nuxi dev playground",
-    "build": "nuxt-module-build build",
-    "prepack": "nuxt-module-build build"
+    "build": "nuxt-module-build build --stub && nuxi prepare playground && nuxt-module-build build",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "@nuxt/kit": "^3.15.0",
     "maplibre-gl": "^5.6.1",
-    "vue3-maplibre-gl": "^6.0.0"
+    "vue3-maplibre-gl": "^6.0.4"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^1.0.2",
