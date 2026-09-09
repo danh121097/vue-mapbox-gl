@@ -20,8 +20,8 @@ v6.0.2 and v6.0.3 changed only docs and CI.
 | ----------- | --------------------------------------------------------- |
 | Components  | 10                                                        |
 | Composables | 38, all exported from the package root                    |
-| Tests       | 107 across 19 files                                       |
-| Coverage    | 41% statements / 36% branches / 39% functions / 42% lines |
+| Tests       | 222 across 32 files                                       |
+| Coverage    | 42% statements / 37% branches / 40% functions / 43% lines |
 | Nuxt module | `nuxt-maplibre-gl` 2.0.1, published                       |
 
 Coverage is enforced as a ratchet in `vitest.config.ts`: every threshold is the

@@ -564,4 +564,4 @@ app.use(VueMapLibreGl, {
 app.mount('#app');
 ```
 
-This configuration guide covers the most common scenarios for customizing Vue3 MapLibre GL components and composables. For more advanced configurations, refer to the [API documentation](/api/components) and [MapLibre GL JS documentation](https://maplibre.org/maplibre-gl-js-docs/api/).
+This configuration guide covers the most common scenarios for customizing Vue3 MapLibre GL components and composables. For more advanced configurations, refer to the [API documentation](/api/components) and [MapLibre GL JS documentation](https://maplibre.org/maplibre-gl-js/docs/API/).

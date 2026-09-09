@@ -614,4 +614,4 @@ Vue3 MapLibre GL re-exports all relevant MapLibre GL JS types for convenience:
 - `GeolocateControl`, `NavigationControl`, `ScaleControl`
 - And many more...
 
-For complete type definitions, refer to the [MapLibre GL JS documentation](https://maplibre.org/maplibre-gl-js-docs/api/).
+For complete type definitions, refer to the [MapLibre GL JS documentation](https://maplibre.org/maplibre-gl-js/docs/API/).
