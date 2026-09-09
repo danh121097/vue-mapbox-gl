@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.0.3
+
+### 📚 Documentation
+
+- Fix the LICENSE badge link and the composables example
+
 ## v6.0.2
 
 ### ⚙️ CI
