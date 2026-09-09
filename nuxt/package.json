@@ -1,6 +1,6 @@
 {
   "name": "nuxt-maplibre-gl",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Nuxt module for vue3-maplibre-gl — auto-import components, composables, CSS, and SSR configuration",
   "type": "module",
   "license": "MIT",
@@ -8,7 +8,7 @@
     "name": "Danh Nguyen",
     "url": "https://harrynguyen.work"
   },
-  "homepage": "https://github.com/danh121097/vue-maplibre-gl#readme",
+  "homepage": "https://vue-maplibre-gl.pages.dev/",
   "bugs": {
     "url": "https://github.com/danh121097/vue-maplibre-gl/issues"
   },

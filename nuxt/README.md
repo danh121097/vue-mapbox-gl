@@ -6,11 +6,13 @@
 
 ## Features
 
-- Auto-import 10+ map components (Maplibre, GeoJsonSource, FillLayer, etc.)
-- Auto-import 38 composables (useFlyTo, useMapEventListener, etc.)
-- Auto-import CSS — no manual style import needed
-- SSR-safe — components register client-only, composables have browser guards
+- Auto-imports all 10 map components (Maplibre, GeoJsonSource, FillLayer, etc.)
+- Auto-imports all 38 composables (useFlyTo, useMapEventListener, etc.)
+- Auto-imports CSS — both `maplibre-gl/dist/maplibre-gl.css` and `vue3-maplibre-gl/dist/style.css`
+- SSR-safe — components register client-only, `maplibre-gl` is kept out of the server bundle
 - Zero configuration required
+
+`vue3-maplibre-gl` and `maplibre-gl` are dependencies of this module, so installing it is enough — there is nothing else to add to your app.
 
 ## Installation
 
@@ -40,7 +42,7 @@ pnpm add nuxt-maplibre-gl
 
 ## Setup
 
-Add to `nuxt.config.ts`:
+Add to `nuxt.config.ts`. The config key is `maplibre`, not the module name:
 
 ```typescript
 export default defineNuxtConfig({
@@ -105,8 +107,21 @@ const circleStyle = ref({ 'circle-radius': 6, 'circle-color': '#007cbf' });
 
 ## Auto-imported Composables
 
-All 38 composables from vue3-maplibre-gl are auto-imported:
-`useCreateMaplibre`, `useFlyTo`, `useEaseTo`, `useJumpTo`, `useMapEventListener`, etc.
+All 38 composables from vue3-maplibre-gl are auto-imported — `useCreateMaplibre`,
+`useMaplibre`, `useFlyTo`, `useEaseTo`, `useJumpTo`, `useMapEventListener`,
+`useCreateGeoJsonSource` and the rest. Set `prefix` to namespace them: with
+`prefix: 'map'` they are imported as `mapUseFlyTo`, `mapUseMapEventListener`, and
+so on.
+
+The full reference lives at
+[vue-maplibre-gl.pages.dev/api/composables](https://vue-maplibre-gl.pages.dev/api/composables).
+
+## Documentation
+
+- [SSR / Nuxt guide](https://vue-maplibre-gl.pages.dev/guide/ssr-nuxt) — what this module configures, and how to use it without the module
+- [Components API](https://vue-maplibre-gl.pages.dev/api/components)
+- [Composables API](https://vue-maplibre-gl.pages.dev/api/composables)
+- [Examples](https://vue-maplibre-gl.pages.dev/examples/)
 
 ## Releasing
 

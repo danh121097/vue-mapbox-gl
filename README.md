@@ -8,10 +8,14 @@ A powerful, feature-rich Vue 3 component library that provides an intuitive, rea
 
 `maplibre-gl` is a peer dependency, re-exported from this package so your app and this one always share a single copy of the MapLibre runtime. npm and Bun would install it on their own; Yarn and pnpm would not, so the commands below name it explicitly.
 
+**Requirements:** Vue `^3.0.0` and `maplibre-gl` `^5.6.1`, both peer dependencies.
+
+**Using Nuxt?** Install [`nuxt-maplibre-gl`](https://www.npmjs.com/package/nuxt-maplibre-gl) instead — it wraps this package with auto-imports, CSS injection, and the SSR configuration MapLibre needs.
+
 ## ✨ Features
 
 - 🗺️ **Interactive Maps** - High-performance vector maps with WebGL rendering
-- 🧩 **10+ Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, Popup, Image, GeolocateControls
+- 🧩 **10 Vue Components** - Maplibre, GeoJsonSource, FillLayer, CircleLayer, LineLayer, SymbolLayer, Marker, Popup, Image, GeolocateControls
 - 🔧 **38 Composables** - Complete map management, animations, events, and utilities
 - 🎯 **Full TypeScript Support** - Comprehensive type definitions and interfaces
 - ⚡ **High Performance** - Optimized rendering with automatic resource cleanup
@@ -115,8 +119,10 @@ const circleStyle = ref({
   'circle-color': '#007cbf',
 });
 
-function onMapLoad(map) {
-  console.log('Map loaded:', map);
+function onMapLoad(event) {
+  // `@load` forwards MapLibre's own event. The map is `event.target`; the
+  // `onMapLoad` prop is the one that receives the map directly.
+  console.log('Map loaded:', event.target);
 }
 </script>
 
@@ -135,7 +141,7 @@ function onMapLoad(map) {
 
 ## 🧩 Components
 
-Vue3 MapLibre GL provides 10+ reactive Vue components:
+All 10 components are reactive and register themselves with the map they are nested in:
 
 | Component             | Description                                                   |
 | --------------------- | ------------------------------------------------------------- |
@@ -152,42 +158,66 @@ Vue3 MapLibre GL provides 10+ reactive Vue components:
 
 ## 🔧 Composables
 
-15+ powerful composables for advanced map functionality:
+All 38 composables are exported from the package root, and every component in
+the table above is built out of them — reach for one when you want the behaviour
+without the component:
 
-### Map Management
+### Map
 
-- `useCreateMaplibre` - Enhanced map creation with error handling
-- `useMaplibre` - Simplified map state management
+- `useCreateMaplibre` - Create and manage a map instance, with status and error state
+- `useMaplibre` - Hold a map created elsewhere; pass it what `<Maplibre>` emits from `@register`
+- `useMaplibreConfig` - Global MapLibre performance settings, set once at app startup
+- `useCreateMarker` - Marker creation and lifecycle
+- `useCreatePopup` - Popup creation and lifecycle
+- `useCreateImage` - Load and manage style images
+- `useLayer` - Hold a layer created elsewhere, with reactive status and style setters
 
-### Layer Management
+### Layers
 
-- `useCreateFillLayer` - Fill layer creation and management
-- `useCreateCircleLayer` - Circle layer for point visualization
+- `useCreateLayer` - Generic layer creation for any layer type
+- `useCreateFillLayer` - Fill layer for polygons
+- `useCreateCircleLayer` - Circle layer for point data
 - `useCreateLineLayer` - Line layer for linear features
 - `useCreateSymbolLayer` - Symbol layer for icons and text
 
-### Source Management
+### Sources
 
 - `useCreateGeoJsonSource` - GeoJSON source with reactive data
-- `useGeoJsonSource` - Simplified source management
+- `useGeoJsonSource` - Hold a GeoJSON source created elsewhere, with error handling
 
 ### Controls
 
-- `useGeolocateControl` - User location tracking
+- `useGeolocateControl` - User location tracking control
 
 ### Events
 
-- `useMapEventListener` - Map event handling
-- `useLayerEventListener` - Layer-specific events
+- `useMapEventListener` - Map events, typed by event name
+- `useLayerEventListener` - Layer-scoped events
+- `useGeolocateEventListener` - Geolocate control events
+- `useMapReloadEvent` - Re-run work after a style reload
 
-### Utilities
+### Camera
 
-- `useFlyTo` - Smooth map animations
-- `useEaseTo` - Easing animations
-- `useJumpTo` - Instant position changes
-- `useFitBounds` - Fit the camera to a bounding box
-- `useZoomTo` - Zoom to a level
-- `useLogger` - Consistent logging
+- `usePanBy` / `usePanTo` - Pan by an offset, or to a coordinate
+- `useRotateTo` / `useSnapToNorth` / `useResetNorth` / `useResetNorthPitch` - Bearing and pitch
+- `useZoomIn` / `useZoomOut` / `useZoomTo` - Zoom control
+- `useFitBounds` / `useCameraForBounds` - Fit the camera to a bounding box
+- `useFitScreenCoordinates` - Fit the camera to two screen points
+
+### Animations and utilities
+
+- `useFlyTo` - Curved fly-to animation
+- `useEaseTo` - Eased camera transition
+- `useJumpTo` - Instant camera move
+- `useLogger` - Logging gated on a `debug` flag
+
+### Performance
+
+- `useDebounce` - Debounce a function
+- `useDebouncedRef` - Immediate and debounced views of one value
+- `useDebouncedWatch` - Debounced `watch`
+
+Full signatures and return types: [Composables API](https://vue-maplibre-gl.pages.dev/api/composables).
 
 ## 🎯 TypeScript Support
 
@@ -302,13 +332,14 @@ useMapEventListener({
 
 ## 📚 Documentation
 
-- **[Getting Started](https://danh121097.github.io/vue-maplibre-gl/guide/getting-started)** - Learn the basics and see examples
-- **[Installation Guide](https://danh121097.github.io/vue-maplibre-gl/guide/installation)** - Detailed setup instructions
-- **[Configuration](https://danh121097.github.io/vue-maplibre-gl/guide/configuration)** - Advanced configuration options
-- **[Components API](https://danh121097.github.io/vue-maplibre-gl/api/components)** - Complete component documentation
-- **[Composables API](https://danh121097.github.io/vue-maplibre-gl/api/composables)** - Composables reference
-- **[TypeScript Types](https://danh121097.github.io/vue-maplibre-gl/api/types)** - Type definitions
-- **[Live Examples](https://danh121097.github.io/vue-maplibre-gl/examples/)** - Interactive demos
+- **[Getting Started](https://vue-maplibre-gl.pages.dev/guide/getting-started)** - Learn the basics and see examples
+- **[Installation Guide](https://vue-maplibre-gl.pages.dev/guide/installation)** - Detailed setup instructions
+- **[Configuration](https://vue-maplibre-gl.pages.dev/guide/configuration)** - Advanced configuration options
+- **[Components API](https://vue-maplibre-gl.pages.dev/api/components)** - Complete component documentation
+- **[Composables API](https://vue-maplibre-gl.pages.dev/api/composables)** - Composables reference
+- **[TypeScript Types](https://vue-maplibre-gl.pages.dev/api/types)** - Type definitions
+- **[SSR / Nuxt](https://vue-maplibre-gl.pages.dev/guide/ssr-nuxt)** - Server-side rendering and the Nuxt module
+- **[Live Examples](https://vue-maplibre-gl.pages.dev/examples/)** - Interactive demos
 
 ## 🛠️ Development
 
@@ -334,7 +365,7 @@ bun run docs:dev
 
 - **🎯 Vue 3 Native** - Built specifically for Vue 3 with Composition API support
 - **🗺️ MapLibre GL JS** - Uses the open-source MapLibre GL JS for high-performance rendering
-- **🧩 Component-Based** - 10+ Vue components for maps, layers, sources, markers, and controls
+- **🧩 Component-Based** - 10 Vue components for maps, layers, sources, markers, and controls
 - **🔧 Powerful Composables** - 38 composables for map management, animations, and utilities
 - **📚 Comprehensive Documentation** - Detailed guides, API references, and examples
 - **⚡ High Performance** - Optimized for performance with automatic resource cleanup
@@ -347,25 +378,12 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ### Development Setup
 
+The Development section above has the clone-and-run steps. Before opening a pull request:
+
 ```bash
-# Clone the repository
-git clone https://github.com/danh121097/vue-maplibre-gl.git
-cd vue-maplibre-gl
-
-# Install dependencies
-bun install
-
-# Start development server
-bun run dev
-
-# Run tests
 bun run test
-
-# Build the library
-bun run build
-
-# Run documentation
-bun run docs:dev
+bun run type-check
+bun run lint:check
 ```
 
 ## 📄 License
@@ -380,7 +398,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📖 [Documentation](https://danh121097.github.io/vue-maplibre-gl/) - Comprehensive guides and API reference
+- 📖 [Documentation](https://vue-maplibre-gl.pages.dev/) - Comprehensive guides and API reference
 - 🐛 [Issues](https://github.com/danh121097/vue-maplibre-gl/issues) - Bug reports and feature requests
 - 💬 [Discussions](https://github.com/danh121097/vue-maplibre-gl/discussions) - Community discussions and questions
 - ⭐ [GitHub](https://github.com/danh121097/vue-maplibre-gl) - Star the project if you find it useful!
