@@ -37,17 +37,18 @@ const SCRIPT_RE = /\b(?:bun|npm|pnpm|yarn)\s+run\s+([a-z0-9:_-]+)/g;
 const DIST_RE = /vue3-maplibre-gl(?:@[^/\s]+)?\/(dist\/[A-Za-z0-9._/-]+)/g;
 
 /**
- * The size of the test suite, as the overview states it, in either spelling:
- * "32 test files", or "223 tests across 32 files". The number that was there
- * said 107 across 19 files while the suite had grown to 32 — and the second
- * spelling was the one the check did not read, which is how it stayed wrong.
+ * The size of the test suite, as the overview states it, in any of its
+ * spellings: "32 test files", "223 tests across 32 files", or the bare
+ * "223 across 32 files" a table cell uses once the row header supplies the
+ * noun. Each spelling in turn was one the check did not read, and each in turn
+ * is how a stale 107 across 19 files survived a whole major.
  * Only the file count is asserted:
  * it is a glob, whereas the number of assertions is only knowable by running
  * them, and a check that has to run the suite to read the docs is not a check
  * anyone will keep.
  */
 const TEST_FILE_COUNT_RE =
-  /\b(\d+)\s+test\s+files\b|\b\d+\s+(?:tests?|assertions?)\s+across\s+(\d+)\s+files\b/g;
+  /\b(\d+)\s+test\s+files\b|\b\d+\s+(?:tests?|assertions?)\s+across\s+(\d+)\s+files\b|\b\d+\s+across\s+(\d+)\s+files\b/g;
 
 /** Every `*.test.ts` under a `__tests__` directory, which is where they live. */
 function testFileCount(dir: string): number {
@@ -132,10 +133,11 @@ export function checkReferences(
           ),
           ...[...line.matchAll(TEST_FILE_COUNT_RE)].map(
             (match): [string, string, number, string] => [
-              // Either spelling of the same claim: "32 test files", or the
-              // "223 tests across 32 files" form the roadmap uses, which went
-              // unchecked and sat at a stale 19 for a whole major.
-              (match[1] ?? match[2])!,
+              // Any spelling of the same claim: "32 test files", "223 tests
+              // across 32 files" as the roadmap writes it, or the bare "223
+              // across 32 files" of a table row. Each went unchecked in turn,
+              // and each let a stale 19 sit for a whole major.
+              (match[1] ?? match[2] ?? match[3])!,
               'test files',
               testFiles,
               'the repository has',

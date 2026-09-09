@@ -86,6 +86,16 @@ describe('checkReferences', () => {
     expect(problems('40 assertions across 2 files', 2)).toEqual([]);
   });
 
+  it('reads the bare "N across M files" a table row uses', () => {
+    // The spelling that survived the previous widening: a table whose row
+    // header already says "Unit Tests" drops the noun from the cell, so
+    // neither "test files" nor "tests across" appears anywhere on the line.
+    expect(problems('| **Unit Tests** | 223 across 2 files |', 2)).toEqual([]);
+    expect(problems('| **Unit Tests** | 107 across 19 files |', 2)).toEqual([
+      'error: the docs say 19 test files, the repository has 2',
+    ]);
+  });
+
   it('leaves a count that is not a total claim alone', () => {
     // "3 composables share one factory" is a fact about three of them.
     expect(problems('3 composables share one factory.')).toEqual([]);
