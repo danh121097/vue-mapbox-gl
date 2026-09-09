@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/danh121097/vue-maplibre-gl",
+    "url": "git+https://github.com/danh121097/vue-maplibre-gl.git",
     "directory": "nuxt"
   },
   "keywords": [
