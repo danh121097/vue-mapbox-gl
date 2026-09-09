@@ -42,15 +42,17 @@ You can also use Vue MapLibre GL directly from a CDN.
 
 For the UMD build, load the global `maplibregl` script first: `maplibre-gl` is externalized there, exactly as it is for a package-manager install.
 
+Pin the majors rather than `@latest`. `maplibre-gl@latest` now resolves to v6, which is outside this package's `^5.6.1` peer range and no longer ships `dist/maplibre-gl.js` at all, so the tag silently 404s.
+
 ```html
-<script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
-<script src="https://unpkg.com/vue3-maplibre-gl@latest/dist/index.umd.cjs"></script>
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/vue3-maplibre-gl@6/dist/index.umd.cjs"></script>
 <link
-  href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css"
+  href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css"
   rel="stylesheet"
 />
 <link
-  href="https://unpkg.com/vue3-maplibre-gl@latest/dist/style.css"
+  href="https://unpkg.com/vue3-maplibre-gl@6/dist/style.css"
   rel="stylesheet"
 />
 ```
