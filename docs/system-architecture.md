@@ -756,7 +756,7 @@ export function useCustomListener(target: MapInstance, handler: Callback) {
 
 ### Test Coverage
 
-233 tests across 34 files, run with Vitest under happy-dom. Coverage is enforced
+241 tests across 35 files, run with Vitest under happy-dom. Coverage is enforced
 as a ratchet in `vitest.config.ts` — see
 [`code-standards.md`](./code-standards.md).
 

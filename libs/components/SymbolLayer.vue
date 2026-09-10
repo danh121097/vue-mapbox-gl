@@ -87,6 +87,10 @@ interface Emits {
 // Component props with sensible defaults
 const props = withDefaults(defineProps<Partial<LayerProps>>(), {
   visible: true,
+  // `FilterSpecification` includes `boolean`, so Vue's Boolean prop casting turns an
+  // omitted `filter` into `false` -- a filter that matches nothing, leaving the layer
+  // on the map but rendering zero features. A declared default wins over that casting.
+  filter: () => ['all'] as FilterSpecification,
 });
 
 // Component events

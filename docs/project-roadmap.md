@@ -24,7 +24,7 @@ a style switch left them off the map.
 | ----------- | --------------------------------------------------------- |
 | Components  | 10                                                        |
 | Composables | 38, all exported from the package root                    |
-| Tests       | 233 across 34 files                                       |
+| Tests       | 241 across 35 files                                       |
 | Coverage    | 42% statements / 37% branches / 40% functions / 43% lines |
 | Nuxt module | `nuxt-maplibre-gl` 2.1.0                                  |
 
