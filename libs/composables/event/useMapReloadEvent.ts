@@ -81,6 +81,11 @@ export function useMapReloadEvent(
 
   const { logError } = useLogger(props.debug ?? false);
   const loadStatus = ref<MapReloadEventStatus>(MapReloadEventStatus.NotLoaded);
+  // Whether `styledataloading` has been seen since the last `style.load`. See
+  // `handleStyleLoadEvent` for what it discriminates.
+  let sawStyleUnload = false;
+  // Pending rebuild after an in-place style diff, so teardown can cancel it.
+  let rebuildTimer: Nullable<ReturnType<typeof setTimeout>> = null;
 
   // Computed properties for better reactivity and performance
   const mapInstance = computed(() => unref(props.map));
@@ -130,6 +135,7 @@ export function useMapReloadEvent(
    * MapLibre listener for `styledataloading`. Ignores the event argument.
    */
   function handleUnloadEvent(): void {
+    sawStyleUnload = true;
     applyUnload(mapInstance.value);
   }
 
@@ -172,6 +178,43 @@ export function useMapReloadEvent(
   }
 
   /**
+   * Listener for `style.load`, which is the only signal an in-place style swap
+   * gives.
+   *
+   * `map.setStyle(next)` defaults to `diff: true`, and that path does not
+   * reload the style: it diffs the serialized current style — which includes
+   * every source and layer this library added at runtime — against the new
+   * one and runs `removeSource`/`removeLayer` for everything the new style
+   * does not itself declare. So the map is emptied of this composable's
+   * objects while no `styledataloading` fires, `loadStatus` still reads
+   * `Loaded`, and the `styledata` that follows is swallowed by the
+   * already-loaded guard. The layers were simply gone until the next full
+   * reload.
+   *
+   * A full reload fires `style.load` too, right after the `styledata` that
+   * already rebuilt everything. `styledataloading` is what separates the two
+   * cases: it precedes a reload and never precedes a diff.
+   */
+  function handleStyleLoadEvent(): void {
+    if (sawStyleUnload) {
+      // A reload: `styledataloading` -> `styledata` already ran the cycle.
+      sawStyleUnload = false;
+      return;
+    }
+
+    // Release synchronously, so every subscriber on this map has let go
+    // before any of them rebuilds — a layer added back before its source
+    // would fail the source-exists check and never be created.
+    applyUnload(mapInstance.value);
+
+    if (rebuildTimer) clearTimeout(rebuildTimer);
+    rebuildTimer = setTimeout(() => {
+      rebuildTimer = null;
+      applyLoad(false);
+    }, 0);
+  }
+
+  /**
    * Forces a load event to be triggered
    */
   function forceLoad(): void {
@@ -192,6 +235,7 @@ export function useMapReloadEvent(
     try {
       map.off('styledata', handleLoadEvent);
       map.off('styledataloading', handleUnloadEvent);
+      map.off('style.load', handleStyleLoadEvent);
       map.off('load', handleLoadEvent);
     } catch (error) {
       logError('Error clearing map reload event listeners:', error);
@@ -246,6 +290,7 @@ export function useMapReloadEvent(
 
         map.on('styledata', handleLoadEvent);
         map.on('styledataloading', handleUnloadEvent);
+        map.on('style.load', handleStyleLoadEvent);
       } catch (error) {
         loadStatus.value = MapReloadEventStatus.Error;
         logError('Error setting up map reload event listeners:', error);
@@ -265,6 +310,10 @@ export function useMapReloadEvent(
     if (initialLoadTimer) {
       clearTimeout(initialLoadTimer);
       initialLoadTimer = null;
+    }
+    if (rebuildTimer) {
+      clearTimeout(rebuildTimer);
+      rebuildTimer = null;
     }
     handleUnloadEvent();
     stopEffect();

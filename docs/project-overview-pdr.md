@@ -14,7 +14,7 @@ Empower Vue 3 developers to build high-performance, interactive maps with minima
 - **Framework integration** - First-class Nuxt support with SSR out of the box
 - **Zero performance compromise** - Optimized bundle size, memory management, and rendering
 
-## Current Release: v6.1.0
+## Current Release: v6.1.1
 
 ### Release Summary
 
@@ -28,6 +28,10 @@ change no API; v6.0.4 ships a `dist/` byte-identical to v6.0.3. **v6.1.0** adds
 `dist/style-with-maplibre.css`, an opt-in stylesheet carrying MapLibre's rules
 alongside this package's, and carries the Nuxt build and range fixes that
 landed after v6.0.4 was tagged. Nothing that already worked changes.
+**v6.1.1** fixes a defect present since the layer composables were written:
+`map.setStyle(next)` diffs the style in place by default, which removes every
+source and layer added at runtime, and nothing rebuilt them until the next full
+reload.
 
 Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 
@@ -42,7 +46,7 @@ Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 | **Correctness**   | v6 fixed reactive status, camera promise settlement, listener attachment ordering, and post-load error recovery  |
 | **SSR Support**   | Full Nuxt SSR/SSG compatibility with browser guards                                                              |
 | **Nuxt Module**   | nuxt-maplibre-gl v2.1.0, auto-importing all 38 composables                                                       |
-| **Testing**       | 228 tests across 33 files, with a coverage ratchet in CI                                                         |
+| **Testing**       | 233 tests across 34 files, with a coverage ratchet in CI                                                         |
 | **Documentation** | VitePress docs with API reference, guides, and examples                                                          |
 
 ## Feature Set
@@ -247,7 +251,7 @@ components and composables it imports rather than the figure above.
 ### Code Quality
 
 - **Framework**: TypeScript with strict mode
-- **Testing**: vitest, 228 tests across 33 files, with a coverage ratchet
+- **Testing**: vitest, 233 tests across 34 files, with a coverage ratchet
 - **Linting**: ESLint with Vue 3 plugin
 - **Formatting**: Prettier with consistent style
 
@@ -275,7 +279,7 @@ gone rather than restated.
 | -------------- | --------------------------------------------------------- | -------------------------------------------------------------------- |
 | Components     | 10                                                        | `libs/components`                                                    |
 | Composables    | 38                                                        | exported from the package root, all auto-imported by the Nuxt module |
-| Tests          | 33 test files                                             | `bun run test`                                                       |
+| Tests          | 34 test files                                             | `bun run test`                                                       |
 | Coverage floor | 39% statements / 34% branches / 37% functions / 40% lines | ratchet in `vitest.config.ts`; CI fails if it drops                  |
 | Type safety    | strict TypeScript, types generated on build               | `tsconfig.json`, `bun run build`                                     |
 

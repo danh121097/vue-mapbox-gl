@@ -116,6 +116,80 @@ describe('useMapReloadEvent teardown', () => {
     expect(calls).toEqual(['load:first', 'unload:first', 'load:second']);
   });
 
+  it('rebuilds after an in-place style diff, which only fires style.load', async () => {
+    const mock = new MockMap();
+    const map = shallowRef(mock as unknown as Map);
+    const calls: string[] = [];
+
+    withSetup(() =>
+      useMapReloadEvent({
+        map,
+        callbacks: {
+          onLoad: () => calls.push('load'),
+          onUnload: () => calls.push('unload'),
+        },
+      }),
+    );
+
+    mock.fire('load', { type: 'load', target: mock });
+    expect(calls).toEqual(['load']);
+
+    // `map.setStyle(next)` defaults to `diff: true`: it removes every source
+    // and layer the new style does not declare -- which is all of the ones
+    // this library added -- without reloading the style. No
+    // `styledataloading`, so nothing else here marks the map as emptied.
+    mock.fire('style.load', { type: 'style.load', target: mock });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(calls).toEqual(['load', 'unload', 'load']);
+  });
+
+  it('does not double-rebuild on the style.load that ends a full reload', async () => {
+    const mock = new MockMap();
+    const map = shallowRef(mock as unknown as Map);
+    const calls: string[] = [];
+
+    withSetup(() =>
+      useMapReloadEvent({
+        map,
+        callbacks: {
+          onLoad: () => calls.push('load'),
+          onUnload: () => calls.push('unload'),
+        },
+      }),
+    );
+
+    mock.fire('load', { type: 'load', target: mock });
+
+    // A full reload -- `setStyle(next, { diff: false })`, or a diff MapLibre
+    // could not apply -- fires all three, `style.load` last.
+    mock.fire('styledataloading', { type: 'styledataloading', target: mock });
+    mock.fire('styledata', { type: 'styledata', target: mock });
+    mock.fire('style.load', { type: 'style.load', target: mock });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(calls).toEqual(['load', 'unload', 'load']);
+  });
+
+  it('drops a pending style-diff rebuild on unmount', async () => {
+    const mock = new MockMap();
+    const map = shallowRef(mock as unknown as Map);
+    const onLoad = vi.fn();
+
+    const { unmount } = withSetupScope(() =>
+      useMapReloadEvent({ map, callbacks: { onLoad } }),
+    );
+
+    mock.fire('load', { type: 'load', target: mock });
+    expect(onLoad).toHaveBeenCalledTimes(1);
+
+    mock.fire('style.load', { type: 'style.load', target: mock });
+    unmount();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(onLoad).toHaveBeenCalledTimes(1);
+  });
+
   it('does not fire the deferred initial load after unmount', async () => {
     const mock = new MockMap();
     mock.setStyleLoaded(true);

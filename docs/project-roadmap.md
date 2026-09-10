@@ -11,18 +11,20 @@ document that is wrong a month later.
 
 ## Current state
 
-**v6.1.0 is the current version.** v6.0.0 was published and then deprecated: it
+**v6.1.1 is the current version.** v6.0.0 was published and then deprecated: it
 was built before `maplibre-gl` moved to `peerDependencies`, so its manifest still
 declared the runtime as a direct dependency. v6.0.1 corrected that manifest;
 v6.0.2, v6.0.3 and v6.0.4 changed only docs and CI. v6.1.0 adds the opt-in
 `dist/style-with-maplibre.css` and releases the Nuxt fixes that landed after
-v6.0.4 was tagged; it is otherwise additive.
+v6.0.4 was tagged; it is otherwise additive. v6.1.1 rebuilds layers and sources
+after an in-place style diff, which `map.setStyle` takes by default — before it,
+a style switch left them off the map.
 
 |             |                                                           |
 | ----------- | --------------------------------------------------------- |
 | Components  | 10                                                        |
 | Composables | 38, all exported from the package root                    |
-| Tests       | 228 across 33 files                                       |
+| Tests       | 233 across 34 files                                       |
 | Coverage    | 42% statements / 37% branches / 40% functions / 43% lines |
 | Nuxt module | `nuxt-maplibre-gl` 2.1.0                                  |
 

@@ -5,7 +5,7 @@
 **vue3-maplibre-gl** is a comprehensive Vue 3 component library for MapLibre GL JS with 10 components, 38 composables, full TypeScript support, and Nuxt integration.
 
 **Repository**: [danh121097/vue-maplibre-gl](https://github.com/danh121097/vue-maplibre-gl)
-**Main Package**: `vue3-maplibre-gl@6.1.0` (npm)
+**Main Package**: `vue3-maplibre-gl@6.1.1` (npm)
 **Nuxt Module**: `nuxt-maplibre-gl@2.1.0` (npm)
 
 ## Directory Structure
@@ -168,7 +168,7 @@ Measured, not estimated. Re-measure before quoting these anywhere public.
 | ----------------------- | -------------------------------- |
 | **Components**          | 10                               |
 | **Composables**         | 38                               |
-| **Unit Tests**          | 228 across 33 files              |
+| **Unit Tests**          | 233 across 34 files              |
 | **Documentation Pages** | 23 Markdown pages under `docs`   |
 | **Lines of Code**       | 11,153 in `libs`, tests excluded |
 
@@ -404,7 +404,7 @@ export type GeolocateHandler = (e: GeolocateSuccess) => void;
 **Main Package** (`libs/`):
 
 - **Name**: `vue3-maplibre-gl`
-- **Version**: `6.1.0`
+- **Version**: `6.1.1`
 - **Main**: `dist/index.js` (ESM default)
 - **UMD**: `dist/index.umd.cjs`
 - **Exports**: Named exports, subpaths for components/composables
@@ -424,7 +424,7 @@ export type GeolocateHandler = (e: GeolocateSuccess) => void;
 - **Configuration**: `vitest.config.ts`
 - **Test Files**: `__tests__/` directories
 
-### Test Coverage (228 tests across 33 files)
+### Test Coverage (233 tests across 34 files)
 
 - `create-event-listener-composable.test.ts` - Factory pattern tests
 - `create-layer-property-setters.test.ts` - Type preservation tests
