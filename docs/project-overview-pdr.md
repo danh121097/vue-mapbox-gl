@@ -42,7 +42,7 @@ Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 | **Correctness**   | v6 fixed reactive status, camera promise settlement, listener attachment ordering, and post-load error recovery  |
 | **SSR Support**   | Full Nuxt SSR/SSG compatibility with browser guards                                                              |
 | **Nuxt Module**   | nuxt-maplibre-gl v2.1.0, auto-importing all 38 composables                                                       |
-| **Testing**       | 228 tests across 33 files, with a coverage ratchet in CI                                                         |
+| **Testing**       | 233 tests across 34 files, with a coverage ratchet in CI                                                         |
 | **Documentation** | VitePress docs with API reference, guides, and examples                                                          |
 
 ## Feature Set
@@ -247,7 +247,7 @@ components and composables it imports rather than the figure above.
 ### Code Quality
 
 - **Framework**: TypeScript with strict mode
-- **Testing**: vitest, 228 tests across 33 files, with a coverage ratchet
+- **Testing**: vitest, 233 tests across 34 files, with a coverage ratchet
 - **Linting**: ESLint with Vue 3 plugin
 - **Formatting**: Prettier with consistent style
 
@@ -275,7 +275,7 @@ gone rather than restated.
 | -------------- | --------------------------------------------------------- | -------------------------------------------------------------------- |
 | Components     | 10                                                        | `libs/components`                                                    |
 | Composables    | 38                                                        | exported from the package root, all auto-imported by the Nuxt module |
-| Tests          | 33 test files                                             | `bun run test`                                                       |
+| Tests          | 34 test files                                             | `bun run test`                                                       |
 | Coverage floor | 39% statements / 34% branches / 37% functions / 40% lines | ratchet in `vitest.config.ts`; CI fails if it drops                  |
 | Type safety    | strict TypeScript, types generated on build               | `tsconfig.json`, `bun run build`                                     |
 

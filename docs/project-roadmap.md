@@ -22,7 +22,7 @@ v6.0.4 was tagged; it is otherwise additive.
 | ----------- | --------------------------------------------------------- |
 | Components  | 10                                                        |
 | Composables | 38, all exported from the package root                    |
-| Tests       | 228 across 33 files                                       |
+| Tests       | 233 across 34 files                                       |
 | Coverage    | 42% statements / 37% branches / 40% functions / 43% lines |
 | Nuxt module | `nuxt-maplibre-gl` 2.1.0                                  |
 
