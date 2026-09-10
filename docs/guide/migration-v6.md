@@ -169,6 +169,12 @@ import 'vue3-maplibre-gl/dist/style.css';
 
 Miss the first line and the map renders without controls, attribution, or popup styling.
 
+If you preferred the single import, `vue3-maplibre-gl/dist/style-with-maplibre.css`
+is the same combination published as its own file. The difference from v5 is that
+it is opt-in: apps that already load MapLibre's stylesheet keep importing
+`dist/style.css` and never pay for the second copy. See
+[Stylesheets](/guide/installation#stylesheets).
+
 The Nuxt module handles this for you: `maplibre: { css: true }` (the default) now injects both stylesheets.
 
 ## MapLibre runtime exports moved to a subpath

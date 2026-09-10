@@ -8,7 +8,7 @@
 
 - Auto-imports all 10 map components (Maplibre, GeoJsonSource, FillLayer, etc.)
 - Auto-imports all 38 composables (useFlyTo, useMapEventListener, etc.)
-- Auto-imports CSS — both `maplibre-gl/dist/maplibre-gl.css` and `vue3-maplibre-gl/dist/style.css`
+- Auto-imports CSS — `vue3-maplibre-gl/dist/style-with-maplibre.css`, which is MapLibre's own stylesheet plus the library's container rules
 - SSR-safe — components register client-only, `maplibre-gl` is kept out of the server bundle
 - Zero configuration required
 

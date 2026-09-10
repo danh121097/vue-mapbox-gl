@@ -20,7 +20,7 @@ v6.0.2, v6.0.3 and v6.0.4 changed only docs and CI.
 | ----------- | --------------------------------------------------------- |
 | Components  | 10                                                        |
 | Composables | 38, all exported from the package root                    |
-| Tests       | 224 across 32 files                                       |
+| Tests       | 228 across 33 files                                       |
 | Coverage    | 42% statements / 37% branches / 40% functions / 43% lines |
 | Nuxt module | `nuxt-maplibre-gl` 2.0.2, published                       |
 

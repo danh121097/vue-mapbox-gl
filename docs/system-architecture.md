@@ -657,7 +657,8 @@ The `nuxt-maplibre-gl` module handles:
    The composable list is explicit in `nuxt/src/module.ts`; a name missing from
    it is silently not auto-imported, so it must be kept in step with the
    package's exports.
-2. **CSS auto-inject** - Styles loaded automatically
+2. **CSS auto-inject** - `vue3-maplibre-gl/dist/style-with-maplibre.css` loaded
+   automatically, which is MapLibre's own stylesheet plus this package's rules
 3. **Browser guards** - SSR-safe out of the box
 4. **Transpilation** - vue3-maplibre-gl transpiled for SSR
 5. **Build config** - maplibre-gl excluded from SSR bundle
@@ -755,7 +756,7 @@ export function useCustomListener(target: MapInstance, handler: Callback) {
 
 ### Test Coverage
 
-224 tests across 32 files, run with Vitest under happy-dom. Coverage is enforced
+228 tests across 33 files, run with Vitest under happy-dom. Coverage is enforced
 as a ratchet in `vitest.config.ts` — see
 [`code-standards.md`](./code-standards.md).
 

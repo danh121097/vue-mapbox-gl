@@ -168,7 +168,7 @@ Measured, not estimated. Re-measure before quoting these anywhere public.
 | ----------------------- | -------------------------------- |
 | **Components**          | 10                               |
 | **Composables**         | 38                               |
-| **Unit Tests**          | 224 across 32 files              |
+| **Unit Tests**          | 228 across 33 files              |
 | **Documentation Pages** | 23 Markdown pages under `docs`   |
 | **Lines of Code**       | 11,153 in `libs`, tests excluded |
 
@@ -424,7 +424,7 @@ export type GeolocateHandler = (e: GeolocateSuccess) => void;
 - **Configuration**: `vitest.config.ts`
 - **Test Files**: `__tests__/` directories
 
-### Test Coverage (224 tests across 32 files)
+### Test Coverage (228 tests across 33 files)
 
 - `create-event-listener-composable.test.ts` - Factory pattern tests
 - `create-layer-property-setters.test.ts` - Type preservation tests
@@ -486,6 +486,10 @@ it is not counted here.
 | UMD (`index.umd.cjs`) | 84 KB  | 20 KB   |
 | ES entry chunks       | 8.4 KB | 2.0 KB  |
 | `style.css`           | 78 B   | —       |
+
+`style-with-maplibre.css` (70 KB raw) is the opt-in alternative to `style.css`:
+the same rules with MapLibre's own stylesheet prepended, so one import covers
+both. An app imports one or the other, never both.
 
 The ES build is split per module, so an app pays only for what it imports.
 

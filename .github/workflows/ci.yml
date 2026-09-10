@@ -73,6 +73,14 @@ jobs:
           # narrower module graph, this catches it.
           grep -q 'maplibre-container' dist/style.css || exit 1
           test "$(wc -c < dist/style.css)" -lt 2000 || exit 1
+          # The opt-in combined stylesheet: MapLibre's rules then this
+          # package's. It is written by a post-build step rather than by Vite,
+          # so a build that stops chaining that step leaves the file stale or
+          # absent while every Vite assertion above still passes.
+          test -f dist/style-with-maplibre.css || exit 1
+          grep -q 'maplibregl-ctrl' dist/style-with-maplibre.css || exit 1
+          grep -q 'maplibre-container' dist/style-with-maplibre.css || exit 1
+          test "$(wc -c < dist/style-with-maplibre.css)" -gt 20000 || exit 1
           # Every SFC leaves a one-line facade module (`Foo.vue2.js`) behind
           # that nothing imports; the build drops those. One showing up again
           # means the orphan-chunk plugin has stopped running.

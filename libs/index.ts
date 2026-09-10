@@ -1,7 +1,9 @@
 // Styles are not imported here. MapLibre's own stylesheet is a peer concern:
 // consumers import 'maplibre-gl/dist/maplibre-gl.css' themselves, as MapLibre's
 // docs instruct. This package's own rules ship as
-// 'vue3-maplibre-gl/dist/style.css', the path the docs use throughout.
+// 'vue3-maplibre-gl/dist/style.css', the path the docs use throughout, and
+// 'vue3-maplibre-gl/dist/style-with-maplibre.css' is the two of them combined
+// for consumers who would rather import one file.
 
 // Export all composables
 export * from './composables';

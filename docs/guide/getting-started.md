@@ -51,14 +51,21 @@ pnpm add vue3-maplibre-gl maplibre-gl
 
 ## Import Styles
 
-Don't forget to import the CSS:
+Don't forget to import the CSS. One file covers both this package and MapLibre:
+
+```js
+import 'vue3-maplibre-gl/dist/style-with-maplibre.css';
+```
+
+If your app already imports MapLibre's stylesheet elsewhere, import this
+package's own rules instead so MapLibre's CSS is not shipped twice:
 
 ```js
 import 'maplibre-gl/dist/maplibre-gl.css';
 import 'vue3-maplibre-gl/dist/style.css';
 ```
 
-You can import this in your main.js file or in individual components.
+You can import either in your main.js file or in individual components.
 
 ## Basic Usage
 
