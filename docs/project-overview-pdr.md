@@ -14,7 +14,7 @@ Empower Vue 3 developers to build high-performance, interactive maps with minima
 - **Framework integration** - First-class Nuxt support with SSR out of the box
 - **Zero performance compromise** - Optimized bundle size, memory management, and rendering
 
-## Current Release: v6.0.4
+## Current Release: v6.1.0
 
 ### Release Summary
 
@@ -24,7 +24,10 @@ a status sees it change. `maplibre-gl` moved to `peerDependencies`, and the
 package stopped shipping MapLibre's stylesheet. **v6.0.1** corrects the manifest
 of v6.0.0, which was built before the peer change landed; v6.0.0 is deprecated
 on npm. **v6.0.2**, **v6.0.3** and **v6.0.4** are documentation and CI releases and
-change no API; v6.0.4 ships a `dist/` byte-identical to v6.0.3.
+change no API; v6.0.4 ships a `dist/` byte-identical to v6.0.3. **v6.1.0** adds
+`dist/style-with-maplibre.css`, an opt-in stylesheet carrying MapLibre's rules
+alongside this package's, and carries the Nuxt build and range fixes that
+landed after v6.0.4 was tagged. Nothing that already worked changes.
 
 Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 
@@ -38,7 +41,7 @@ Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 | **TypeScript**    | Comprehensive type definitions with event handler types                                                          |
 | **Correctness**   | v6 fixed reactive status, camera promise settlement, listener attachment ordering, and post-load error recovery  |
 | **SSR Support**   | Full Nuxt SSR/SSG compatibility with browser guards                                                              |
-| **Nuxt Module**   | nuxt-maplibre-gl v2.0.2, auto-importing all 38 composables                                                       |
+| **Nuxt Module**   | nuxt-maplibre-gl v2.1.0, auto-importing all 38 composables                                                       |
 | **Testing**       | 228 tests across 33 files, with a coverage ratchet in CI                                                         |
 | **Documentation** | VitePress docs with API reference, guides, and examples                                                          |
 

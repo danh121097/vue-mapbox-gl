@@ -5,8 +5,8 @@
 **vue3-maplibre-gl** is a comprehensive Vue 3 component library for MapLibre GL JS with 10 components, 38 composables, full TypeScript support, and Nuxt integration.
 
 **Repository**: [danh121097/vue-maplibre-gl](https://github.com/danh121097/vue-maplibre-gl)
-**Main Package**: `vue3-maplibre-gl@6.0.4` (npm)
-**Nuxt Module**: `nuxt-maplibre-gl@2.0.2` (npm)
+**Main Package**: `vue3-maplibre-gl@6.1.0` (npm)
+**Nuxt Module**: `nuxt-maplibre-gl@2.1.0` (npm)
 
 ## Directory Structure
 
@@ -91,7 +91,7 @@ vue-maplibre-gl/ (root)
 │   ├── style.css                  # Component styles (bundled)
 │   ├── index.ts                   # Main library export
 │   └── test-utils.ts              # Test utilities
-├── nuxt/                          # Nuxt module (v2.0.2)
+├── nuxt/                          # Nuxt module (v2.1.0)
 │   ├── src/
 │   │   ├── module.ts              # Nuxt module setup
 │   │   └── runtime/
@@ -404,7 +404,7 @@ export type GeolocateHandler = (e: GeolocateSuccess) => void;
 **Main Package** (`libs/`):
 
 - **Name**: `vue3-maplibre-gl`
-- **Version**: `6.0.4`
+- **Version**: `6.1.0`
 - **Main**: `dist/index.js` (ESM default)
 - **UMD**: `dist/index.umd.cjs`
 - **Exports**: Named exports, subpaths for components/composables
@@ -412,7 +412,7 @@ export type GeolocateHandler = (e: GeolocateSuccess) => void;
 **Nuxt Module** (`nuxt/`):
 
 - **Name**: `nuxt-maplibre-gl`
-- **Version**: `2.0.2`
+- **Version**: `2.1.0`
 - **Auto-imports**: Components and composables
 - **Features**: CSS auto-inject, SSR support
 
