@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.1.1
+
+### 🐛 Bug Fixes
+
+- Install without bun's cache when publishing the module
+
+- Rebuild layers after an in-place style diff
+
 ## v6.1.0
 
 ### ✨ Features

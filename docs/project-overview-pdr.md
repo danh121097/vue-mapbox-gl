@@ -14,7 +14,7 @@ Empower Vue 3 developers to build high-performance, interactive maps with minima
 - **Framework integration** - First-class Nuxt support with SSR out of the box
 - **Zero performance compromise** - Optimized bundle size, memory management, and rendering
 
-## Current Release: v6.1.0
+## Current Release: v6.1.1
 
 ### Release Summary
 
@@ -28,6 +28,10 @@ change no API; v6.0.4 ships a `dist/` byte-identical to v6.0.3. **v6.1.0** adds
 `dist/style-with-maplibre.css`, an opt-in stylesheet carrying MapLibre's rules
 alongside this package's, and carries the Nuxt build and range fixes that
 landed after v6.0.4 was tagged. Nothing that already worked changes.
+**v6.1.1** fixes a defect present since the layer composables were written:
+`map.setStyle(next)` diffs the style in place by default, which removes every
+source and layer added at runtime, and nothing rebuilt them until the next full
+reload.
 
 Consumer-facing detail is in [the v6 migration guide](./guide/migration-v6.md).
 
