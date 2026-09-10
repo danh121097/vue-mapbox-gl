@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.1.2
+
+### 🐛 Bug Fixes
+
+- Default `filter` so omitting it does not hide the layer
+
 ## v6.1.1
 
 ### 🐛 Bug Fixes
