@@ -8,6 +8,14 @@
  * that by widening the range and ships a module that installs the previous
  * major. The only safe order is root package first, then the module, and this
  * check makes that order mechanical instead of remembered.
+ *
+ * This check asks npm directly, while the `bun install` it guards asks bun's
+ * cached registry manifest — two sources of truth, and releasing 6.1.0 found
+ * the gap between them: npm served the new version seconds after publishing
+ * while bun still held a manifest that had never seen it, so this check passed
+ * and the install right after it failed with "No version matching". That is why
+ * `publish:nuxt` runs `bun install --no-cache`. Do not drop the flag to save
+ * the download; it is what makes this check's answer the one the install uses.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
