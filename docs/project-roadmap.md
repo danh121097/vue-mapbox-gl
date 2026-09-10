@@ -11,18 +11,20 @@ document that is wrong a month later.
 
 ## Current state
 
-**v6.0.4 is the published latest.** v6.0.0 was published and then deprecated: it
+**v6.1.0 is the current version.** v6.0.0 was published and then deprecated: it
 was built before `maplibre-gl` moved to `peerDependencies`, so its manifest still
 declared the runtime as a direct dependency. v6.0.1 corrected that manifest;
-v6.0.2, v6.0.3 and v6.0.4 changed only docs and CI.
+v6.0.2, v6.0.3 and v6.0.4 changed only docs and CI. v6.1.0 adds the opt-in
+`dist/style-with-maplibre.css` and releases the Nuxt fixes that landed after
+v6.0.4 was tagged; it is otherwise additive.
 
 |             |                                                           |
 | ----------- | --------------------------------------------------------- |
 | Components  | 10                                                        |
 | Composables | 38, all exported from the package root                    |
-| Tests       | 224 across 32 files                                       |
+| Tests       | 228 across 33 files                                       |
 | Coverage    | 42% statements / 37% branches / 40% functions / 43% lines |
-| Nuxt module | `nuxt-maplibre-gl` 2.0.2, published                       |
+| Nuxt module | `nuxt-maplibre-gl` 2.1.0                                  |
 
 Coverage is enforced as a ratchet in `vitest.config.ts`: every threshold is the
 number a file actually reached, so a change that lowers it fails CI. The global

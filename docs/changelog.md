@@ -1,5 +1,21 @@
 # Changelog
 
+## v6.1.0
+
+### ✨ Features
+
+- Ship an opt-in stylesheet that carries MapLibre's rules
+
+### 🐛 Bug Fixes
+
+- Generate the playground types before the module build
+
+- Restore the major-tracking vue3-maplibre-gl range
+
+### 📚 Documentation
+
+- Reconcile the maintainer docs with the 6.0.4 release
+
 ## v6.0.4
 
 ### 🐛 Bug Fixes

@@ -5,8 +5,8 @@
 **vue3-maplibre-gl** is a comprehensive Vue 3 component library for MapLibre GL JS with 10 components, 38 composables, full TypeScript support, and Nuxt integration.
 
 **Repository**: [danh121097/vue-maplibre-gl](https://github.com/danh121097/vue-maplibre-gl)
-**Main Package**: `vue3-maplibre-gl@6.0.4` (npm)
-**Nuxt Module**: `nuxt-maplibre-gl@2.0.2` (npm)
+**Main Package**: `vue3-maplibre-gl@6.1.0` (npm)
+**Nuxt Module**: `nuxt-maplibre-gl@2.1.0` (npm)
 
 ## Directory Structure
 
@@ -91,7 +91,7 @@ vue-maplibre-gl/ (root)
 │   ├── style.css                  # Component styles (bundled)
 │   ├── index.ts                   # Main library export
 │   └── test-utils.ts              # Test utilities
-├── nuxt/                          # Nuxt module (v2.0.2)
+├── nuxt/                          # Nuxt module (v2.1.0)
 │   ├── src/
 │   │   ├── module.ts              # Nuxt module setup
 │   │   └── runtime/
@@ -168,7 +168,7 @@ Measured, not estimated. Re-measure before quoting these anywhere public.
 | ----------------------- | -------------------------------- |
 | **Components**          | 10                               |
 | **Composables**         | 38                               |
-| **Unit Tests**          | 224 across 32 files              |
+| **Unit Tests**          | 228 across 33 files              |
 | **Documentation Pages** | 23 Markdown pages under `docs`   |
 | **Lines of Code**       | 11,153 in `libs`, tests excluded |
 
@@ -404,7 +404,7 @@ export type GeolocateHandler = (e: GeolocateSuccess) => void;
 **Main Package** (`libs/`):
 
 - **Name**: `vue3-maplibre-gl`
-- **Version**: `6.0.4`
+- **Version**: `6.1.0`
 - **Main**: `dist/index.js` (ESM default)
 - **UMD**: `dist/index.umd.cjs`
 - **Exports**: Named exports, subpaths for components/composables
@@ -412,7 +412,7 @@ export type GeolocateHandler = (e: GeolocateSuccess) => void;
 **Nuxt Module** (`nuxt/`):
 
 - **Name**: `nuxt-maplibre-gl`
-- **Version**: `2.0.2`
+- **Version**: `2.1.0`
 - **Auto-imports**: Components and composables
 - **Features**: CSS auto-inject, SSR support
 
@@ -424,7 +424,7 @@ export type GeolocateHandler = (e: GeolocateSuccess) => void;
 - **Configuration**: `vitest.config.ts`
 - **Test Files**: `__tests__/` directories
 
-### Test Coverage (224 tests across 32 files)
+### Test Coverage (228 tests across 33 files)
 
 - `create-event-listener-composable.test.ts` - Factory pattern tests
 - `create-layer-property-setters.test.ts` - Type preservation tests
@@ -486,6 +486,10 @@ it is not counted here.
 | UMD (`index.umd.cjs`) | 84 KB  | 20 KB   |
 | ES entry chunks       | 8.4 KB | 2.0 KB  |
 | `style.css`           | 78 B   | —       |
+
+`style-with-maplibre.css` (70 KB raw) is the opt-in alternative to `style.css`:
+the same rules with MapLibre's own stylesheet prepended, so one import covers
+both. An app imports one or the other, never both.
 
 The ES build is split per module, so an app pays only for what it imports.
 

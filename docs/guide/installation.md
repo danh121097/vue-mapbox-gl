@@ -10,10 +10,10 @@ Every command below installs two packages, because `maplibre-gl` is a peer depen
 This package re-exports MapLibre's own classes and types, and your app imports MapLibre's stylesheet directly. If both your app and this package resolved their own copy of `maplibre-gl`, a `Map` produced by one would fail an `instanceof` check in the other and two copies of the runtime would ship. Declaring it as a peer means there is exactly one, on a version you choose.
 :::
 
-Since v6 the two stylesheets are separate: this package ships only its own rules, and you import MapLibre's own stylesheet the way MapLibre documents it. See [Setup in Vue 3](#setup-in-vue-3).
+Since v6 the two stylesheets are separate: this package ships only its own rules, and you import MapLibre's own stylesheet the way MapLibre documents it. A combined `dist/style-with-maplibre.css` is published for apps that would rather import one file. See [Stylesheets](#stylesheets).
 
 ::: warning pnpm
-pnpm's isolated `node_modules` does not expose a dependency your app did not install itself, so `import 'maplibre-gl/dist/maplibre-gl.css'` fails unless `maplibre-gl` is in your own `package.json`. This has been true since v6 split the stylesheets, independently of the peer dependency.
+pnpm's isolated `node_modules` does not expose a dependency your app did not install itself, so `import 'maplibre-gl/dist/maplibre-gl.css'` fails unless `maplibre-gl` is in your own `package.json`. This has been true since v6 split the stylesheets, independently of the peer dependency. Importing [`vue3-maplibre-gl/dist/style-with-maplibre.css`](#stylesheets) sidesteps it, since that specifier resolves inside this package.
 :::
 
 ::: code-group
@@ -56,6 +56,32 @@ Pin the majors rather than `@latest`. `maplibre-gl@latest` now resolves to v6, w
   rel="stylesheet"
 />
 ```
+
+## Stylesheets
+
+The build externalises MapLibre entirely, so `dist/style.css` carries only this
+package's own rules — the map container's sizing. MapLibre's controls, popups
+and markers are styled by MapLibre's own stylesheet, and omitting it produces an
+unstyled map rather than an error.
+
+`dist/style-with-maplibre.css` is MapLibre's stylesheet followed by this package's, so
+one import covers both:
+
+```js
+import 'vue3-maplibre-gl/dist/style-with-maplibre.css';
+```
+
+Import `dist/style.css` instead when your app already loads
+`maplibre-gl/dist/maplibre-gl.css` — through another map library, a shared
+stylesheet, or a `<link>` tag — so that ~69KB is not shipped twice:
+
+```js
+import 'maplibre-gl/dist/maplibre-gl.css';
+import 'vue3-maplibre-gl/dist/style.css';
+```
+
+Never import both `style-with-maplibre.css` and `maplibre-gl.css`; the second copy wins
+on identical rules and changes nothing, but it doubles the CSS payload.
 
 ## Setup in Vue 3
 
@@ -295,7 +321,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 ### Common Issues
 
-1. **CSS not loading**: Make sure to import both `maplibre-gl/dist/maplibre-gl.css` and `vue3-maplibre-gl/dist/style.css`
+1. **CSS not loading**: Import `vue3-maplibre-gl/dist/style-with-maplibre.css`, or both `maplibre-gl/dist/maplibre-gl.css` and `vue3-maplibre-gl/dist/style.css`. See [Stylesheets](#stylesheets).
 2. **Module not found**: Reinstall `vue3-maplibre-gl` so its `maplibre-gl` dependency is present in `node_modules`
 3. **TypeScript errors**: Update your TypeScript configuration to include the package types
 

@@ -354,7 +354,7 @@ You can copy any example code and paste it into your Vue 3 project. All examples
 ### Map Not Showing
 
 - **Check**: Container has height (e.g., `style="height: 500px"`)
-- **Check**: both stylesheets are imported (`maplibre-gl/dist/maplibre-gl.css` and `vue3-maplibre-gl/dist/style.css`)
+- **Check**: the stylesheets are imported — either `vue3-maplibre-gl/dist/style-with-maplibre.css` on its own, or both `maplibre-gl/dist/maplibre-gl.css` and `vue3-maplibre-gl/dist/style.css`
 - **Check**: MapOptions includes valid `style` URL
 
 ### Events Not Firing

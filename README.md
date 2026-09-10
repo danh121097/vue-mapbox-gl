@@ -49,6 +49,14 @@ yarn add vue3-maplibre-gl maplibre-gl
 pnpm add vue3-maplibre-gl maplibre-gl
 ```
 
+### Styles
+
+`vue3-maplibre-gl/dist/style-with-maplibre.css` is MapLibre's stylesheet plus this
+package's own rules, so one import covers both. Apps that already load
+`maplibre-gl/dist/maplibre-gl.css` should import
+`vue3-maplibre-gl/dist/style.css` alongside it instead, rather than shipping
+MapLibre's CSS twice.
+
 ## 🚀 Quick Start
 
 ```vue
@@ -89,8 +97,7 @@ import {
   Popup,
   GeolocateControls,
 } from 'vue3-maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import 'vue3-maplibre-gl/dist/style.css';
+import 'vue3-maplibre-gl/dist/style-with-maplibre.css';
 
 const mapOptions = ref({
   style: 'https://demotiles.maplibre.org/style.json',

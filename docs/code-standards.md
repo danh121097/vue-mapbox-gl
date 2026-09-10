@@ -492,7 +492,9 @@ watch(
 The package ships one shared rule in `style.css`, for `.maplibre-container`.
 There is no theming variable layer — do not document one until it exists.
 Since v6 this stylesheet carries only this package's rules; MapLibre's own
-stylesheet is imported by the app.
+stylesheet is imported by the app. `dist/style-with-maplibre.css` is generated
+from the two by a post-build step — build output, never a place to author
+rules.
 
 ### No Style Conflicts
 

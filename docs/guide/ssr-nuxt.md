@@ -64,7 +64,7 @@ export default defineNuxtConfig({
 
 The module automatically configures:
 
-1. **CSS Auto-Import** - `maplibre-gl/dist/maplibre-gl.css` and `vue3-maplibre-gl/dist/style.css` injected
+1. **CSS Auto-Import** - `vue3-maplibre-gl/dist/style-with-maplibre.css` injected, which carries MapLibre's own rules and the library's
 2. **Component Auto-Import** - All 10 components available without imports
 3. **Composable Auto-Import** - All 38 composables available without imports
 4. **SSR Support** - Map components rendered only on client
@@ -236,7 +236,7 @@ pnpm add vue3-maplibre-gl maplibre-gl
 ```typescript
 // nuxt.config.ts
 export default defineNuxtConfig({
-  css: ['maplibre-gl/dist/maplibre-gl.css', 'vue3-maplibre-gl/dist/style.css'],
+  css: ['vue3-maplibre-gl/dist/style-with-maplibre.css'],
   build: {
     transpile: ['vue3-maplibre-gl'],
   },
